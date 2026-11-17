@@ -7,13 +7,17 @@
 - Stage: 0 — design front-loaded (mockups → v0 sign-off) before engineering
 - Shape: INDEPENDENT PRs to main (all work is additive)
 - Repo: github.com/jasontd92/golden-hour (private), main @ 338fba7
-- Vercel: NOT connected. Repo is pushed + private; Vercel's GitHub app needs access to golden-hour (GitHub → Settings → Applications → Vercel → Configure)
-- Codex review: not confirmed
+- Vercel: connected (CEO, 2026-11-17)
+- Codex review: CEO enabling async; NOT a blocker. Until present, merge gate = CI green + 0 unresolved threads.
 - Open PRs / worktrees / subagents: none
 - Mockups: https://claude.ai/artifact/VAMdGRd2S13J3HBGDoPCDs (A: dark gym-floor, 4 screens; B: light notebook/timeline, 2 screens). Session content is PLACEHOLDER until the debate.
-- Next: CEO feedback on mockups → v0 direction → WS1
+- Design pass 2 (page 'Pass 2: quiet' on the same canvas): Emil Kowalski skills applied (emil-design-eng, mobile-native, apple-design). Interactive Today (tap to expand) + Log (Done → saved + rest).
+- Next: CEO feedback on pass 2 → v0 direction → WS1
 
 ## §2 CEO directives (durable)
+- Docs policy: only durable intent belongs in prose (semi-permanent design decisions, the why and the focus; mostly on the methodology side). No planning artifacts or prescriptive agent instructions that need upkeep. Code documents itself via names and directories. This .sprint/ folder is deleted at program close.
+- Design taste: simple and elegant; surface only what matters now, the rest one tap away (progressive disclosure). LLM failure mode to avoid: too much detail and verbosity on screen.
+- Later scoping (not v1): ongoing methodology generation after Evolution 5 and the benchmarks.
 - Stack: SvelteKit + TypeScript, installable PWA (no Apple dev license). Web-enabled, phone-first. Single user; no auth; don't productize.
 - Data: logs offline-first on phone, synced to hosted DB. PM recommends Turso (SQLite) + Drizzle; CEO has no DB preference.
 - Merge: auto-merge when green. Gate = CI green + Codex review present on latest SHA + 0 unresolved threads (Codex posts comments, not a check → EM enforces, not GitHub auto-merge).
@@ -22,7 +26,7 @@
 - Front-load design: mockups before v0, then PM runs with it.
 - Docker is available if useful.
 - Working memory: this tracker (repo-local, git-tracked) so EMs in worktrees can read it; Obsidian vault at ~/Documents/Obsidian Vault not used for sprint state.
-- DB: CEO open; PM recommends Turso. Review bot: Codex (CEO has plan; Cubic quota reserved for Unstale).
+- DB: Turso (CEO confirmed). Review bot: Codex (CEO has plan; Cubic quota reserved for Unstale).
 - Programming debate (Evolution 5) runs in parallel, moderated by PM; it writes into the WS2 PlanSession format.
 - Commits: conventional, NEVER an AI co-author trailer, `git add <paths>` never -A.
 
