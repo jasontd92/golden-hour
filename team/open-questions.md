@@ -1,0 +1,4 @@
+- [running] Would the athlete accept double days (e.g. a hard run and the deadlift as separate sessions, or back-to-back over 60 min)? FIRST/Seiler both open to a hard run on DL day with the run first.
+- [benchmarks] Does the athlete have a heart-rate monitor (chest strap/watch)? Seiler's HR-based zones and submax test depend on it; otherwise use RPE only.
+- [benchmarks] What exactly are "Launchpad" and "Kong is King" (movements/reps/scoring)? Glassman says Launchpad's version must be fixed to be repeatable (2024 scores 6:47 and 10:11 look like different versions).
+- [benchmarks] Amanda needs muscle-ups: test at the rec center, or drop it (losing the 2024 comparison)?

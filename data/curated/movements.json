@@ -1,0 +1,499 @@
+{
+ "_about": "Movement vocabulary. pattern: squat | hinge | lunge | push_v | push_h | pull_v | pull_h | core | olympic | locomotion | carry | full_body. modality: M (monostructural) | G (gymnastics/bodyweight) | W (weightlifting/external load) per CrossFit's M/G/W. home: available in the home gym. match: lowercase regexes run against workout descriptions (order matters: specific before generic). Matching consumes text spans, so earlier (more specific) entries win over later generic ones.",
+ "movements": [
+  {
+   "id": "thruster",
+   "pattern": "squat+push_v",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "thrusters?\\b"
+   ]
+  },
+  {
+   "id": "wall_ball",
+   "pattern": "squat+push_v",
+   "modality": "W",
+   "home": false,
+   "match": [
+    "wall ?balls?"
+   ]
+  },
+  {
+   "id": "overhead_squat",
+   "pattern": "squat",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "overhead squats?",
+    "\\bohs\\b"
+   ]
+  },
+  {
+   "id": "front_squat",
+   "pattern": "squat",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "front squats?"
+   ]
+  },
+  {
+   "id": "back_squat",
+   "pattern": "squat",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "back squats?",
+    "pause squat"
+   ]
+  },
+  {
+   "id": "air_squat",
+   "pattern": "squat",
+   "modality": "G",
+   "home": true,
+   "match": [
+    "(jumping )?air[- ]?squats?"
+   ]
+  },
+  {
+   "id": "pistol",
+   "pattern": "squat",
+   "modality": "G",
+   "home": true,
+   "match": [
+    "pistols?"
+   ]
+  },
+  {
+   "id": "squat_snatch",
+   "pattern": "olympic",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "squat snatch"
+   ]
+  },
+  {
+   "id": "db_snatch",
+   "pattern": "olympic",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "(db|dumbbell|dumbell) snatch",
+    "snatches? \\(?\\d+ ?(lb|#)"
+   ]
+  },
+  {
+   "id": "power_snatch",
+   "pattern": "olympic",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "power snatch",
+    "hang snatch",
+    "\\bsnatch(es)?\\b"
+   ]
+  },
+  {
+   "id": "squat_clean",
+   "pattern": "olympic",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "squat cleans?"
+   ]
+  },
+  {
+   "id": "power_clean",
+   "pattern": "olympic",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "power cleans?",
+    "hang (power )?cleans?",
+    "\\bcleans?\\b"
+   ]
+  },
+  {
+   "id": "clean_and_jerk",
+   "pattern": "olympic",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "clean ?(and|&|\\+) ?jerk",
+    "c&j"
+   ]
+  },
+  {
+   "id": "jerk",
+   "pattern": "push_v",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "push jerks?",
+    "split jerks?",
+    "\\bjerks?\\b"
+   ]
+  },
+  {
+   "id": "push_press",
+   "pattern": "push_v",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "push press"
+   ]
+  },
+  {
+   "id": "shoulder_press",
+   "pattern": "push_v",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "shoulder press",
+    "strict press",
+    "overhead press",
+    "behind[- ]the[- ]neck press"
+   ]
+  },
+  {
+   "id": "bench_press",
+   "pattern": "push_h",
+   "modality": "W",
+   "home": false,
+   "match": [
+    "bench ?press",
+    "floor press"
+   ]
+  },
+  {
+   "id": "deadlift",
+   "pattern": "hinge",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "dead ?lifts?(?! high)",
+    "\\bdl\\b"
+   ]
+  },
+  {
+   "id": "sdhp",
+   "pattern": "hinge+pull_v",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "high[- ]pulls?",
+    "sdhp"
+   ]
+  },
+  {
+   "id": "kb_swing",
+   "pattern": "hinge",
+   "modality": "W",
+   "home": false,
+   "match": [
+    "(kb|kettlebell)? ?swings?"
+   ]
+  },
+  {
+   "id": "devils_press",
+   "pattern": "full_body",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "devils? press"
+   ]
+  },
+  {
+   "id": "turkish_getup",
+   "pattern": "full_body",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "turkish get ?ups?",
+    "tgu"
+   ]
+  },
+  {
+   "id": "bear_complex",
+   "pattern": "olympic",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "bear complex"
+   ]
+  },
+  {
+   "id": "lunge",
+   "pattern": "lunge",
+   "modality": "G",
+   "home": true,
+   "match": [
+    "lunges?"
+   ]
+  },
+  {
+   "id": "box_jump",
+   "pattern": "squat",
+   "modality": "G",
+   "home": true,
+   "match": [
+    "box jumps?",
+    "box jump-overs?",
+    "box step[- ]?(ups?|overs?)"
+   ]
+  },
+  {
+   "id": "burpee",
+   "pattern": "full_body",
+   "modality": "G",
+   "home": true,
+   "match": [
+    "burpees?"
+   ]
+  },
+  {
+   "id": "pull_up",
+   "pattern": "pull_v",
+   "modality": "G",
+   "home": true,
+   "match": [
+    "pull[- ]?ups?",
+    "chin[- ]?ups?"
+   ]
+  },
+  {
+   "id": "chest_to_bar",
+   "pattern": "pull_v",
+   "modality": "G",
+   "home": true,
+   "match": [
+    "chest[- ]to[- ]bar",
+    "c2b"
+   ]
+  },
+  {
+   "id": "muscle_up",
+   "pattern": "pull_v+push_v",
+   "modality": "G",
+   "home": false,
+   "match": [
+    "muscle[- ]?ups?",
+    "\\bmus?\\b"
+   ]
+  },
+  {
+   "id": "ring_row",
+   "pattern": "pull_h",
+   "modality": "G",
+   "home": true,
+   "match": [
+    "ring rows?"
+   ]
+  },
+  {
+   "id": "weighted_row",
+   "pattern": "pull_h",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "(barbell|bb|db|dumbbell|bent[- ]over|pendlay|renegade) rows?"
+   ]
+  },
+  {
+   "id": "rope_climb",
+   "pattern": "pull_v",
+   "modality": "G",
+   "home": false,
+   "match": [
+    "rope climbs?"
+   ]
+  },
+  {
+   "id": "hspu",
+   "pattern": "push_v",
+   "modality": "G",
+   "home": true,
+   "match": [
+    "handstand push[- ]?ups?",
+    "hspus?"
+   ]
+  },
+  {
+   "id": "push_up",
+   "pattern": "push_h",
+   "modality": "G",
+   "home": true,
+   "match": [
+    "push[- ]?ups?"
+   ]
+  },
+  {
+   "id": "dip",
+   "pattern": "push_v",
+   "modality": "G",
+   "home": true,
+   "match": [
+    "(?<!hip )\\bdips?\\b"
+   ]
+  },
+  {
+   "id": "handstand_walk",
+   "pattern": "push_v",
+   "modality": "G",
+   "home": false,
+   "match": [
+    "handstand walk"
+   ]
+  },
+  {
+   "id": "toes_to_bar",
+   "pattern": "core",
+   "modality": "G",
+   "home": true,
+   "match": [
+    "toes[- ]?(to|2)[- ]?bar",
+    "t2b",
+    "ttb"
+   ]
+  },
+  {
+   "id": "knees_to_elbow",
+   "pattern": "core",
+   "modality": "G",
+   "home": true,
+   "match": [
+    "knees[- ]to[- ]elbows?",
+    "k2e"
+   ]
+  },
+  {
+   "id": "sit_up",
+   "pattern": "core",
+   "modality": "G",
+   "home": true,
+   "match": [
+    "sit[- ]?ups?",
+    "ghd"
+   ]
+  },
+  {
+   "id": "l_sit",
+   "pattern": "core",
+   "modality": "G",
+   "home": true,
+   "match": [
+    "l[- ]sit"
+   ]
+  },
+  {
+   "id": "plank",
+   "pattern": "core",
+   "modality": "G",
+   "home": true,
+   "match": [
+    "plank"
+   ]
+  },
+  {
+   "id": "v_up",
+   "pattern": "core",
+   "modality": "G",
+   "home": true,
+   "match": [
+    "v[- ]ups?"
+   ]
+  },
+  {
+   "id": "double_under",
+   "pattern": "locomotion",
+   "modality": "M",
+   "home": false,
+   "match": [
+    "double[- ]?unders?",
+    "\\bdus?\\b"
+   ]
+  },
+  {
+   "id": "run",
+   "pattern": "locomotion",
+   "modality": "M",
+   "home": true,
+   "match": [
+    "\\brun\\b",
+    "\\d+ ?m(eter)?s? run",
+    "run \\d",
+    "\\bmile\\b",
+    "sprint"
+   ]
+  },
+  {
+   "id": "row",
+   "pattern": "locomotion",
+   "modality": "M",
+   "home": false,
+   "match": [
+    "\\brow\\b(?! ?ing)",
+    "rower",
+    "\\d+ ?m row",
+    "row \\d",
+    "cal(orie)?s? row"
+   ]
+  },
+  {
+   "id": "bike",
+   "pattern": "locomotion",
+   "modality": "M",
+   "home": true,
+   "match": [
+    "assault bike",
+    "air ?bike",
+    "echo bike",
+    "\\bbike\\b",
+    "cal(orie)?s? bike"
+   ]
+  },
+  {
+   "id": "ski",
+   "pattern": "locomotion",
+   "modality": "M",
+   "home": false,
+   "match": [
+    "ski ?erg",
+    "\\bski\\b"
+   ]
+  },
+  {
+   "id": "farmers_carry",
+   "pattern": "carry",
+   "modality": "W",
+   "home": true,
+   "match": [
+    "farmers? carry",
+    "farmer'?s walk"
+   ]
+  },
+  {
+   "id": "sled",
+   "pattern": "carry",
+   "modality": "W",
+   "home": false,
+   "match": [
+    "sled"
+   ]
+  },
+  {
+   "id": "sandbag",
+   "pattern": "carry",
+   "modality": "W",
+   "home": false,
+   "match": [
+    "sandbag",
+    "d-?ball",
+    "slam ?balls?"
+   ]
+  }
+ ]
+}

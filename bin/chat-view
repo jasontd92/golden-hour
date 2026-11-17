@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# chat-view [thread]  — live, color-coded transcript of all agent messages (optionally one thread)
+log="${GH_CHAT_LOG:-$HOME/Documents/golden-hour/chat.jsonl}"
+touch "$log"
+tail -n +1 -F "$log" 2>/dev/null | python3 -u -c '
+import sys, json, hashlib
+want = sys.argv[1] if len(sys.argv) > 1 else None
+colors = [31, 32, 33, 34, 35, 36, 91, 92, 93, 94, 95, 96]
+def c(name):
+    return "\033[1;%dm%s\033[0m" % (colors[int(hashlib.md5(name.encode()).hexdigest(), 16) % len(colors)], name)
+for line in sys.stdin:
+    try: e = json.loads(line)
+    except Exception: continue
+    if want and e["thread"] != want: continue
+    print("\033[2m%s\033[0m \033[2m#%s\033[0m  %s -> %s" % (e["ts"][11:], e["thread"], c(e["from"]), c(e["to"])))
+    print("    " + e["msg"].replace("\n", "\n    ") + "\n")
+' "$@"

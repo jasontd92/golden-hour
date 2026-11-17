@@ -1,0 +1,416 @@
+[
+ {
+  "id": "turkey-trot-triple",
+  "name": "Turkey Trot Triple",
+  "kind": "personal",
+  "favorite": true,
+  "recurrence": "annual: Thanksgiving week",
+  "description": "For time, each piece timed: 5k run, 5k row, 5k assault bike. Total = sum.",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "equipment": [
+   "run",
+   "rower",
+   "assault_bike"
+  ],
+  "home_ok": false,
+  "home_note": "rower only at rec center",
+  "sources": [
+   "raw/apple-notes/turkey-trot-triple.txt"
+  ]
+ },
+ {
+  "id": "jason-cunningham",
+  "name": "Jason Cunningham",
+  "aliases": [
+   "Cunningham",
+   "Cunnigham (minutes)"
+  ],
+  "kind": "hero",
+  "favorite": true,
+  "recurrence": "annual",
+  "description": "For time: 10 rounds of run 200m, 3 bear complexes, 4 burpees over bar. After round 10: 26 front squats, 38 deadlifts, run 1 mile. 115/75 lb.",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "equipment": [
+   "barbell",
+   "run"
+  ],
+  "home_ok": true,
+  "sources": [
+   "raw/apple-notes/jason-cunningham.txt",
+   "raw/google-sheet/tests.json"
+  ]
+ },
+ {
+  "id": "benchmark-anaerobic",
+  "name": "Benchmark Anaerobic",
+  "kind": "personal",
+  "description": "AMRAP 45 min: run 800m, 20 quick burpees, 6 Turkish get-ups each arm (40 lb), 25 push-ups, 8 chest flies (30 lb). Scaled: 10 burpees / 15 lb TGU / 10 knee push-ups / glute raises.",
+  "format": "amrap",
+  "time_cap_s": 2700,
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher",
+   "note": "a 'round' counts the run; course length varies by location"
+  },
+  "equipment": [
+   "run",
+   "dumbbell"
+  ],
+  "home_ok": true,
+  "sources": [
+   "raw/apple-notes/benchmark-anaerobic.txt"
+  ]
+ },
+ {
+  "id": "death-by-core",
+  "name": "Death by Core",
+  "kind": "personal",
+  "description": "Composite of 4 pieces. 1) 2:00 cumulative L-sit; every break = deadlift buy-in 5x225 or 10 burpees to target; minutes = negative points. 2) 200 sit-ups (or 250 flutter kicks); every break = :20 superman hold; breaks = negative points. 3) AMRAP 10: 30 two-count rocky twists, broken sets don't count; rounds x2 = points. 4) Tabata front-backs; total reps / 4 = points.",
+  "format": "composite",
+  "score": {
+   "type": "points",
+   "better": "higher"
+  },
+  "equipment": [
+   "pull_up_bar_or_parallettes",
+   "ab_mat"
+  ],
+  "home_ok": true,
+  "sources": [
+   "raw/apple-notes/death-by-core.txt",
+   "raw/google-sheet/evo2.json"
+  ]
+ },
+ {
+  "id": "100-burpees",
+  "name": "100 Burpees For Time",
+  "kind": "personal",
+  "description": "100 burpees for time.",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "equipment": [],
+  "home_ok": true,
+  "sources": [
+   "raw/apple-notes/100-burpees-for-time.txt",
+   "raw/google-sheet/evo2.json"
+  ]
+ },
+ {
+  "id": "run-5k-row-5k",
+  "name": "5k Run + 5k Row",
+  "kind": "personal",
+  "description": "5k run then 5k row, <1 min transition. Score total and splits.",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "equipment": [
+   "run",
+   "rower"
+  ],
+  "home_ok": false,
+  "sources": [
+   "raw/apple-notes/5k-run-5k-row.txt"
+  ]
+ },
+ {
+  "id": "kong-is-king",
+  "name": "Kong is King",
+  "kind": "test",
+  "description": null,
+  "definition_status": "LOST: athlete doesn't remember it and it isn't in any source (2026-11-17). Aug 2025 result kept for the record; can't be repeated.",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower",
+   "note": "Aug 2025 logged 21:33 with splits 11:02/7:31"
+  },
+  "energy_tags_sheet": [
+   "oxidative"
+  ],
+  "sources": [
+   "raw/google-sheet/tests.json"
+  ]
+ },
+ {
+  "id": "launchpad",
+  "name": "Launchpad",
+  "kind": "test",
+  "description": "Probably Annie with burpees in place of double-unders at half the reps: 25-20-15-10-5 burpees and 50-40-30-20-10 sit-ups, for time.",
+  "definition_status": "RECONSTRUCTED, low confidence (athlete's memory 2026-11-17). Times 6:47 -> 10:11 -> 12:21 suggest the version changed between attempts; treat past results as not comparable.",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower",
+   "note": "6:47 -> 10:11 -> 12:21 suggests the version changed"
+  },
+  "energy_tags_sheet": [
+   "phosphagen",
+   "glycolytic"
+  ],
+  "sources": [
+   "raw/google-sheet/tests.json",
+   "raw/google-sheet/evo2.json"
+  ]
+ },
+ {
+  "id": "king-kong-womens-rx",
+  "name": "King Kong (women's Rx)",
+  "kind": "test",
+  "description": "3 rounds for time: 1 deadlift, 2 muscle-ups, 3 squat cleans, 4 handstand push-ups. Rx 455/250 lb; women's Rx 320/185 lb. Athlete's logged version: 320 DL / 175 squat clean, bar muscle-ups.",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": false,
+  "home_note": "no muscle-up clearance at home",
+  "sources": [
+   "raw/google-sheet/tests.json"
+  ],
+  "reference": "https://wodwell.com/wod/king-kong/ (page needs login; loads are the commonly published standard, not verified against it)",
+  "aliases": [
+   "King Kong (womens rx) (seconds)",
+   "King Kong"
+  ]
+ },
+ {
+  "id": "crossfit-total",
+  "name": "CrossFit Total",
+  "kind": "test",
+  "description": "1RM back squat + 1RM shoulder press + 1RM deadlift; 3 attempts each.",
+  "format": "max_load",
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "home_ok": true,
+  "sources": [
+   "raw/google-sheet/tests.json",
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ]
+ },
+ {
+  "id": "strict-pullups-max",
+  "name": "Unbroken strict pull-ups",
+  "aliases": [
+   "Unbroken pull-ups",
+   "Pull-ups (Strict): Max Reps",
+   "Max Strict Pullups"
+  ],
+  "kind": "test",
+  "format": "max_reps",
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "home_ok": true,
+  "sources": [
+   "raw/google-sheet/tests.json"
+  ]
+ },
+ {
+  "id": "assault-bike-2mi",
+  "name": "2 mile assault bike (home)",
+  "aliases": [
+   "2 mile home assault bike"
+  ],
+  "kind": "test",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": true
+ },
+ {
+  "id": "run-10k",
+  "name": "10k run",
+  "aliases": [
+   "10k Run (minutes)",
+   "Run 10k"
+  ],
+  "kind": "test",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": true
+ },
+ {
+  "id": "run-5k",
+  "name": "5k run",
+  "aliases": [
+   "Run 5k"
+  ],
+  "kind": "test",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": true
+ },
+ {
+  "id": "run-400m",
+  "name": "400m run",
+  "aliases": [
+   "400m Run (seconds)",
+   "Run 400m"
+  ],
+  "kind": "test",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": true
+ },
+ {
+  "id": "run-200m",
+  "name": "200m run",
+  "aliases": [
+   "Run 200m"
+  ],
+  "kind": "test",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": true
+ },
+ {
+  "id": "row-5k",
+  "name": "Row 5k",
+  "kind": "test",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": false
+ },
+ {
+  "id": "ski-2000m",
+  "name": "Ski erg 2000m",
+  "aliases": [
+   "2000m Ski Erg (minutes)",
+   "Ski 2000m"
+  ],
+  "kind": "test",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": false
+ },
+ {
+  "id": "max-l-sit",
+  "name": "Max L-sit hold",
+  "aliases": [
+   "Max L-Sit Hold (seconds)",
+   "Max L-sit"
+  ],
+  "kind": "test",
+  "format": "max_hold",
+  "score": {
+   "type": "seconds",
+   "better": "higher"
+  },
+  "home_ok": true
+ },
+ {
+  "id": "max-vertical-jump",
+  "name": "Max vertical jump",
+  "kind": "test",
+  "format": "other",
+  "score": {
+   "type": "text",
+   "better": null
+  },
+  "home_ok": false
+ },
+ {
+  "id": "amanda",
+  "name": "Amanda",
+  "kind": "girl",
+  "description": "9-7-5: muscle-ups, squat snatches (135 lb).",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": false,
+  "home_note": "muscle-ups: rec center"
+ },
+ {
+  "id": "cindy",
+  "name": "Cindy",
+  "kind": "girl",
+  "format": "amrap",
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "home_ok": true
+ },
+ {
+  "id": "grace",
+  "name": "Grace",
+  "kind": "girl",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": true
+ },
+ {
+  "id": "fran",
+  "name": "Fran",
+  "kind": "girl",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": true
+ },
+ {
+  "id": "diane",
+  "name": "Diane",
+  "kind": "girl",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": true
+ },
+ {
+  "id": "fight-gone-bad",
+  "name": "Fight Gone Bad",
+  "kind": "notable",
+  "format": "intervals",
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "home_ok": false
+ }
+]

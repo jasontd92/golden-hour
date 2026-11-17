@@ -1,0 +1,7526 @@
+[
+ {
+  "id": "10-min-clean-jerk-complex-emom",
+  "name": "10 min Clean & Jerk Complex EMOM",
+  "kind": "strength",
+  "descriptions": [
+   "Rx: 2 x Deadlift + Hang Clean + JerkSc: 1 x Deadlift + Hang Clean + JerkAim for 80% of your 3RM weight."
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "clean_and_jerk",
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge",
+    "olympic"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "100-burpees",
+  "name": "100 Burpees For Time",
+  "kind": "personal",
+  "description": "100 burpees for time.",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "equipment": [],
+  "home_ok": true,
+  "sources": [
+   "raw/apple-notes/100-burpees-for-time.txt",
+   "raw/google-sheet/evo2.json"
+  ],
+  "tags": {
+   "movements": [
+    "burpee"
+   ],
+   "patterns": [
+    "full_body"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "12-days-of-christmas",
+  "name": "12 Days of Christmas",
+  "kind": "class_wod",
+  "descriptions": [
+   "Warm up:400m runMobility:PVC workHip openersShoulder activationWOD:Perform the workout Ladder style (Just like the song)1 Power Clean (155/115)2 Alt Pistols3 Handstand Pushups4 Burpee box jump5 Pull-ups6 Alt KB Snatch7 KB Swings8 Knees to elbow9 Sit-ups10 Cal Bike/row11 Deadlifts12 DB ThrustersDeadlifts and Power clean will be the same weight as well as all KB movements will be the same, DB thruster will be heavy."
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "pistol",
+    "power_clean",
+    "deadlift",
+    "kb_swing",
+    "box_jump",
+    "burpee",
+    "pull_up",
+    "hspu",
+    "knees_to_elbow",
+    "sit_up",
+    "run",
+    "bike"
+   ],
+   "patterns": [
+    "core",
+    "full_body",
+    "hinge",
+    "locomotion",
+    "olympic",
+    "pull_v",
+    "push_v",
+    "squat"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "2022-eod-137-memorial-workout",
+  "name": "2022 EOD 137 Memorial Workout",
+  "kind": "class_wod",
+  "descriptions": [
+   "With a partner, wearing a #20lbs vest, complete:66 Front Squats #135/9566 KBS #70/5316 Burpee over Partner30 second plank400m run66 Hang power cleans #135/9566 Single arm KB Press #53/3516 Burpee over Partner30 second plank400m run66 Chest to bar pull-ups66 Box Jumps16 Burpee over Partner30 second plank400m run66 Push-ups66 Pendlay Barbell Rows #135/9516 Burpee over Partner30 second plank400m run*Partners may split reps however they would like, but the plank and the runs must be done by both partners simultaneously"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat",
+    "power_clean",
+    "box_jump",
+    "burpee",
+    "pull_up",
+    "chest_to_bar",
+    "weighted_row",
+    "push_up",
+    "plank",
+    "run"
+   ],
+   "patterns": [
+    "core",
+    "full_body",
+    "locomotion",
+    "olympic",
+    "pull_h",
+    "pull_v",
+    "push_h",
+    "squat"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "22-1-rx",
+  "name": "22.1 RX",
+  "kind": "class_wod",
+  "descriptions": [
+   "Complete as many rounds as possible in 15 minutes of:3 wall walks12 dumbbell snatches15 box jump-overs50-lb dumbbell, 24-in box"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "db_snatch",
+    "box_jump"
+   ],
+   "patterns": [
+    "olympic",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "22-2-rx",
+  "name": "22.2 RX",
+  "kind": "class_wod",
+  "descriptions": [
+   "1-2-3-4-5-6-7-8-9-10-9-8-7-6-5-4-3-2-1reps for time of:Deadlifts Bar-facing burpees\u2640 155 lb\u2642 225 lbTime cap: 10 minutes"
+  ],
+  "score": {
+   "type": "text",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift",
+    "burpee"
+   ],
+   "patterns": [
+    "full_body",
+    "hinge"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "22-3-rx",
+  "name": "22.3 RX",
+  "kind": "class_wod",
+  "descriptions": [
+   "21 pull-ups42 double-unders21 thrusters (weight 1)18 chest-to-bar pull-ups36 double-unders18 thrusters (weight 2)15 bar muscle-ups30 double-unders15 thrusters (weight 3)95/65 lb, then 115/75 lb, then 135/85 lbTime cap: 12 minutes"
+  ],
+  "score": {
+   "type": "text",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "pull_up",
+    "chest_to_bar",
+    "muscle_up",
+    "double_under"
+   ],
+   "patterns": [
+    "locomotion",
+    "pull_v",
+    "push_v",
+    "squat"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "9-11-22",
+  "name": "9/11/22",
+  "kind": "class_wod",
+  "descriptions": [
+   "For time:Buy in: 93 sit-ups Into 11 rounds:5 sand bag over shoulder (~80#?)4 complex @115#*During the 11 rounds: Every 5 minutes do 21 pushups Buy out: 93 situps"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "push_up",
+    "sit_up"
+   ],
+   "patterns": [
+    "core",
+    "push_h"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "acid-bath",
+  "name": "Acid Bath",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD400m Run500m Row24 cals Assault bike*****Full sprint Target to get below 6 mins"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "run",
+    "row",
+    "bike"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "adderall",
+  "name": "Adderall",
+  "kind": "class_wod",
+  "descriptions": [
+   "27 Minute AMRAPMinutes 0-10Run 1 mileMax Clean & jerks (135/95)Minutes 10-13RestMinutes 13-20Run a half mileMax Power snatches (115/80)Minutes 20-23RestMinutes 23-27Run a quarter mileMax thrusters (95/65)"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "power_snatch",
+    "power_clean",
+    "jerk",
+    "run"
+   ],
+   "patterns": [
+    "locomotion",
+    "olympic",
+    "push_v",
+    "squat"
+   ],
+   "modality": "MW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "aerobic-test",
+  "name": "Aerobic Test",
+  "kind": "class_wod",
+  "descriptions": [
+   "400m run for time**may be completed outside if weather is good."
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "run"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "agoq-19-1",
+  "name": "AGOQ 19.1",
+  "kind": "competition",
+  "descriptions": [
+   "3 rounds for time of:\u202215 deadlifts\u202235 overhead squats\u202290 double-undersTime cap: 15 minutesAges 16-17 and 35-54:Men deadlift 225 lb. and overhead squat 75 lb.Women deadlift 155 lb. and overhead squat 55 lb.Ages 14-15:Boys deadlift 135 lb. and overhead squat 65 lb.Girls deadlift 95 lb. and overhead squat 45 lb.Ages 55+:Men deadlift 185 lb. and overhead squat 65 lb.Women deadlift 125 lb. and overhead squat 45 lb."
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "overhead_squat",
+    "deadlift",
+    "double_under"
+   ],
+   "patterns": [
+    "hinge",
+    "locomotion",
+    "squat"
+   ],
+   "modality": "MW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "amanda",
+  "name": "Amanda",
+  "kind": "girl",
+  "description": "9-7-5: muscle-ups, squat snatches (135 lb).",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": false,
+  "home_note": "muscle-ups: rec center",
+  "sources": [],
+  "tags": {
+   "movements": [
+    "squat_snatch",
+    "muscle_up"
+   ],
+   "patterns": [
+    "olympic",
+    "pull_v",
+    "push_v"
+   ],
+   "modality": "GW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "amrap",
+  "name": "AMRAP",
+  "kind": "class_wod",
+  "descriptions": [
+   "Complete as many rounds as possible in 5 minutes of:12 front squats (\u2640 85 lb \u2642 125 lb)12-cal. bikeRest 5 minutesComplete as many rounds as possible in 5 minutes of:9 front squats (\u2640 105 lb \u2642 155 lb)9-cal. bike"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat",
+    "bike"
+   ],
+   "patterns": [
+    "locomotion",
+    "squat"
+   ],
+   "modality": "MW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "annie",
+  "name": "Annie",
+  "kind": "girl",
+  "descriptions": [
+   "50-40-30-20-10 reps for time of:\u2022 Double-Unders\u2022 Sit-ups"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "sit_up",
+    "double_under"
+   ],
+   "patterns": [
+    "core",
+    "locomotion"
+   ],
+   "modality": "MG",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "assault-bike-2mi",
+  "name": "2 mile assault bike (home)",
+  "aliases": [
+   "2 mile home assault bike"
+  ],
+  "kind": "test",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": true,
+  "sources": [],
+  "tags": {
+   "movements": [
+    "run",
+    "bike"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "back-squat",
+  "name": "Back Squat",
+  "kind": "strength",
+  "descriptions": [
+   "Strength:Back squat 7-5-5-3-3-1Start at 70% max, Increase weight every round. Record your  final round weight",
+   "StrengthBack Squat 5x5 @65-75%then135/95 back squat for max reps**total number of reps at 135/95 until you hit exhaustion or failure.  No more than 1-3 seconds at the top of the lift.Score is max reps",
+   "2x10 @70%Then Establish a 3RM back squat"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "back_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "back-squat-1-rep-max",
+  "name": "Back Squat 1 Rep Max",
+  "kind": "class_wod",
+  "descriptions": [
+   "Establish a 1 rep max back squat"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "back_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "back-squat-1rm",
+  "name": "Back Squat 1RM",
+  "kind": "strength",
+  "descriptions": [
+   "Back Squat for load: #1: 1 rep"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "back_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "back-squat-1x1",
+  "name": "Back Squat 1x1",
+  "kind": "strength",
+  "descriptions": [
+   "Back Squat for load: #1: 1 rep"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "back_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "back-squat-3x3",
+  "name": "Back Squat 3x3",
+  "kind": "strength",
+  "descriptions": [
+   "3 sets x 3 Back Squats (85-90%)-Complete a set every 2:45-"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "back_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "back-squat-5x5",
+  "name": "Back Squat 5x5",
+  "kind": "strength",
+  "descriptions": [
+   "Back Squat for load: #1:  5 reps #2:  5 reps #3:  5 reps #4:  5 reps #5:  5 reps"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "back_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "bar-muscle-ups-week-1",
+  "name": "Bar Muscle Ups: Week 1",
+  "kind": "class_wod",
+  "descriptions": [
+   "2:00 AMRAP for max reps of:Freedom: Bar Muscle UpsIndependence: Kipping Chest to Bar Pull-ups or Kipping Pull-upsLiberty: Ring Rows"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "pull_up",
+    "chest_to_bar",
+    "muscle_up",
+    "ring_row"
+   ],
+   "patterns": [
+    "pull_h",
+    "pull_v",
+    "push_v"
+   ],
+   "modality": "G",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "baseline",
+  "name": "Baseline",
+  "kind": "class_wod",
+  "descriptions": [
+   "For time:\u2022 Row 500m\u2022 40 Air Squats\u2022 30 Sit-ups\u2022 20 Push-ups\u2022 10 Pull-ups"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "air_squat",
+    "pull_up",
+    "push_up",
+    "sit_up",
+    "row"
+   ],
+   "patterns": [
+    "core",
+    "locomotion",
+    "pull_v",
+    "push_h",
+    "squat"
+   ],
+   "modality": "MG",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "bear-complex",
+  "name": "Bear Complex",
+  "kind": "strength",
+  "descriptions": [
+   "5 Rounds for Max Load:Each round is 7 unbroken sets of:\u2022 1 Power Clean\u2022 1 Front Squat\u2022 1 Push Press\u2022 1 Back Squat\u2022 1 Push PressYou must hold on to the bar for the entire round.How do you perform the \"Bear Complex\" workout?The five movements known as the \u201cBear Complex\u201d comprise one repetition. Complete the complex seven times, unbroken (without letting go of the bar or resting it on the ground) to complete one round. Complete five unbroken rounds, increasing the weight and resting as needed between each round to complete the workout. Rest as needed between rounds. You may not change the load mid-round.Score is the max weight used for your fifth unbroken round.What is a good score for the \"Bear Complex\" workout?- Beginner: Men 75/Women 55 lb- Intermediate: Men 115/Women 85 lb- Advanced: Men 155/Women 105 lb- Elite: Men 225+/Women 155+ lb"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat",
+    "back_squat",
+    "power_clean",
+    "push_press",
+    "bear_complex"
+   ],
+   "patterns": [
+    "olympic",
+    "push_v",
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "behind-the-neck-press",
+  "name": "Behind the neck press",
+  "kind": "strength",
+  "descriptions": [
+   "Behind the neck press5x7Gradually build up weight"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "shoulder_press"
+   ],
+   "patterns": [
+    "push_v"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "bench-press",
+  "name": "Bench Press",
+  "kind": "strength",
+  "descriptions": [
+   "Strength:Barbell/DB Bench1x10 @50%1x10 @60%1x7 @ 75%5x5 @80-85%",
+   "Strength:DB/Barbell Bench Press10-5-5-3-3-1* Increase weight each set",
+   "Dumbbell or barbell5x7 @75%"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "bench_press"
+   ],
+   "patterns": [
+    "push_h"
+   ],
+   "modality": "W",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "bench-press-1x10",
+  "name": "Bench Press 1x10",
+  "kind": "strength",
+  "descriptions": [
+   "Bench Press for load: #1: 10 reps"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "bench_press"
+   ],
+   "patterns": [
+    "push_h"
+   ],
+   "modality": "W",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "bench-press-5-3-1-5-3-1-3",
+  "name": "Bench Press 5-3-1-5-3-1-3",
+  "kind": "strength",
+  "descriptions": [
+   "Bench Press5 @ 80%3 @ 90%1 @ 95%5 @ 85%3 @ 95 %1 @ 95+%3 @ 90%"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "bench_press"
+   ],
+   "patterns": [
+    "push_h"
+   ],
+   "modality": "W",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "benchmark-anaerobic",
+  "name": "Benchmark Anaerobic",
+  "kind": "personal",
+  "description": "AMRAP 45 min: run 800m, 20 quick burpees, 6 Turkish get-ups each arm (40 lb), 25 push-ups, 8 chest flies (30 lb). Scaled: 10 burpees / 15 lb TGU / 10 knee push-ups / glute raises.",
+  "format": "amrap",
+  "time_cap_s": 2700,
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher",
+   "note": "a 'round' counts the run; course length varies by location"
+  },
+  "equipment": [
+   "run",
+   "dumbbell"
+  ],
+  "home_ok": true,
+  "sources": [
+   "raw/apple-notes/benchmark-anaerobic.txt"
+  ],
+  "tags": {
+   "movements": [
+    "turkish_getup",
+    "burpee",
+    "push_up",
+    "run"
+   ],
+   "patterns": [
+    "full_body",
+    "locomotion",
+    "push_h"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "black-bear-mile",
+  "name": "Black Bear Mile",
+  "kind": "class_wod",
+  "descriptions": [
+   "3 RFT:500m row3 Bear complexes @135#500m ski3 Bear complexes500m run3 Bear complexes"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "bear_complex",
+    "run",
+    "row"
+   ],
+   "patterns": [
+    "locomotion",
+    "olympic"
+   ],
+   "modality": "MW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "breyer-s",
+  "name": "Breyer\u2019s",
+  "kind": "class_wod",
+  "descriptions": [
+   "Freedom (RXd)6 sets1:30 AMRAP50 Crossovers (scaled: 100 Single Unders)Max Strict Pull-Ups in the remaining time-1:30 rest between sets-* Affiliate Compete6 sets1:30 AMRAP60 Crossovers (scaled: 120 Single Unders)Max Strict Pull-Ups in remaining time-1:30 rest between sets-* Independence6 sets1:30 AMRAP35 Crossovers (scaled: 75 Single Unders)Max Strict Pull-Ups in remaining time-1:30 rest between sets- * Liberty6 sets1:30 AMRAP80 SIngle UndersMax RIng Rows in remaining time-1:30 rest between sets-"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "pull_up",
+    "ring_row"
+   ],
+   "patterns": [
+    "pull_h",
+    "pull_v"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "can-you-survive",
+  "name": "Can you survive",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:10 Rounds1 Deadlifts1 Hang Clean1 Power Squat clean1 Jerk***75-80% of Clean + Jerk**earn it today! Focusing on Heavy load over 10 rounds.  Put Load in notes"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "squat_clean",
+    "power_clean",
+    "clean_and_jerk",
+    "jerk",
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge",
+    "olympic",
+    "push_v"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "cardio-test",
+  "name": "Cardio Test",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:2,000m Rowor100 Cal BikeGoal is to do a test of cardio endurance.  We are working in the time domain of around 8:00mins to 12 Minutes.  Find a good fast pace and set your new benchmark"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "row",
+    "bike"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "catch-me-if-you-can",
+  "name": "Catch me if you can",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:5 Rounds for time6 2x DB Devils press12 DB Step ups18 Cals"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "devils_press"
+   ],
+   "patterns": [
+    "full_body"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "cccf-cardio-benchmark",
+  "name": "CCCF Cardio Benchmark",
+  "kind": "class_wod",
+  "descriptions": [
+   "4 Rounds for Time:400m run500m row or 40/32 Bike Cals50 double unders*If equipment is an issue, stagger start athletes. Start the second round of athletes once the first athlete completes the run"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "double_under",
+    "run",
+    "row",
+    "bike"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "cccf-gymnastics-benchmark",
+  "name": "CCCF Gymnastics Benchmark",
+  "kind": "class_wod",
+  "descriptions": [
+   "5 rounds for time:10 HSPU15 Pull-Ups20 Push-Ups25 Double Unders"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "pull_up",
+    "hspu",
+    "push_up",
+    "double_under"
+   ],
+   "patterns": [
+    "locomotion",
+    "pull_v",
+    "push_h",
+    "push_v"
+   ],
+   "modality": "MG",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "cccf-power-endurance-benchmark",
+  "name": "CCCF Power Endurance Benchmark",
+  "kind": "class_wod",
+  "descriptions": [
+   "15 min EMOM: Complete the following complex1 Clean (Power or Full)1 Front Squat1 Thruster1 Jerk (Any Variation)*Score is the average weight used"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat",
+    "power_clean",
+    "jerk"
+   ],
+   "patterns": [
+    "olympic",
+    "push_v",
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "cccf-sprint-benchmark-intervals",
+  "name": "CCCF Sprint Benchmark [INTERVALS]",
+  "kind": "class_wod",
+  "descriptions": [
+   "For time:On the rower or bike:15 seconds working:45 seconds restContinue until you reach 150 cals and record your time"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "run",
+    "row",
+    "bike"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "cindy",
+  "name": "Cindy",
+  "kind": "girl",
+  "format": "amrap",
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "home_ok": true,
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "descriptions": [
+   "AMRAP 20 minutes of:\u2022 5 pull-ups\u2022 10 push-ups\u2022 15 squats"
+  ],
+  "tags": {
+   "movements": [
+    "pull_up",
+    "push_up"
+   ],
+   "patterns": [
+    "pull_v",
+    "push_h"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "circles",
+  "name": "circles",
+  "kind": "class_wod",
+  "descriptions": [
+   "AMRAP 178 Front Squat 95/6530 situps1 lap farmers carry 53/35 each hand"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat",
+    "sit_up",
+    "farmers_carry"
+   ],
+   "patterns": [
+    "carry",
+    "core",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "clean-and-jerk-5-5-5-5-5-5-5",
+  "name": "Clean and Jerk 5-5-5-5-5-5-5",
+  "kind": "strength",
+  "descriptions": [
+   "If at home, modify with dumbbells, jugs, or other heavy objects."
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "jerk"
+   ],
+   "patterns": [
+    "olympic",
+    "push_v"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "clean-jerk-3rm",
+  "name": "Clean & Jerk 3RM",
+  "kind": "strength",
+  "descriptions": [
+   "Work Up to your 3RM"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "jerk"
+   ],
+   "patterns": [
+    "olympic",
+    "push_v"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "clean-up",
+  "name": "Clean Up",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:10 EMOM1 Power Clean1 Hang Power Clean1 Power Squat Clean1 Front Squat70-80% of Squat Clean max",
+   "WOD:15 EMOM1 Power Clean1 Hang Power Clean1 Power Squat Clean1 Front Squat70-80% of Squat Clean max"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat",
+    "squat_clean",
+    "power_clean"
+   ],
+   "patterns": [
+    "olympic",
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "competition-chipper-6-22-22",
+  "name": "COMPETITION Chipper 6.22.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "Row 500m/Run 400m/Bike 30 cals20 strict HSPURow 500m/Run 400m/Bike 30 cals20 Deficit HSPU using #45/#25 bumpersRow 500m/Run 400m/Bike 30 cals20 HSPURow 500m/Run 400m/Bike 30 cals20 Handstand walks (5ft each, 100ft total)"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "hspu",
+    "handstand_walk",
+    "run",
+    "row",
+    "bike"
+   ],
+   "patterns": [
+    "locomotion",
+    "push_v"
+   ],
+   "modality": "MG",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "competition-metcon-6-13-22",
+  "name": "Competition METCON 6.13.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "For time: 8 Rounds15/12 cals3 Back Squats #255/1753 Strict Press #135/95Back Squats may be taken from the rack, Strict presses must be taken from the ground"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "back_squat",
+    "shoulder_press"
+   ],
+   "patterns": [
+    "push_v",
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "competition-metcon-6-20-22",
+  "name": "COMPETITION METCON 6.20.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "3 rounds of 4 min AMRAP w/2 min rest between rounds:Run 1 Lap with Medicine Ball (#20/14)20 Alternating Pistols15 Dumbbell floor press (#60/45)10 Box Jump Overs (30\"/24\")Max D-ball ground-to-over shoulder (#100/50)*Score is the total distance of D-balls G2OS completed across all rounds"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "pistol",
+    "bench_press",
+    "box_jump",
+    "run",
+    "sandbag"
+   ],
+   "patterns": [
+    "carry",
+    "locomotion",
+    "push_h",
+    "squat"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "competition-metcon-6-8-22",
+  "name": "Competition METCON 6.8.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "9 min Max EffortMax Chest to bar Pull Ups Every Drop complete a 1 Lap run"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "pull_up",
+    "chest_to_bar",
+    "run"
+   ],
+   "patterns": [
+    "locomotion",
+    "pull_v"
+   ],
+   "modality": "MG",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "complex-galore",
+  "name": "Complex galore",
+  "kind": "class_wod",
+  "descriptions": [
+   "12 EMOM1 Deadlift1 Power Clean1 Squat Clean1 Hang Squat Clean*** Either stick with a heavy weight and try and maintain or go up in weight throughout.  ideal weight is 80% of squat clean max"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "squat_clean",
+    "power_clean",
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge",
+    "olympic"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "corgis",
+  "name": "Corgis",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:5 rounds7 2xDB deadlift7 2xDB hang clean7 2xDB front squat7 2xDB squat clean7 pull-ups 1 lap runFor the dumbbell 50/35s"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat",
+    "squat_clean",
+    "power_clean",
+    "deadlift",
+    "pull_up"
+   ],
+   "patterns": [
+    "hinge",
+    "olympic",
+    "pull_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "crossfit-total",
+  "name": "CrossFit Total",
+  "kind": "test",
+  "description": "1RM back squat + 1RM shoulder press + 1RM deadlift; 3 attempts each.",
+  "format": "max_load",
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "home_ok": true,
+  "sources": [
+   "raw/google-sheet/tests.json",
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "descriptions": [
+   "Three attempts of each lift:\u2022 Back squat 1-1-1\u2022 Shoulder Press 1-1-1\u2022 Deadlift 1-1-1Your score is the total of your best successful lifts."
+  ],
+  "tags": {
+   "movements": [
+    "back_squat",
+    "shoulder_press",
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge",
+    "push_v",
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "da-pump",
+  "name": "Da Pump",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:21-15-9OHS 115/75Wall Balls 20/14Pullups"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "wall_ball",
+    "pull_up"
+   ],
+   "patterns": [
+    "pull_v",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "date-me",
+  "name": "Date me",
+  "kind": "class_wod",
+  "descriptions": [
+   "21-18-15-12-9 For Time-Power Cleans 135/95Toes To Bar"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "toes_to_bar"
+   ],
+   "patterns": [
+    "core",
+    "olympic"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "dead-lift-5-3-1-5-3-1-3",
+  "name": "Dead Lift 5-3-1-5-3-1-3",
+  "kind": "strength",
+  "descriptions": [
+   "5 @ 80%3 @ 90%1 @ 95%5 @ 85%3 @ 95 %1 @ 95+%3 @ 90%"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "deadlift",
+  "name": "Deadlift",
+  "kind": "strength",
+  "descriptions": [
+   "EMOM 104 Deadlifts at 75-80% 1 rep max* warm up to your working set weight prior to starting the EMOM"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "deadlift-1-rep-max",
+  "name": "Deadlift 1 rep max",
+  "kind": "class_wod",
+  "descriptions": [
+   "Establish a 1 rep max Deadlift"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "deadlift-1x1",
+  "name": "Deadlift 1x1",
+  "kind": "strength",
+  "descriptions": [
+   "Deadlift for load: #1: 1 rep"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "deadlift-2x2",
+  "name": "Deadlift 2x2",
+  "kind": "strength",
+  "descriptions": [
+   "2 sets x 2 Deadlift (90-95%)-Complete a set every 3:00-"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "deadlift-3x3",
+  "name": "Deadlift 3x3",
+  "kind": "strength",
+  "descriptions": [
+   "Deadlift for load: #1: 3 reps @ 70% #2: 3 reps @ 80% #3: 3 reps @ 90%"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "deadlift-3x5",
+  "name": "Deadlift 3x5",
+  "kind": "strength",
+  "descriptions": [
+   "Deadlift for load: #1: 5 reps @ 65% #2: 5 reps @ 75% #3: 5 reps @ 85%"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "deadlift-4x4",
+  "name": "Deadlift 4x4",
+  "kind": "strength",
+  "descriptions": [
+   "4 sets x 4 Deadlifts (85%)-Complete a set every 2:30-"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "deadlift-5x3",
+  "name": "Deadlift 5x3",
+  "kind": "strength",
+  "descriptions": [
+   "Deadlift for load: #1:  3 reps #2:  3 reps #3:  3 reps #4:  3 reps #5:  3 reps"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "deadlift-5x5",
+  "name": "Deadlift 5x5",
+  "kind": "strength",
+  "descriptions": [
+   "Deadlift for load: #1:  5 reps #2:  5 reps #3:  5 reps #4:  5 reps #5:  5 reps",
+   "5 sets x 5 Deadlifts (80%)-Complete a set every 2:15-"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "deadlift-6x6",
+  "name": "Deadlift 6x6",
+  "kind": "strength",
+  "descriptions": [
+   "6 sets x 6 Deadlifts (75%)-Complete a set every 2:00-"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "deadlift-7x3",
+  "name": "Deadlift 7x3",
+  "kind": "strength",
+  "descriptions": [
+   "Deadlift for load: #1:  3 reps #2:  3 reps #3:  3 reps #4:  3 reps #5:  3 reps #6:  3 reps #7:  3 reps"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "deadlifts",
+  "name": "Deadlifts",
+  "kind": "strength",
+  "descriptions": [
+   "Strength:Deadlift5-5-3-3-1-1-1"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "death-by-core",
+  "name": "Death by Core",
+  "kind": "personal",
+  "description": "Composite of 4 pieces. 1) 2:00 cumulative L-sit; every break = deadlift buy-in 5x225 or 10 burpees to target; minutes = negative points. 2) 200 sit-ups (or 250 flutter kicks); every break = :20 superman hold; breaks = negative points. 3) AMRAP 10: 30 two-count rocky twists, broken sets don't count; rounds x2 = points. 4) Tabata front-backs; total reps / 4 = points.",
+  "format": "composite",
+  "score": {
+   "type": "points",
+   "better": "higher"
+  },
+  "equipment": [
+   "pull_up_bar_or_parallettes",
+   "ab_mat"
+  ],
+  "home_ok": true,
+  "sources": [
+   "raw/apple-notes/death-by-core.txt",
+   "raw/google-sheet/evo2.json"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift",
+    "burpee",
+    "sit_up",
+    "l_sit"
+   ],
+   "patterns": [
+    "core",
+    "full_body",
+    "hinge"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "death-by-squat-clean",
+  "name": "Death By Squat Clean",
+  "kind": "class_wod",
+  "descriptions": [
+   "E2MOM 162 Hang Squat Clean  60-75%Every 2 minutes add 1 squat clean. Starting at 0:00 completing 2 squat cleans, 2:00 min mark 3 squat clean etc. Your last round should be 10 squat cleans"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "squat_clean"
+   ],
+   "patterns": [
+    "olympic"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "death-do-us-part",
+  "name": "Death do us part",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:50-40-30-20-10Cals5-10-15-10-5Burpees5-5-5-5-5Thrusters 95/65"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "burpee"
+   ],
+   "patterns": [
+    "full_body",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "diane",
+  "name": "Diane",
+  "kind": "girl",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": true,
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "descriptions": [
+   "21-15-9 reps for time of:\u2022 Deadlift 225/155#  \u2022 HSPU"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift",
+    "hspu"
+   ],
+   "patterns": [
+    "hinge",
+    "push_v"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "dog-pooo",
+  "name": "Dog pooo",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD: w/PartnerBuy In: 1 Lap Dumbell Bear Crawl 50/35100 Box Jump Overs200 Cals100 Toes to barBuy Out: 1 Lap Dumbell Bear Crawl 50/35Buy in/out is shared. As a pair accumulate one lap bear crawling with weights in each hand.  One rests while the other bear crawls. For the main workout 1 is working while the other is running.  you may go in any order/ chip away however you want."
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "box_jump",
+    "toes_to_bar"
+   ],
+   "patterns": [
+    "core",
+    "squat"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "double-under-practice",
+  "name": "Double Under Practice",
+  "kind": "class_wod",
+  "descriptions": [
+   "3 rounds1 Min Single unders1 Min 2 singles + 1 Double under1 Min Doubles 1 min rest between roundsthen 3 min Max reps Doubles"
+  ],
+  "score": {
+   "type": "text",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "double_under"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "duck-walk",
+  "name": "Duck walk",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:30-20-10WallballsBurpeesPushups"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "wall_ball",
+    "burpee",
+    "push_up"
+   ],
+   "patterns": [
+    "full_body",
+    "push_h",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "dust-off",
+  "name": "Dust Off",
+  "kind": "class_wod",
+  "descriptions": [
+   "AMRAP 125 cals8 Burpees11 Sit-ups14 Alt DB hang cleans"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "burpee",
+    "sit_up"
+   ],
+   "patterns": [
+    "core",
+    "full_body",
+    "olympic"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "event-3-capital-city-games-practice-double-back",
+  "name": "Event 3 Capital City Games Practice: Double Back",
+  "kind": "class_wod",
+  "descriptions": [
+   "With a partner,complete the following:50 WB Shots (#20/14)50 T2B50 deadlift (#180/120)50 Box Jump Overs (\"24/20\")25 Syncro bar facing burpees50 Box Jump Overs50 deadlifts24/16 Pulls Ups (Comp: BMU)50 WB Shots*Time cap 25 mins (Comp: 16 mins)*Reps can be divided however between partners EXCEPT for syncro reps"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift",
+    "box_jump",
+    "burpee",
+    "toes_to_bar"
+   ],
+   "patterns": [
+    "core",
+    "full_body",
+    "hinge",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "event-4-capital-city-games-competition",
+  "name": "Event 4: Capital City Games (Competition)",
+  "kind": "class_wod",
+  "descriptions": [
+   "AMRAP 9 x 2 with 5 min rest between5L/5R Single Arm Synchro DB Thrusters25 Synchro OH Walking Lunge (right)10 Synchro Pul-ups25 Synchro OH walking lunge (left)25 Double Unders each (both partners working at the same time, cannot start thrusters until both are done)Dumbbells: #50/35Score is your lowest rounds + reps of the 2 rounds"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "lunge",
+    "double_under"
+   ],
+   "patterns": [
+    "locomotion",
+    "lunge",
+    "push_v",
+    "squat"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "explosion",
+  "name": "Explosion",
+  "kind": "class_wod",
+  "descriptions": [
+   "WODAMRAP 1515 Wallball 10 Push-up5 Muscle up"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "wall_ball",
+    "muscle_up",
+    "push_up"
+   ],
+   "patterns": [
+    "pull_v",
+    "push_h",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "expo",
+  "name": "EXPO",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD10-20-30-40Pushupwall ballSingle Arm Alt Devils press 50/3510-10-10-10"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "wall_ball",
+    "devils_press",
+    "push_up"
+   ],
+   "patterns": [
+    "full_body",
+    "push_h",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "fight-gone-bad",
+  "name": "Fight Gone Bad",
+  "kind": "notable",
+  "format": "intervals",
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "home_ok": false,
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "descriptions": [
+   "Three rounds of:\u2022 Wall-ball, 20 pound ball, 10 ft target (Reps)\u2022 Sumo deadlift high-pull, 75 pounds (Reps)\u2022 Box Jump, 20\" box (Reps)\u2022 Push-press, 75 pounds (Reps)\u2022 Row (Calories)In this workout you move from each of five stations after a minute.The clock does not reset or stop between exercises. This is a five-minute round from which a one-minute break is allowed before repeating. On call of \"rotate\", the athletes must move to next station immediately for best score. One point is given for each rep, except on the rower where each calorie is one point."
+  ],
+  "tags": {
+   "movements": [
+    "sdhp",
+    "box_jump",
+    "row"
+   ],
+   "patterns": [
+    "hinge",
+    "locomotion",
+    "pull_v",
+    "squat"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "floor-press",
+  "name": "Floor press",
+  "kind": "strength",
+  "descriptions": [
+   "Strength:Single arm Floor Press16 light 14 light12 light10 moderate8 moderate6 heavy4 heavy 2 heavyNumbers are total counting both arms.  For example 16 light will be 8 on each side."
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "bench_press"
+   ],
+   "patterns": [
+    "push_h"
+   ],
+   "modality": "W",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "fran",
+  "name": "Fran",
+  "kind": "girl",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": true,
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "descriptions": [
+   "21-15-9 reps for time of:\u2022 Thruster 95/65#\u2022 Pull-ups"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "pull_up"
+   ],
+   "patterns": [
+    "pull_v",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "front-squat",
+  "name": "Front Squat",
+  "kind": "strength",
+  "descriptions": [
+   "Strength:Front Squat 5-3-3-1-1"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "front-squat-1-rep-max",
+  "name": "Front Squat 1 Rep Max",
+  "kind": "class_wod",
+  "descriptions": [
+   "Establish a 1 rep max front squat"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "front-squat-1x1",
+  "name": "Front Squat 1x1",
+  "kind": "strength",
+  "descriptions": [
+   "Front Squat for load: #1:  1 rep ",
+   "Front Squat for load: #1: 1 rep"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "front-squat-3x3",
+  "name": "Front Squat 3x3",
+  "kind": "strength",
+  "descriptions": [
+   "Front Squat for load: #1: 3 reps @ 70% #2: 3 reps @ 80% #3: 3 reps @ 90%"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "front-squat-3x5",
+  "name": "Front Squat 3x5",
+  "kind": "strength",
+  "descriptions": [
+   "Front Squat for load: #1: 5 reps @ 65% #2: 5 reps @ 75% #3: 5 reps @ 85%"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "front-squat-5-3-1",
+  "name": "Front Squat 5-3-1",
+  "kind": "strength",
+  "descriptions": [
+   "Front Squat for load: #1: 5 reps @ 75% #2: 3 reps @ 85% #3: 1 rep @ 95%"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "front-squat-5-5-5",
+  "name": "Front Squat 5-5-5",
+  "kind": "strength",
+  "descriptions": [
+   "Front Squat for load: #1: 5 reps @ 65% #2: 5 reps @ 75% #3: 5 reps @ 85%*All percentages based off of 90% 1RM**Last set of 5 is really 5+"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "funky-complex",
+  "name": "Funky Complex",
+  "kind": "class_wod",
+  "descriptions": [
+   "EMOM 102 Snatch grip Deadlift1 Power Snatch1 Hang Snatch1 OHS"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "overhead_squat",
+    "power_snatch",
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge",
+    "olympic",
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "games-friendly-fran",
+  "name": "Games: Friendly Fran",
+  "kind": "competition",
+  "descriptions": [
+   "3 Rounds For Time:\u2022 21 Thrusters\u2022 21 Chest-to-bar Pull-UpsW 85 lb.  M 115 lb."
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "pull_up",
+    "chest_to_bar"
+   ],
+   "patterns": [
+    "pull_v",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "games-the-standard-modified",
+  "name": "Games: The Standard (modified)",
+  "kind": "competition",
+  "descriptions": [
+   "\u2022 30 Clean and Jerks (Grace)\u2022 30 Muscle-Ups or Pullups\u2022 30 Snatches (Isabel) Female: 95lbs Clean/75lbs SnatchesMale: 135lbs clean/115lb Snatches"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_snatch",
+    "power_clean",
+    "jerk",
+    "pull_up",
+    "muscle_up"
+   ],
+   "patterns": [
+    "olympic",
+    "pull_v",
+    "push_v"
+   ],
+   "modality": "GW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "goodnight",
+  "name": "Goodnight",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:75 Cals20 Alt DB Snatches (Heavy)20 Alt one arm KB OHS20 Box Jumps"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "db_snatch",
+    "box_jump"
+   ],
+   "patterns": [
+    "olympic",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "grace",
+  "name": "Grace",
+  "kind": "girl",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": true,
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "descriptions": [
+   "30 reps for time of:\u2022 Clean & Jerk 135/95#"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "jerk"
+   ],
+   "patterns": [
+    "olympic",
+    "push_v"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "grettel",
+  "name": "Grettel",
+  "kind": "girl",
+  "descriptions": [
+   "10 rounds for time of:3 clean and jerks3 burpees over the bar\u2640 95 lb. \u2642 135 lb."
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "burpee"
+   ],
+   "patterns": [
+    "full_body",
+    "olympic"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "gummy-worm",
+  "name": "Gummy worm",
+  "kind": "class_wod",
+  "descriptions": [
+   "AMRAP 124 Strict Pull-ups8 Clapping pushups or hand release12 Front Squats 95/65**Front squats should be taken from the ground, your first one can be a squat clean"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat",
+    "squat_clean",
+    "pull_up",
+    "push_up"
+   ],
+   "patterns": [
+    "olympic",
+    "pull_v",
+    "push_h",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "h-agen-dazs",
+  "name": "H\u00e4agen-Dazs",
+  "kind": "class_wod",
+  "descriptions": [
+   "Freedom (RXd)TEAMS OF 227-21-15-9Partner 1: Calorie Row (women: 21-15-12-7)Partner 2: Hang Squat Cleans (75/55)Both partners work at the same time and switch when both are finished.* Affiliate CompeteTEAMS OF 227-21-15-9Partner 1: Calorie Row (women: 21-15-12-7)Partner 2: Hang Squat Cleans (95/65)* IndependenceTEAMS OF 221-15-9-6Partner 1: Calorie Row (women 16-12-8-4)Partner 2: Hang Squat Cleans (65/45)* LibertyTEAMS OF 212-10-8-6Partner 1: Calorie Row (women 10-8-6-4)Partner 2: Hang Dumbbell Squat Cleans (light)"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "squat_clean",
+    "row"
+   ],
+   "patterns": [
+    "locomotion",
+    "olympic"
+   ],
+   "modality": "MW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "hall",
+  "name": "HALL",
+  "kind": "hero",
+  "descriptions": [
+   "5 rounds for time of:\u2022 225/155 lb. cleans, 3 reps \u2022 200-meter sprint\u2022 20 kettlebell snatches, 1.5 pood, 10 each arm\u2022 Rest 2 minutes"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_snatch",
+    "power_clean",
+    "run"
+   ],
+   "patterns": [
+    "locomotion",
+    "olympic"
+   ],
+   "modality": "MW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "hang-squat-clean-push-press-1x2",
+  "name": "Hang Squat Clean + Push Press 1x2",
+  "kind": "strength",
+  "descriptions": [
+   "5-4-3-2-1 Hang Squat Clean + Push Press (Build in weight across sets)Set 1: 5 Hang Squat Cleans + 5 Push PressSet 2: 4 Hang Squat Cleans + 4 Push PressSet 3: 3 Hang Squat Cleans + 3 Push PressSet 4: 2 Hang Squat Cleans + 2 Push PressSet 5: 1 Hang Squat Clean + 1 Push Press*Complete each complex unbroken"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "squat_clean",
+    "push_press"
+   ],
+   "patterns": [
+    "olympic",
+    "push_v"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "helen",
+  "name": "Helen",
+  "kind": "girl",
+  "descriptions": [
+   "3 rounds for time of:\u2022 400m run\u2022 21 Kettlebell Swings 1.5/1 pood \u2022 12 Pull-ups"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "kb_swing",
+    "pull_up",
+    "run"
+   ],
+   "patterns": [
+    "hinge",
+    "locomotion",
+    "pull_v"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "holy-spirt",
+  "name": "Holy spirt",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:20 Min Max calsthen5 mins max effortAir SquatspullupsScore 1 is cals, score 2 is total number of reps combined from squats and pullups"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "air_squat",
+    "pull_up"
+   ],
+   "patterns": [
+    "pull_v",
+    "squat"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "hot-apple-cider",
+  "name": "Hot Apple Cider",
+  "kind": "class_wod",
+  "descriptions": [
+   "Freedom (RXd)3 sets2:00 AMRAP20/16 Calorie RowMax Wall Ball (20/14) in the time remaining-rest 2:00 between sets--into-3 sets2:00 AMRAP10x50ft Shuttle RunMax Burpee to Bar-rest 2:00 between sets-* Affiliate CompeteNo Change to Workout* Independence3 sets2:00 AMRAP16/13 Calorie RowMax Wall Ball (14/10) in the time remaining-rest 2:00 between sets--into-3 sets2:00 AMRAP8x50ft Shuttle RunMax Burpee to Bar-rest 2:00 between sets- * Liberty3 sets2:00 AMRAP12/10 Calorie RowMax Wall Ball Thrusters (light) in the time remaining-rest 2:00 between sets--into-3 sets2:00 AMRAP6x50ft Shuttle RunMax Up Downs-rest 2:00 between sets-"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "wall_ball",
+    "burpee",
+    "row"
+   ],
+   "patterns": [
+    "full_body",
+    "locomotion",
+    "push_v",
+    "squat"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "in-debt",
+  "name": "in debt",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:AMRAP 1210 Cal10 Burpee Pullup"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "burpee",
+    "pull_up"
+   ],
+   "patterns": [
+    "full_body",
+    "pull_v"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "ingrid",
+  "name": "Ingrid",
+  "kind": "girl",
+  "descriptions": [
+   "10 rounds for time of:3 snatches3 burpees over the bar\u2640 95 lb. \u2642 135 lb."
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "burpee"
+   ],
+   "patterns": [
+    "full_body"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "isabel",
+  "name": "Isabel",
+  "kind": "girl",
+  "descriptions": [
+   "30 reps for time of:\u2022 Snatch 135/95#"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_snatch"
+   ],
+   "patterns": [
+    "olympic"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "jack",
+  "name": "\"Jack\"",
+  "kind": "class_wod",
+  "descriptions": [
+   "20 min AMRAP10 Push Presses #115/8010 American KBS #53/3510 Box jumps 24\"/20\""
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "push_press",
+    "box_jump"
+   ],
+   "patterns": [
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "jackie",
+  "name": "Jackie",
+  "kind": "girl",
+  "descriptions": [
+   "Freedom (RXd)TEAMS OF 22000m Row 100 Thrusters (45/35)60 Pull UpsShare the reps, one partner works at a time.* Scaled Individual Option if Equipment Allows\u201cJackie\u201d1000m Row50 Thrusters (45/35)30 Pull Ups* Affiliate CompeteNo Change to Workout* IndependenceTEAMS OF 21600m Row100 Thrusters (35/25)40 Pull Ups* LibertyTEAMS OF 21000m Row60 Wall Ball Thrusters (light)40 Ring Rows"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "wall_ball",
+    "pull_up",
+    "ring_row",
+    "row"
+   ],
+   "patterns": [
+    "locomotion",
+    "pull_h",
+    "pull_v",
+    "push_v",
+    "squat"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "jannie",
+  "name": "JAnnie",
+  "kind": "class_wod",
+  "descriptions": [
+   "For time:25-20-15-10-5 Box jumps (20\u201d)50-40-30-20-10 Ab Mat sit-ups Time cap: 12 minutes"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "box_jump",
+    "sit_up"
+   ],
+   "patterns": [
+    "core",
+    "squat"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "jason-cunningham",
+  "name": "Jason Cunningham",
+  "aliases": [
+   "Cunningham",
+   "Cunnigham (minutes)"
+  ],
+  "kind": "hero",
+  "favorite": true,
+  "recurrence": "annual",
+  "description": "For time: 10 rounds of run 200m, 3 bear complexes, 4 burpees over bar. After round 10: 26 front squats, 38 deadlifts, run 1 mile. 115/75 lb.",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "equipment": [
+   "barbell",
+   "run"
+  ],
+  "home_ok": true,
+  "sources": [
+   "raw/apple-notes/jason-cunningham.txt",
+   "raw/google-sheet/tests.json"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat",
+    "deadlift",
+    "bear_complex",
+    "burpee",
+    "run"
+   ],
+   "patterns": [
+    "full_body",
+    "hinge",
+    "locomotion",
+    "olympic",
+    "squat"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "jeanie",
+  "name": "Jeanie",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:500M row or 30 cal bike100 double unders10 power cleans 135/9515 muscle ups/pullups10 power cleans100 double unders500m row or 30 cal bike"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "pull_up",
+    "muscle_up",
+    "double_under",
+    "row",
+    "bike"
+   ],
+   "patterns": [
+    "locomotion",
+    "olympic",
+    "pull_v",
+    "push_v"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "jeep-there-it-is",
+  "name": "jeep there it is",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD (with a Partner)800m run100 toes to bar50 cals100 Burpees800m run150 Wall Ball Shots (20/14 lb)Split the work as necessary. all runs are together."
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "wall_ball",
+    "burpee",
+    "toes_to_bar",
+    "run"
+   ],
+   "patterns": [
+    "core",
+    "full_body",
+    "locomotion",
+    "push_v",
+    "squat"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "just-go-with-it",
+  "name": "Just Go With It",
+  "kind": "class_wod",
+  "descriptions": [
+   "Freedom (RXd)100-80-60-40-20Double Unders30-25-20-15-10Stick Sit Ups* Affiliate Compete100-80-60-40-20Double Unders30-25-20-15-10GHD\u2019s* Independence75-60-45-30-15Double Unders25-20-15-10-5Stick Sit Ups* Liberty100-80-60-40-20Single Unders30-25-20-15-10Sit Ups"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "sit_up",
+    "double_under"
+   ],
+   "patterns": [
+    "core",
+    "locomotion"
+   ],
+   "modality": "MG",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "just-hanging-for-our-life",
+  "name": "just hanging for our life",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:10-20-30Toes 2 BarHang Power Clean 135/95Bar Facing Burpees"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "burpee",
+    "toes_to_bar"
+   ],
+   "patterns": [
+    "core",
+    "full_body",
+    "olympic"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "just-keep-moving",
+  "name": "Just keep moving",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:18 min AMRAP10 DB Deadlift 50/3510 DB Hang Clean10 DB Thruster10 Cal bike/row**For all DB movements ensure you have a DB in each hand"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "deadlift",
+    "row",
+    "bike"
+   ],
+   "patterns": [
+    "hinge",
+    "locomotion",
+    "olympic"
+   ],
+   "modality": "MW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "kabul-13",
+  "name": "Kabul 13",
+  "kind": "class_wod",
+  "descriptions": [
+   "Kabul 13 Warmup: as neededWOD: Complete 13 rounds 21 count body builders 21 push-ups 21 step ups w/ 1 dumbbell or kettle bell 21 4 count mtn climbers 1 lap run or 150m row Cool down. Foam roll. Hydrate and fuel. Never forget.   Thirteen service members were killed in the Kabul airport bombing on Aug. 26, 2021. Top Row from left: Lance Cpl. Dylan R. Merola, 20, of Rancho Cucamonga, Cpl. Hunter Lopez, 22, of Indio, and Cpl. Kareem M. Nikoui, 20, of Norco. Middle Row from left: Staff Sgt. Darin T. Hoover, 31, of Salt Lake City, Utah, Cpl. Daegan W. Page, 23, of Omaha, Nebraska, Sgt. Johanny Rosario Pichardo, 25, of Lawrence, Massachusetts Cpl. Humberto A. Sanchez, 22, of Logansport, Indiana, and Lance Cpl. David L. Espinoza, 20, of Rio Bravo, Texas. Bottom Row from left: Lance Cpl. Jared M. Schmitz, 20, of St. Charles, Missouri, Lance Cpl. Rylee J. McCollum, 20, of Jackson, Wyoming, Navy Corpsman, Maxton W. Soviak, 22, of Berlin Heights, Ohio, Army Staff Sgt. Ryan C. Knauss, 23, of Corryton, Tennessee and Sgt. Nicole L. Gee, 23, of Roseville, California."
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "push_up",
+    "run",
+    "row"
+   ],
+   "patterns": [
+    "locomotion",
+    "push_h"
+   ],
+   "modality": "MG",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "kb-swings-run",
+  "name": "KB Swings & Run",
+  "kind": "class_wod",
+  "descriptions": [
+   "For time:45 kettlebell swings400-m run35 kettlebell swings800-m run25 kettlebell swings1,200-m run15 kettlebell swings\u2640 24 kg \u2642 32 kg"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "kb_swing",
+    "run"
+   ],
+   "patterns": [
+    "hinge",
+    "locomotion"
+   ],
+   "modality": "MW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "keep-the-core-nice-and-tight",
+  "name": "Keep the core nice and tight",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:50-30-10CalsWeighted Russian Twists 20/14Weighted situps 20/14"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "sit_up"
+   ],
+   "patterns": [
+    "core"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "keepsake",
+  "name": "Keepsake",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:21-15-9-3Thruster 95/65Burpee"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "burpee"
+   ],
+   "patterns": [
+    "full_body",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "kelly",
+  "name": "Kelly",
+  "kind": "girl",
+  "descriptions": [
+   "5 rounds for time of:\u2022 400m run\u2022 30 Box Jumps 24/20\"\u2022 30 Wall Balls"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "wall_ball",
+    "box_jump",
+    "run"
+   ],
+   "patterns": [
+    "locomotion",
+    "push_v",
+    "squat"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "king-kong-womens-rx",
+  "name": "King Kong (women's Rx)",
+  "kind": "test",
+  "description": "3 rounds for time: 1 deadlift, 2 muscle-ups, 3 squat cleans, 4 handstand push-ups. Rx 455/250 lb; women's Rx 320/185 lb. Athlete's logged version: 320 DL / 175 squat clean, bar muscle-ups.",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": false,
+  "home_note": "no muscle-up clearance at home",
+  "sources": [
+   "raw/google-sheet/tests.json"
+  ],
+  "reference": "https://wodwell.com/wod/king-kong/ (page needs login; loads are the commonly published standard, not verified against it)",
+  "aliases": [
+   "King Kong (womens rx) (seconds)",
+   "King Kong"
+  ],
+  "tags": {
+   "movements": [
+    "squat_clean",
+    "deadlift",
+    "muscle_up",
+    "hspu"
+   ],
+   "patterns": [
+    "hinge",
+    "olympic",
+    "pull_v",
+    "push_v"
+   ],
+   "modality": "GW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "king-of-the-jungle",
+  "name": "king of the jungle",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:AMRAP 76 wall walks18 weighted situpsRest 1 minAMRAP 718 Toes 2 Bar12 HSPU"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "hspu",
+    "toes_to_bar",
+    "sit_up"
+   ],
+   "patterns": [
+    "core",
+    "push_v"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "kitty-cat",
+  "name": "Kitty Cat",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:AMRAP 815 Cals15 Box jumps 30/241 Power Snatch @ 80%"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_snatch",
+    "box_jump"
+   ],
+   "patterns": [
+    "olympic",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "klepto-alternative-workout-option",
+  "name": "KLEPTO (Alternative Workout Option)",
+  "kind": "class_wod",
+  "descriptions": [
+   "Freedom (RXd)TEAMS OF 24 Rounds50 Box Jumps (24/20) - shared20 Synchro Burpees20 Squat Cleans (145/100) - sharedU.S. Air Force Major David \"Klepto\" L. Brodeur, 34, of Auburn, Massachusetts, assigned to the 11th Air Force, based at Joint Base Elmendorf-Richardson, Alaska, died on April 27, 2011 in Kabul, Afghanistan, of wounds sustained from gunfire from an Afghan military trainee. He is survived by his wife Susie, daughter Elizabeth, and son David.* Affiliate CompeteNo Change to the Workout (Hero Workout)* IndependenceTEAMS OF 24 Rounds50 Box Jumps (20/18) - shared20 Synchro Burpees20 Squat Cleans (125/85) - shared* LibertyTEAMS OF 24 Rounds50 Box Step Ups (20/18) - shared20 Synchro Up Downs20 Dumbbell Squat Cleans (light) - shared"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "squat_clean",
+    "box_jump",
+    "burpee"
+   ],
+   "patterns": [
+    "full_body",
+    "olympic",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "kong-is-king",
+  "name": "Kong is King",
+  "kind": "test",
+  "description": null,
+  "definition_status": "LOST: athlete doesn't remember it and it isn't in any source (2026-11-17). Aug 2025 result kept for the record; can't be repeated.",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower",
+   "note": "Aug 2025 logged 21:33 with splits 11:02/7:31"
+  },
+  "energy_tags_sheet": [
+   "oxidative"
+  ],
+  "sources": [
+   "raw/google-sheet/tests.json"
+  ],
+  "tags": {
+   "movements": [],
+   "patterns": [],
+   "modality": "",
+   "home_ok_auto": null,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "lactic-acid",
+  "name": "Lactic Acid",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:21 Thruster 95/6521 Lateral bar burpees15 Thruster 105/6515 Lateral bar burpees9 Thruster 115/ 859 Lateral bar burpees*** Thruster weight increases throughout the workout.  If you scale, still have an increase in weight for each set."
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "burpee"
+   ],
+   "patterns": [
+    "full_body",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "launchpad",
+  "name": "Launchpad",
+  "kind": "test",
+  "description": "Probably Annie with burpees in place of double-unders at half the reps: 25-20-15-10-5 burpees and 50-40-30-20-10 sit-ups, for time.",
+  "definition_status": "RECONSTRUCTED, low confidence (athlete's memory 2026-11-17). Times 6:47 -> 10:11 -> 12:21 suggest the version changed between attempts; treat past results as not comparable.",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower",
+   "note": "6:47 -> 10:11 -> 12:21 suggests the version changed"
+  },
+  "energy_tags_sheet": [
+   "phosphagen",
+   "glycolytic"
+  ],
+  "sources": [
+   "raw/google-sheet/tests.json",
+   "raw/google-sheet/evo2.json"
+  ],
+  "tags": {
+   "movements": [
+    "burpee",
+    "sit_up",
+    "double_under"
+   ],
+   "patterns": [
+    "core",
+    "full_body",
+    "locomotion"
+   ],
+   "modality": "MG",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "live-well",
+  "name": "Live Well",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:10 Min AMRAP1-2-3-4-5-6-7-8-EtcPullupsHang Clean 95/65Then6 minutes to establish 1 rep max squat clean (10:00-16:00)"
+  ],
+  "score": {
+   "type": "text",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "squat_clean",
+    "power_clean",
+    "pull_up"
+   ],
+   "patterns": [
+    "olympic",
+    "pull_v"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "mangos",
+  "name": "Mangos",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:400m run (3 Laps)3 HSPU3 Deadlift  225/175266m run (2 Laps)3 HSPU3 Deadlifts 225/175133m run (1 Lap)3 HSPU3 Deadlifts 225/175400m run (3 Laps)3 HSPU3 Deadlifts 225/175"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift",
+    "hspu",
+    "run"
+   ],
+   "patterns": [
+    "hinge",
+    "locomotion",
+    "push_v"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "max-l-sit",
+  "name": "Max L-sit hold",
+  "aliases": [
+   "Max L-Sit Hold (seconds)",
+   "Max L-sit"
+  ],
+  "kind": "test",
+  "format": "max_hold",
+  "score": {
+   "type": "seconds",
+   "better": "higher"
+  },
+  "home_ok": true,
+  "sources": [],
+  "tags": {
+   "movements": [
+    "l_sit"
+   ],
+   "patterns": [
+    "core"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "max-vertical-jump",
+  "name": "Max vertical jump",
+  "kind": "test",
+  "format": "other",
+  "score": {
+   "type": "text",
+   "better": null
+  },
+  "home_ok": false,
+  "sources": [],
+  "tags": {
+   "movements": [],
+   "patterns": [],
+   "modality": "",
+   "home_ok_auto": null,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metccon-10-28-22",
+  "name": "METCCON 10.28.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "4 rounds of 2 min AMRAPs, rest 1 min between rounds10 Alt KB Snatch #53/3510 Burpees*Each round start where you left off previously, score will be the number of rounds + reps completed"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_snatch",
+    "burpee"
+   ],
+   "patterns": [
+    "full_body",
+    "olympic"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-10-10-22",
+  "name": "METCON 10.10.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "For time: 21-15-9Push Jerk #135/95Front Squat #135/95Power Cleans #135/95"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat",
+    "power_clean",
+    "jerk"
+   ],
+   "patterns": [
+    "olympic",
+    "push_v",
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-10-24-22",
+  "name": "METCON 10.24.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "20 min AMRAP30 Alt PistolsMax Barbell Floor Press @ 70% of 1RM Bench Press30 Alt Bodyweight Lunges"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "pistol",
+    "bench_press",
+    "lunge"
+   ],
+   "patterns": [
+    "lunge",
+    "push_h",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-10-26-22",
+  "name": "METCON 10.26.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "For time:50 Double Unders1000m row50 Double Unders1600m bike50 Double Unders800m run50 Double Unders"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "double_under",
+    "run",
+    "row"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-11-16-22",
+  "name": "METCON 11.16.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "10-8-6-4-2-4-6-8-10Double DB Deadlift #50/35Box Jumps 24\"/20\"Toes to barDouble DB Thrusters #50/35"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "deadlift",
+    "box_jump",
+    "toes_to_bar"
+   ],
+   "patterns": [
+    "core",
+    "hinge",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-11-18-22",
+  "name": "METCON 11.18.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "12 min AMRAP500/450m row or 1000/900m bike 1 round of STRICT Cindy*1 round of Strict Cindy is:5 strict pull-ups10 Push Ups15 Air SquatsScore is the number of rounds and reps completed(Men: 100m row = 1 rep, 200m bike = 1 rep)(Women: 90m row = 1 rep, 180m bike = 1 rep)"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "air_squat",
+    "pull_up",
+    "push_up",
+    "row",
+    "bike"
+   ],
+   "patterns": [
+    "locomotion",
+    "pull_v",
+    "push_h",
+    "squat"
+   ],
+   "modality": "MG",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-11-9-22",
+  "name": "METCON 11.9.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "3 rounds of 2 min AMREPs, rest 1 min in between rounds12/10 calsMax Hang Power Snatches #75/55Score is the total number of snatches completed across all rounds"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_snatch"
+   ],
+   "patterns": [
+    "olympic"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-12-5-22-meathead-mile",
+  "name": "METCON 12.5.22 - \"Meathead mile\"",
+  "kind": "class_wod",
+  "descriptions": [
+   "For time:1 mile (11 full laps) double dumbbell farmers carry (#50/35)*Every time you place the dumbbells down while completing the 11 laps do 3 double DB Thrusters. You DO NOT need to complete the penalty again if you set the DBs down after the thrusters before you start moving again."
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "run",
+    "farmers_carry"
+   ],
+   "patterns": [
+    "carry",
+    "locomotion",
+    "push_v",
+    "squat"
+   ],
+   "modality": "MW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-2-10-23",
+  "name": "METCON 2.10.23",
+  "kind": "class_wod",
+  "descriptions": [
+   "For time:50/35 cals10 wall balls (#20/14)40/28 cals)20 Wall Balls30/21 cals30 Wall Balls20/14 cals40 Wall Balls10/7 cals50 Wall Balls"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "wall_ball"
+   ],
+   "patterns": [
+    "push_v",
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-3-25-22",
+  "name": "METCON 3.25.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "4 Rounds for time8 Deadlifts6 Hang Cleans (Power or Squat)4 Front Squats2 Jerks (any variation)#155/105*Each time the bar is put down during the round, the athlete must complete a penalty exercise before picking up the bar again: run 1 Lap or row 150m. The only time the bar can be put down without penalty once the round is started is after the second jerk"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat",
+    "power_clean",
+    "jerk",
+    "deadlift",
+    "run",
+    "row"
+   ],
+   "patterns": [
+    "hinge",
+    "locomotion",
+    "olympic",
+    "push_v",
+    "squat"
+   ],
+   "modality": "MW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-4-1-22",
+  "name": "METCON 4.1.22",
+  "kind": "strength",
+  "descriptions": [
+   "METCON (12 min):12 min alternating EMOM (6 rounds each)FIrst min: 1 rep of the following complex: 1 Snatch DL, 1 Hang Pwr Snatch, 1 Full Snatch @ 65-75% 1RM Power SnatchSecond min: Run 1 Lap or row 150m*Score is the average of all loads successfully accomplished"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_snatch",
+    "deadlift",
+    "run",
+    "row"
+   ],
+   "patterns": [
+    "hinge",
+    "locomotion",
+    "olympic"
+   ],
+   "modality": "MW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-4-13-22",
+  "name": "METCON 4.13.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "15 min AMRAP:20 Hand Release Push-Ups15 Box Jump Overs (24\"/20\")10 Push Press (#115/75)10 Alternating Pistols"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "pistol",
+    "push_press",
+    "box_jump",
+    "push_up"
+   ],
+   "patterns": [
+    "push_h",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-4-22-22",
+  "name": "METCON 4.22.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "10 min AMRAP:10 cals5 strict HSPU"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "hspu"
+   ],
+   "patterns": [
+    "push_v"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-4-25-22",
+  "name": "METCON 4.25.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "METCON:10 min10 min AMRAP: Ascending Ladder10 Double Unders1 Bar muscle up20 Double Unders2 Bar muscle ups30 Double Unders3 Bar muscle ups...Score is the total number of reps completed"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "muscle_up",
+    "double_under"
+   ],
+   "patterns": [
+    "locomotion",
+    "pull_v",
+    "push_v"
+   ],
+   "modality": "MG",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-4-27-22",
+  "name": "METCON 4.27.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "3 rounds for timeRow 500m/Run 400m21 Hang Power Snatch (75/55)"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_snatch",
+    "run",
+    "row"
+   ],
+   "patterns": [
+    "locomotion",
+    "olympic"
+   ],
+   "modality": "MW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-4-29-22",
+  "name": "METCON 4.29.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "8 rounds of Run 400mRest 90 secsScore is the total time after the last 400m run"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "run"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-4-4-22",
+  "name": "METCON 4.4.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "21-15-9Deadlift (275/185)Box Jumps (30\"/24\")"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift",
+    "box_jump"
+   ],
+   "patterns": [
+    "hinge",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-4-6-22",
+  "name": "METCON 4.6.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "20 min Alternating EMOM Alternate between movement combos every minute (10 rounds of each):Movement Combo 1: 5 C2B Pull-Ups + 10 Wall Balls (20/14)Movement Combo 2: 10 ring rows or 10 rows using the barbell on j-hooks + 20 Air Squats* Score is the number of reps accomplished successfully. Reps do not count if not done within the designated minute. The highest possible Rx score is 450"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "wall_ball",
+    "air_squat",
+    "pull_up",
+    "chest_to_bar",
+    "ring_row"
+   ],
+   "patterns": [
+    "pull_h",
+    "pull_v",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-5-13-22",
+  "name": "METCON 5.13.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "8 min AMRAP:1 Power Clean (#155/105)1 Bar Muscle Up2 Power cleans2 Bar muscle ups...*Complete 10 squats after each set of Bar muscle ups*Score is the number of Power Cleans and Bar Muscle Ups completed (dont count air squats)"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "air_squat",
+    "power_clean",
+    "muscle_up"
+   ],
+   "patterns": [
+    "olympic",
+    "pull_v",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-5-20-22",
+  "name": "METCON 5.20.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "METCON (25 min cap)5 rounds for time:20 pull-ups400m run or 500m rowScore is the total time"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "pull_up",
+    "run",
+    "row"
+   ],
+   "patterns": [
+    "locomotion",
+    "pull_v"
+   ],
+   "modality": "MG",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-5-23-22",
+  "name": "METCON 5.23.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "METCON9-6-3 reps for timeSnatchesBurpee box jump oversMen = 165/30\"Women = 115/24\""
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "box_jump",
+    "burpee"
+   ],
+   "patterns": [
+    "full_body",
+    "squat"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-5-4-22-milley",
+  "name": "METCON: 5.4.22: \"Milley\"",
+  "kind": "class_wod",
+  "descriptions": [
+   "23 min AMRAP2000m row/1600m run/120 cal buy inThen with remaining time, complete as many rounds a possible:11 Wall Balls (#30, 10ft / #20, 8ft)30 double Unders10 burpees*Score is the number of rounds + reps completed, enter row/run/bike time in your notes for future referenceThis hero workout is dedicated to 1st Lt. Scott \u201cScooter\u201d Milley, 2nd Battalion, 30th Infantry Regiment, 4th Brigade Combat Team, 10th Mountain Division, US Army, who was\u00a0killed in action\u00a0on November 30, 2010, from wounds sustained when insurgents attacked his unit with small-arms fire in the Baraki Barak district, Afghanistan."
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "wall_ball",
+    "burpee",
+    "double_under",
+    "run",
+    "row",
+    "bike"
+   ],
+   "patterns": [
+    "full_body",
+    "locomotion",
+    "push_v",
+    "squat"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-6-13-22",
+  "name": "METCON 6.13.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "For time: 8 Rounds15/12 cals3 Back Squats #225/#155 3 Strict Press #115/75 Back Squats may be taken from the rack, strict presses must be taken from the ground"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "back_squat",
+    "shoulder_press"
+   ],
+   "patterns": [
+    "push_v",
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-6-29-22",
+  "name": "METCON 6.29.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "3 x 2 min rounds w/1 min rest in betweenMax Double UndersScore is the number of double unders completed (all 3 rounds combined)"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "double_under"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-6-3-22",
+  "name": "METCON 6.3.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "Run 1 Lap20 Toes to BarRun 1 Lap30 Alternating KB Snatch (#53/35)Run 1 Lap40 Ab Mat Sit-UpsRun 1 Lap50 Wall ball thrusters (#20/14)Run 1 Lap"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "wall_ball",
+    "power_snatch",
+    "toes_to_bar",
+    "sit_up",
+    "run"
+   ],
+   "patterns": [
+    "core",
+    "locomotion",
+    "olympic",
+    "push_v",
+    "squat"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-6-6-22",
+  "name": "METCON 6.6.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "12 min AMRAP50 double Unders10 HSPU"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "hspu",
+    "double_under"
+   ],
+   "patterns": [
+    "locomotion",
+    "push_v"
+   ],
+   "modality": "MG",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-7-1-22",
+  "name": "METCON 7.1.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "For time:500m row/400m run/30 bike cals30 bench press (#185/125)750m row/600m run/45 cals20 bench press1000m row/800m run/60 cals10 bench press*30 min time cap"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "bench_press",
+    "run",
+    "row",
+    "bike"
+   ],
+   "patterns": [
+    "locomotion",
+    "push_h"
+   ],
+   "modality": "MW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-7-14-23",
+  "name": "METCON 7.14.23",
+  "kind": "class_wod",
+  "descriptions": [
+   "FOR TIME: 5, 10, 15, 20, 25 Wall Balls (#20/16)5, 4, 3, 2, 1 Muscle Ups"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "wall_ball",
+    "muscle_up"
+   ],
+   "patterns": [
+    "pull_v",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-7-15-22",
+  "name": "METCON 7.15.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "30 MIN EMOMMinute 1 - 10 clean & Press (#95/65)Minute 2 - 3/4 lap run (line to clock)Minute 3 - 10 BurpeesNumber of rounds completed for EMOM (max score 30)You can still continue the EMOM even if you miss a round. If youre planning to break do so strategically so you can complete the max number of rounds"
+  ],
+  "score": {
+   "type": "text",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "burpee",
+    "run"
+   ],
+   "patterns": [
+    "full_body",
+    "locomotion",
+    "olympic"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-7-25-22",
+  "name": "METCON 7.25.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "4 rounds:10 deadlifts (#225/155)10 Strict Press (#115/75)"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "shoulder_press",
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge",
+    "push_v"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-8-17-22",
+  "name": "METCON 8.17.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "10 min AMRAP12 Power Cleans #135/9524 Lunges (in place or walking)"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "lunge"
+   ],
+   "patterns": [
+    "lunge",
+    "olympic"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-8-24-22-score-a",
+  "name": "METCON 8.24.22 (SCORE A)",
+  "kind": "class_wod",
+  "descriptions": [
+   "30 mins to accomplish:10 rounds of3 Thrusters #95/655 Burpees over barTime is SCORE AThen with the remaining time left:Establish 1 RM ThrusterLoad is SCORE B"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "burpee"
+   ],
+   "patterns": [
+    "full_body",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-8-24-22-score-b",
+  "name": "METCON 8.24.22 (SCORE B)",
+  "kind": "strength",
+  "descriptions": [
+   "30 mins to accomplish:10 rounds of3 Thrusters #95/655 Burpees over barTime is SCORE AThen with the remaining time left:Establish 1 RM ThrusterLoad is SCORE B"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "burpee"
+   ],
+   "patterns": [
+    "full_body",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-8-5-22",
+  "name": "METCON 8.5.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "5 rounds x 3 min AMREP21/15 cals9 Box Jumps 24\"/20\"Max reps Power Snatch #115/75Rest 1:30 between roundsScore is the total number of snatches completed"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_snatch",
+    "box_jump"
+   ],
+   "patterns": [
+    "olympic",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-9-16-22",
+  "name": "METCON 9.16.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "16 min AMRAP12 Wall Ball Shots #20/148 Toes to bar40 double undersRun 1 Lap"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "wall_ball",
+    "toes_to_bar",
+    "double_under",
+    "run"
+   ],
+   "patterns": [
+    "core",
+    "locomotion",
+    "push_v",
+    "squat"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-9-2-22",
+  "name": "METCON 9.2.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "For time:Accumulate 10 mins in the plank position*Every time you break complete:10 jumping air squats5 Bar Muscle Ups"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "air_squat",
+    "muscle_up",
+    "plank"
+   ],
+   "patterns": [
+    "core",
+    "pull_v",
+    "push_v",
+    "squat"
+   ],
+   "modality": "G",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "metcon-9-28-22",
+  "name": "METCON 9.28.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "16 min AMRAP5 Deadlifts #275/1857 Strict HSPU9 Man Makers #35/20Man Maker demo: https://www.youtube.com/watch?v=iMNnvhg1JcM"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift",
+    "hspu"
+   ],
+   "patterns": [
+    "hinge",
+    "push_v"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "most-improved-wod-3-cardio",
+  "name": "\"Most Improved WOD #3: Cardio\"",
+  "kind": "class_wod",
+  "descriptions": [
+   "4 Rounds for time:500m row25 Ab-mat Sit-Ups400m run15 Hand release push-ups"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "push_up",
+    "sit_up",
+    "run",
+    "row"
+   ],
+   "patterns": [
+    "core",
+    "locomotion",
+    "push_h"
+   ],
+   "modality": "MG",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "muscle-mountain",
+  "name": "Muscle Mountain",
+  "kind": "class_wod",
+  "descriptions": [
+   "13 Minute AMRAP300m ski erg3 bar muscle ups25m sled rope pull (135#)25m backwards-facing sled drag  (135#)100m ski erg = 1 rep5m sled = 1 rep",
+   "13 Minute AMRAP300m ski erg3 bar muscle ups25m sled rope pull (135#)25m backwards-facing sled drag  (135#)50m ski erg = 1 rep5m sled = 1 rep"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "muscle_up",
+    "ski",
+    "sled"
+   ],
+   "patterns": [
+    "carry",
+    "locomotion",
+    "pull_v",
+    "push_v"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "nicole",
+  "name": "Nicole",
+  "kind": "girl",
+  "descriptions": [
+   "AMRAP in 20 minutes of:\u2022 400m run\u2022 Pull-ups (max reps)"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "pull_up",
+    "run"
+   ],
+   "patterns": [
+    "locomotion",
+    "pull_v"
+   ],
+   "modality": "MG",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "old-age",
+  "name": "Old age",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:100 Cals80 Double unders ( 160 Singles)40 KB Push press (2x53/35)20 OHS10 Pistols5 Snatch 400m run**** Snatch and OHS weight will be the same. 60-70% 1 rep max OHS"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "overhead_squat",
+    "pistol",
+    "power_snatch",
+    "push_press",
+    "double_under",
+    "run"
+   ],
+   "patterns": [
+    "locomotion",
+    "olympic",
+    "push_v",
+    "squat"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "open-13-1",
+  "name": "Open 13.1",
+  "kind": "competition",
+  "descriptions": [
+   "MEN - includes Masters Men up to 54 years oldProceed through the sequence below completing as many reps as possible in 17 minutes of:40 Burpees75 pound Snatch, 30 reps30 Burpees135 pound Snatch, 30 reps20 Burpees165 pound Snatch, 30 reps10 burpees210 pound Snatch, as many reps as possibleWOMEN - includes Masters Women up to 54 years oldProceed through the sequence below completing as many reps as possible in 17 minutes of:40 Burpees45 pound Snatch, 30 reps30 Burpees75 pound Snatch, 30 reps20 Burpees100 pound Snatch, 30 reps10 burpees120 pound Snatch, as many reps as possibleMASTERS MEN - includes Masters Men 55+Proceed through the sequence below completing as many reps as possible in 17 minutes of:40 Burpees45 pound Snatch, 30 reps30 Burpees75 pound Snatch, 30 reps20 Burpees100 pound Snatch, 30 reps10 burpees120 pound Snatch, as many reps as possibleMASTERS WOMEN - includes Masters Women 55+Proceed through the sequence below completing as many reps as possible in 17 minutes of:40 Burpees35 pound Snatch, 30 reps30 Burpees55 pound Snatch, 30 reps20 Burpees75 pound Snatch, 30 reps10 burpees90 pound Snatch, as many reps as possible"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_snatch",
+    "burpee"
+   ],
+   "patterns": [
+    "full_body",
+    "olympic"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "open-13-4",
+  "name": "Open 13.4",
+  "kind": "competition",
+  "descriptions": [
+   "MEN - includes Masters Men up to 54 years oldComplete as many reps as possible in 7 minutes following the rep scheme below:135 pound Clean and jerk, 3 reps3 Toes-to-bar135 pound Clean and jerk, 6 reps6 Toes-to-bar135 pound Clean and jerk, 9 reps9 Toes-to-bar135 pound Clean and jerk, 12 reps12 Toes-to-bar135 pound Clean and jerk, 15 reps15 Toes-to-bar135 pound Clean and jerk, 18 reps18 Toes-to-bar...This is a timed workout. If you complete the round of 18, go on to 21. If you complete 21, go on to 24, etc.WOMEN - includes Masters Women up to 54 years oldComplete as many reps as possible in 7 minutes following the rep scheme below:95 pound Clean and jerk, 3 reps3 Toes-to-bar95 pound Clean and jerk, 6 reps6 Toes-to-bar95 pound Clean and jerk, 9 reps9 Toes-to-bar95 pound Clean and jerk, 12 reps12 Toes-to-bar95 pound Clean and jerk, 15 reps15 Toes-to-bar95 pound Clean and jerk, 18 reps18 Toes-to-bar...This is a timed workout. If you complete the round of 18, go on to 21. If you complete 21, go on to 24, etc.MASTERS MEN - includes Masters Men 55+Complete as many reps as possible in 7 minutes following the rep scheme below:115 pound Clean and jerk, 3 reps3 Toes-to-bar115 pound Clean and jerk, 6 reps6 Toes-to-bar115 pound Clean and jerk, 9 reps9 Toes-to-bar115 pound Clean and jerk, 12 reps12 Toes-to-bar115 pound Clean and jerk, 15 reps15 Toes-to-bar115 pound Clean and jerk, 18 reps18 Toes-to-bar...This is a timed workout. If you complete the round of 18, go on to 21. If you complete 21, go on to 24, etc.MASTERS WOMEN - includes Masters Women 55+Complete as many reps as possible in 7 minutes following the rep scheme below:65 pound Clean and jerk, 3 reps3 Toes-to-bar65 pound Clean and jerk, 6 reps6 Toes-to-bar65 pound Clean and jerk, 9 reps9 Toes-to-bar65 pound Clean and jerk, 12 reps12 Toes-to-bar65 pound Clean and jerk, 15 reps15 Toes-to-bar65 pound Clean and jerk, 18 reps18 Toes-to-bar...This is a timed workout. If you complete the round of 18, go on to 21. If you complete 21, go on to 24, etc."
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "jerk",
+    "toes_to_bar"
+   ],
+   "patterns": [
+    "core",
+    "olympic",
+    "push_v"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "open-17-1",
+  "name": "Open 17.1",
+  "kind": "competition",
+  "descriptions": [
+   "For time / reps:\u202210 dumbbell snatches\u202215 burpee box jump-overs\u202220 dumbbell snatches\u202215 burpee box jump-overs\u202230 dumbbell snatches\u202215 burpee box jump-overs\u202240 dumbbell snatches\u202215 burpee box jump-overs\u202250 dumbbell snatches\u202215 burpee box jump-oversMen use 50-lb. dumbbell and 24-in. boxWomen use 35-lb. dumbbell and 20-in. boxTime cap: 20 minutes. Note total reps if the time cap is reached.Scaled (ages 16-54)/RXD Masters 55+\u2022Men use 35-lb. dumbbell and 20-in. box, step-ups OK\u2022Women use 20-lb. dumbbell and 20-in. box, step-ups OKTeenagers RxD (ages 14-15)\u2022Boys use 35-lb. dumbbell and 24-in. box\u2022Girls use 20-lb. dumbbell and 20-in. boxScaled Masters 55+/Scaled Teens (ages 14-15)\u2022Men/Boys use 20-lb. dumbbell and 24-in. box, step-ups OK\u2022Women/Girls use 10-lb. dumbbell and 20-in. box, step-ups OK"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "db_snatch",
+    "box_jump",
+    "burpee"
+   ],
+   "patterns": [
+    "full_body",
+    "olympic",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "open-18-2",
+  "name": "Open 18.2",
+  "kind": "competition",
+  "descriptions": [
+   "1-2-3-4-5-6-7-8-9-10 reps for time of:\u2022Dumbbell squats\u2022Bar-facing burpeesRx:Men use 50-lb. dumbbellsWomen use 35-lb. dumbbellsScaled:Men use 35-lb. dumbbells,stepping burpees allowedWomen use 20-lb. dumbbells,stepping burpees allowed"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "burpee"
+   ],
+   "patterns": [
+    "full_body"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "open-18-2a",
+  "name": "Open 18.2a",
+  "kind": "competition",
+  "descriptions": [
+   "5 mins to establish\u20221-rep-max clean"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean"
+   ],
+   "patterns": [
+    "olympic"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "open-21-3",
+  "name": "Open 21.3",
+  "kind": "competition",
+  "descriptions": [
+   "For total time:\u2022 15 front squats \u2022 30 toes-to-bars \u2022 15 thrustersRest 1 min.\u202215 front squats\u2022 30 chest-to-bar pull-ups \u2022 15 thrustersRest 1 min.\u2022 15 front squats\u2022 30 bar muscle-ups \u2022 15 thrusters\u2640 65 lb. \u2642 95 lb.Time cap: 15 min"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "front_squat",
+    "pull_up",
+    "chest_to_bar",
+    "muscle_up",
+    "toes_to_bar"
+   ],
+   "patterns": [
+    "core",
+    "pull_v",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "open-23-1",
+  "name": "Open 23.1",
+  "kind": "competition",
+  "descriptions": [
+   "Complete as many reps as possible in14 minutes of:\u2022\u00a060-calorie row\u2022\u00a050 toes-to-bars\u2022 40 wall-ball shots\u2022\u00a030 cleans\u2022\u00a020 muscle-ups\u2640 14-lb ball to 9-ft target, 95-lb cleans\u2642 20-lb ball to 10-ft target, 135-lb cleansFor full equipment details, categories, and scoring options visit: https://games.crossfit.com/workouts/open/2023/1"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "muscle_up",
+    "toes_to_bar",
+    "row"
+   ],
+   "patterns": [
+    "core",
+    "locomotion",
+    "olympic",
+    "pull_v",
+    "push_v"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "open-23-2a",
+  "name": "Open 23.2A",
+  "kind": "competition",
+  "descriptions": [
+   "Complete as many reps as possible in 15 minutes of:\u2022\u00a05 burpee pull-ups\u2022\u00a010 shuttle runs (1 rep = 25 ft out/25 ft back)*Add 5 burpee pull-ups after each round.For full equipment details, categories, and scoring options visit: https://games.crossfit.com/workouts/open/2023/2"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "burpee",
+    "pull_up"
+   ],
+   "patterns": [
+    "full_body",
+    "pull_v"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "open-23-2b",
+  "name": "Open 23.2B",
+  "kind": "competition",
+  "descriptions": [
+   "Immediately following 23.2A, athletes will have 5 minutes to establish:\u2022\u00a01-rep-max thruster (from the floor)For full equipment details, categories, and scoring options visit: https://games.crossfit.com/workouts/open/2023/2"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster"
+   ],
+   "patterns": [
+    "push_v",
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "overhead-squat-3x5",
+  "name": "Overhead Squat 3x5",
+  "kind": "strength",
+  "descriptions": [
+   "Overhead Squat for load: #1: 5 reps #2: 5 reps #3: 5 reps"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "overhead_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "overhead-squats",
+  "name": "Overhead Squats",
+  "kind": "strength",
+  "descriptions": [
+   "Strength:OHS3x5 @ 75% 1 rep maxthen6 minutes to establish a 3 rep maxWhen attempting the 3 rep maxes you may take it from the squat rack"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "overhead_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "partner-linda",
+  "name": "Partner Linda",
+  "kind": "class_wod",
+  "descriptions": [
+   "10-9-8-7-6-5-4-3-2-1Deadlift (#315/220)Bench Press (#185/125) Squat Clean (#155/105) Complete in teams of two, \"you go, I go\" fashion, one partner working at a time"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "squat_clean",
+    "bench_press",
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge",
+    "olympic",
+    "push_h"
+   ],
+   "modality": "W",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "partner-wod-1-14-23",
+  "name": "Partner WOD 1.14.23",
+  "kind": "strength",
+  "descriptions": [
+   "!!28 min total time cap!!1.5 mile run150 toes to bar*Partners may partition T2Bs/run however, but only one partner can be working at a timeREST 3 mins1 RM Squat clean*Score is the heaviest lift of each partner combined**Teams will start their rest at the 22:00 mark, regardless if theyre finished with the T2B/run. If the T2B and Run are not complete by the 22:00 min mark, the team will be \"scaled\" when entering the score"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "squat_clean",
+    "toes_to_bar",
+    "run"
+   ],
+   "patterns": [
+    "core",
+    "locomotion",
+    "olympic"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "partner-wod-10-15-22",
+  "name": "Partner WOD 10.15.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "With a partner: 28 min AMRAP10 cal Assault Bike5 right arm DB hang Clean and Jerk #50/355 left arm DB hang Clean and Jerk*Partners switch after each full round"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "jerk",
+    "bike"
+   ],
+   "patterns": [
+    "locomotion",
+    "olympic",
+    "push_v"
+   ],
+   "modality": "MW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "partner-wod-3-6-23",
+  "name": "Partner WOD 3.6.23",
+  "kind": "class_wod",
+  "descriptions": [
+   "In teams of 2, complete150 D-ball Ground to shoulder #100/50150 Toes to barP1 works, P2 runs 1 lap, then they switch. Partition reps however and complete movements however desired (you do not have to finish D-balls before moving onto T2B)"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "toes_to_bar",
+    "sandbag"
+   ],
+   "patterns": [
+    "carry",
+    "core"
+   ],
+   "modality": "GW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "partner-wod-7-9-22-300",
+  "name": "Partner WOD 7.9.22 \"300\"",
+  "kind": "class_wod",
+  "descriptions": [
+   "With a partner, for time:300 push-ups*Every time you break you must complete:5 pull-ups10 ab-mat sit-ups15 Air SquatsPartner 1 is completing the push-ups, Partner 2 is resting. Once Partner 1 breaks, both partners complete the entire penalty. After both partners are done, Partner 2 starts on push-ups again."
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "air_squat",
+    "pull_up",
+    "push_up",
+    "sit_up"
+   ],
+   "patterns": [
+    "core",
+    "pull_v",
+    "push_h",
+    "squat"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "partner-wod-8-27-22-relay",
+  "name": "Partner WOD 8.27.22 \"Relay\"",
+  "kind": "class_wod",
+  "descriptions": [
+   "Each partner will run/row the given distance one after the otherRun 200mRun 400mRun 800mRow 250mRow 500mRow 1000m*For example: P1 will run 200m, and once they return P2 will run 200m. They will continue in this fashion until they are done with the 1000m row. Time stops once P2 completes 1000m row"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "run",
+    "row"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "pause-front-squats",
+  "name": "Pause Front Squats",
+  "kind": "strength",
+  "descriptions": [
+   "Strength:Pause front Squats5x6 70-85%* increase weight each set** at the bottom of the squat hold 3 seconds before coming up"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "peach-cobbler",
+  "name": "peach cobbler",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:AMRAP 310 Toes to bar15 situps20 double undersRest 1 MinAMRAP 330 double unders20 weighted situps 20/1410 Toes to bar"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "toes_to_bar",
+    "sit_up",
+    "double_under"
+   ],
+   "patterns": [
+    "core",
+    "locomotion"
+   ],
+   "modality": "MG",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "pork-chops",
+  "name": "Pork Chops",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:5 Rounds For Time10 DB Bench Press 60/408 Cals10 Push Press 115/758 Cals"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "push_press",
+    "bench_press"
+   ],
+   "patterns": [
+    "push_h",
+    "push_v"
+   ],
+   "modality": "W",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "post-wod-core-work-15-min",
+  "name": "Post WOD Core Work (15 min)",
+  "kind": "class_wod",
+  "descriptions": [
+   "3 rounds for quality:Front plank on forearms (1 min)Chinese Supine Plank on raised surface (1 min)10 Alternating lunges with single KB or DB overhead each arm (moderate weight)1 min rest"
+  ],
+  "score": {
+   "type": "checkbox",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "lunge",
+    "plank"
+   ],
+   "patterns": [
+    "core",
+    "lunge"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "power-clean-front-squat-jerk-6x6",
+  "name": "Power Clean + Front Squat + Jerk 6x6",
+  "kind": "strength",
+  "descriptions": [
+   "6 sets 3 Power Cleans + 2 Front Squats + 1 Push Jerk (build-in weight)* Complete a set every 2 minutes. The complex is to be completed unbroken."
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat",
+    "power_clean",
+    "jerk"
+   ],
+   "patterns": [
+    "olympic",
+    "push_v",
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "power-clean-front-squat-push-jerk-8x3",
+  "name": "Power Clean + Front Squat +  Push Jerk 8x3",
+  "kind": "strength",
+  "descriptions": [
+   "8 sets x [1 Power Clean + 1 Front Squat + 1 Push Jerk] (Unbroken, build in weight)-Complete a set every 1:30-"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat",
+    "power_clean",
+    "jerk"
+   ],
+   "patterns": [
+    "olympic",
+    "push_v",
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "power-clean-jerk-5x5",
+  "name": "Power Clean & Jerk 5x5",
+  "kind": "strength",
+  "descriptions": [
+   "Power Clean & Jerk for load: #1:  5 reps #2:  5 reps #3:  5 reps #4:  5 reps #5:  5 reps"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "jerk"
+   ],
+   "patterns": [
+    "olympic",
+    "push_v"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "presses",
+  "name": "Presses",
+  "kind": "strength",
+  "descriptions": [
+   "Strength:Strict Press3x8 @ 70%Push Press3x5 @ 80%Push jerk/ Split Jerkestablish a 1 rep maxScoring is in 3 sets, 1st set is max load for strict, 2nd is push press and the third is the push jerk"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "jerk",
+    "push_press",
+    "shoulder_press"
+   ],
+   "patterns": [
+    "push_v"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "pump-sesh",
+  "name": "Pump Sesh",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:7 Rounds for time10 Cal Bike/row7 2xDB Bench press5 2xDB Squat3 Pullups* the goal is to use a heavy DB set for DB Bench Press, if you need to scale down for the squat transition into a single DB goblet squat."
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "bench_press",
+    "pull_up",
+    "bike"
+   ],
+   "patterns": [
+    "locomotion",
+    "pull_v",
+    "push_h"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "pumpkin-carving",
+  "name": "Pumpkin Carving",
+  "kind": "class_wod",
+  "descriptions": [
+   "Freedom (RXd)4 Sets: (1 set every 5 minutes)10 Handstand Push Ups10 Right Arm Hang Dumbbell Snatch (50/35)25ft Right Arm Overhead Dumbbell Walking Lunge (50/35)10 Left Arm Hang Dumbbell Snatch (50/35)25ft Left Arm Overhead Dumbbell Walking Lunge (50/35)* Affiliate Compete4 Sets: (Every 5:00)10 Strict Handstand Push Ups10 Right Arm Hang Dumbbell Snatch (50/35)25ft Right Arm Overhead Dumbbell Walking Lunge (50/35)10 Left Arm Hang Dumbbell Snatch (50/35)25ft Left Arm Overhead Dumbbell Walking Lunge (50/35)* Independence4 Sets: (Every 5:00)8 Handstand Push Ups10 Right Arm Hang Dumbbell Snatch (35/25)25ft Right Arm Overhead Dumbbell Walking Lunge (35/25)10 Left Arm Hang Dumbbell Snatch (35/25)25ft Left Arm Overhead Dumbbell Walking Lunge (35/25) * Liberty4 Sets: (Every 5:00)10 Push Ups10 Right Arm Hang Dumbbell Snatch (light)25ft Dumbbell Walking Lunge (light)10 Left Arm Hang Dumbbell Snatch (light)25ft Dumbbell Walking Lunge (light)"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "db_snatch",
+    "lunge",
+    "hspu",
+    "push_up"
+   ],
+   "patterns": [
+    "lunge",
+    "olympic",
+    "push_h",
+    "push_v"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "red-ants",
+  "name": "Red Ants",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:21-15-9Thruster 95/65Push-upsToes to bar/ring"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "push_up",
+    "toes_to_bar"
+   ],
+   "patterns": [
+    "core",
+    "push_h",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "row-5k",
+  "name": "Row 5k",
+  "kind": "test",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": false,
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "descriptions": [
+   "Row 5k"
+  ],
+  "tags": {
+   "movements": [
+    "row"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "run-10k",
+  "name": "10k run",
+  "aliases": [
+   "10k Run (minutes)",
+   "Run 10k"
+  ],
+  "kind": "test",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": true,
+  "sources": [],
+  "tags": {
+   "movements": [
+    "run"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "run-200m",
+  "name": "200m run",
+  "aliases": [
+   "Run 200m"
+  ],
+  "kind": "test",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": true,
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "descriptions": [
+   "Run 200m"
+  ],
+  "tags": {
+   "movements": [
+    "run"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "run-400m",
+  "name": "400m run",
+  "aliases": [
+   "400m Run (seconds)",
+   "Run 400m"
+  ],
+  "kind": "test",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": true,
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "descriptions": [
+   "Run 400m"
+  ],
+  "tags": {
+   "movements": [
+    "run"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "run-5k",
+  "name": "5k run",
+  "aliases": [
+   "Run 5k"
+  ],
+  "kind": "test",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": true,
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "descriptions": [
+   "Run 5k"
+  ],
+  "tags": {
+   "movements": [
+    "run"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "run-5k-row-5k",
+  "name": "5k Run + 5k Row",
+  "kind": "personal",
+  "description": "5k run then 5k row, <1 min transition. Score total and splits.",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "equipment": [
+   "run",
+   "rower"
+  ],
+  "home_ok": false,
+  "sources": [
+   "raw/apple-notes/5k-run-5k-row.txt"
+  ],
+  "tags": {
+   "movements": [
+    "run",
+    "row"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "say-it-ain-t-so",
+  "name": "Say It Ain\u2019t So",
+  "kind": "class_wod",
+  "descriptions": [
+   "Amrap 109 burpees 1 power snatch 125/851 muscle up"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_snatch",
+    "burpee",
+    "muscle_up"
+   ],
+   "patterns": [
+    "full_body",
+    "olympic",
+    "pull_v",
+    "push_v"
+   ],
+   "modality": "GW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "say-whattt",
+  "name": "Say whattt",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:100 Double unders then15-25-35Cals4- count Flutter kicksThen150 Double unders"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "double_under"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "shoulder-press-1x1",
+  "name": "Shoulder Press 1x1",
+  "kind": "strength",
+  "descriptions": [
+   "Shoulder Press for load: #1: 1 rep"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "shoulder_press"
+   ],
+   "patterns": [
+    "push_v"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "shoulder-press-3x1",
+  "name": "Shoulder Press 3x1",
+  "kind": "strength",
+  "descriptions": [
+   "Shoulder Press for load: #1: 1 rep #2: 1 rep #3: 1 rep"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "shoulder_press"
+   ],
+   "patterns": [
+    "push_v"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "shoulder-press-3x3",
+  "name": "Shoulder Press 3x3",
+  "kind": "strength",
+  "descriptions": [
+   "Shoulder Press for load: #1: 3 reps #2: 3 reps #3: 3 reps"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "shoulder_press"
+   ],
+   "patterns": [
+    "push_v"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "shoulder-press-4x6",
+  "name": "Shoulder Press 4x6",
+  "kind": "strength",
+  "descriptions": [
+   "Shoulder Press for load: #1:  6 reps #2:  6 reps #3:  6 reps #4:  6 reps"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "shoulder_press"
+   ],
+   "patterns": [
+    "push_v"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "simon-says",
+  "name": "Simon says",
+  "kind": "class_wod",
+  "descriptions": [
+   "E2MOM 1812 Cals Bike/RowMax Effort Power Cleans 135/95Score is total number of Power cleans throughout workout**strive for a minimum for 5-10 power cleans each round"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "bike"
+   ],
+   "patterns": [
+    "locomotion",
+    "olympic"
+   ],
+   "modality": "MW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "ski-2000m",
+  "name": "Ski erg 2000m",
+  "aliases": [
+   "2000m Ski Erg (minutes)",
+   "Ski 2000m"
+  ],
+  "kind": "test",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "home_ok": false,
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "descriptions": [
+   "Ski 2000m"
+  ],
+  "tags": {
+   "movements": [
+    "ski"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "skill-10-10-22",
+  "name": "SKILL 10.10.22",
+  "kind": "class_wod",
+  "descriptions": [
+   "Take 5 mins to warm up with one of these progressions:Piked Box HSPUHandstand holdShoulder tapsWall Walks-THEN-Every :30 secs for 5 min complete one of the following exercises:Pike Box HSPUKipping HSPUStrict HSPUHS Walk"
+  ],
+  "score": {
+   "type": "text",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "hspu"
+   ],
+   "patterns": [
+    "push_v"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "skill-4-6-22-chest-to-bar-pull-ups",
+  "name": "SKILL 4.6.22 [Chest to Bar Pull-Ups]",
+  "kind": "class_wod",
+  "descriptions": [
+   "For 15 minutes: Work on one or more of the following progressions1) Jumping C2Bs2) Banded C2Bs3) 1 kip + 1 C2B4) Kipping C2Bs5) Butterfly C2Bs6) Strict C2Bs"
+  ],
+  "score": {
+   "type": "checkbox",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "pull_up",
+    "chest_to_bar"
+   ],
+   "patterns": [
+    "pull_v"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "skill-pull-ups",
+  "name": "SKILL: Pull-Ups",
+  "kind": "class_wod",
+  "descriptions": [
+   "For 15 minutes, practice one or more of the following progressions:1. Banded Pull-ups2. Jumping Pull-ups with 3 second descent3. Kipping Pull-ups4. Butterfly Pull-ups5. Strict Pull-ups to failure + kipping pull-ups to failure (sets)"
+  ],
+  "score": {
+   "type": "checkbox",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "pull_up"
+   ],
+   "patterns": [
+    "pull_v"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "skill-work",
+  "name": "Skill Work",
+  "kind": "strength",
+  "descriptions": [
+   "Skill work:3x20 feet Barbell Back Rack Lunges3x20 feet Barbell Front Rack Lunges 135/9510x1 Heavy slam Ball toss (over body)"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "lunge",
+    "sandbag"
+   ],
+   "patterns": [
+    "carry",
+    "lunge"
+   ],
+   "modality": "GW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "snatch",
+  "name": "Snatch",
+  "kind": "strength",
+  "descriptions": [
+   "5x5 @70-80%3x1 @ 85%+Power snatch"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_snatch"
+   ],
+   "patterns": [
+    "olympic"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "snatch-1x1",
+  "name": "Snatch 1x1",
+  "kind": "strength",
+  "descriptions": [
+   "Snatch for load: #1: 1 rep"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_snatch"
+   ],
+   "patterns": [
+    "olympic"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "snatch-balance",
+  "name": "Snatch Balance+",
+  "kind": "class_wod",
+  "descriptions": [
+   "7 X 1 Snatch balance + 2 OHS** Work on increasing weight throughout.  Begin with a snatch balance, once you are back at the top complete 2 more Overhead Squats."
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "overhead_squat",
+    "power_snatch"
+   ],
+   "patterns": [
+    "olympic",
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "snatch-complex",
+  "name": "Snatch Complex",
+  "kind": "strength",
+  "descriptions": [
+   "Complete 3 sets of 1 rep of the following complex:1 Power Snatch + 1 Overhead Squat @ 85% 1RM Power SnatchScore is the load used"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "overhead_squat",
+    "power_snatch"
+   ],
+   "patterns": [
+    "olympic",
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "snatch-emom",
+  "name": "Snatch EMOM",
+  "kind": "class_wod",
+  "descriptions": [
+   "Snatch EMOM 122 Snatch Grip Deadlift1 Power Snatch2 Hang power snatch70-80% of 1 rep max"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_snatch",
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge",
+    "olympic"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "snatch-grip-deadlift-3x5",
+  "name": "Snatch Grip Deadlift 3x5",
+  "kind": "strength",
+  "descriptions": [
+   "Snatch Grip Deadlift for load: #1: 5 reps @ 105% #2: 5 reps @ 105% #3: 5 reps @ 105%"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_snatch",
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge",
+    "olympic"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "snatch-it",
+  "name": "Snatch it",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:AMRAP 7 7 Power Snatches7 Toes to Bar7 Burpees over Bar Then: 75 Assault Bike Cals"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_snatch",
+    "burpee",
+    "toes_to_bar",
+    "bike"
+   ],
+   "patterns": [
+    "core",
+    "full_body",
+    "locomotion",
+    "olympic"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "snatch-pull-3x5",
+  "name": "Snatch Pull 3x5",
+  "kind": "strength",
+  "descriptions": [
+   "Snatch Pull for load: #1: 5 reps @ 100% #2: 5 reps @ 100% #3: 5 reps @ 100%"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_snatch"
+   ],
+   "patterns": [
+    "olympic"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "speed",
+  "name": "Speed",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:50-40-30-20-20-30-40-50 Jump rope10-15-20-25-25-20-15-10 Weighted Sit upsTime Cap: 15 minutes"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "sit_up"
+   ],
+   "patterns": [
+    "core"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "speed-work",
+  "name": "speed work",
+  "kind": "class_wod",
+  "descriptions": [
+   "6 Rounds1 Lap Sprint1:30 Seconds restRecord lap splits.  The goal is to maintain speed every round.  Use the rest appropriately"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "run"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "spin",
+  "name": "spin",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:AMRAP 125 cals10 DB box step ups10 DB Squats5 Toes to barFor both step ups and db Squats, have a dumbell/KB in each hand."
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "box_jump",
+    "toes_to_bar"
+   ],
+   "patterns": [
+    "core",
+    "squat"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "split-jerk-1x1",
+  "name": "Split Jerk 1x1",
+  "kind": "strength",
+  "descriptions": [
+   "Split Jerk for load: #1: 1 rep"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "jerk"
+   ],
+   "patterns": [
+    "push_v"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "sponge-bob",
+  "name": "Sponge bob",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:20 Burpees400m run60 air squats400m run20 burpees"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "air_squat",
+    "burpee",
+    "run"
+   ],
+   "patterns": [
+    "full_body",
+    "locomotion",
+    "squat"
+   ],
+   "modality": "MG",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "sprint-baby-sprint",
+  "name": "sprint baby sprint",
+  "kind": "class_wod",
+  "descriptions": [
+   "4 x 2 lap sprints1:30 rest in between setsrecord fastest split"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "run"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "squat-clean-1x1",
+  "name": "Squat Clean 1x1",
+  "kind": "strength",
+  "descriptions": [
+   "Squat Clean for load: #1: 1 rep"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "squat_clean"
+   ],
+   "patterns": [
+    "olympic"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "squat-clean-7x3",
+  "name": "Squat Clean 7x3",
+  "kind": "strength",
+  "descriptions": [
+   "Squat Clean for load: #1:  3 reps #2:  3 reps #3:  3 reps #4:  3 reps #5:  3 reps #6:  3 reps #7:  3 reps"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "squat_clean"
+   ],
+   "patterns": [
+    "olympic"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "squat-cleans",
+  "name": "Squat Cleans",
+  "kind": "class_wod",
+  "descriptions": [
+   "Strength:Squat Clean warmup/ 10 mins to get to 75%-85%ThenEMOM 103 Squat Cleans @75%-85%"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "squat_clean"
+   ],
+   "patterns": [
+    "olympic"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "squat-snatch-1x1",
+  "name": "Squat Snatch 1x1",
+  "kind": "strength",
+  "descriptions": [
+   "Squat Snatch for load: #1: 1 rep"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "squat_snatch"
+   ],
+   "patterns": [
+    "olympic"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "squats",
+  "name": "Squats",
+  "kind": "strength",
+  "descriptions": [
+   "Strength:Back Squat 5x3 @ 84%Front Squat 4x3 @ 89%Record 1st set as Back Squat, 2nd set for front squat"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "front_squat",
+    "back_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "stay-in-the-game",
+  "name": "stay in the game",
+  "kind": "class_wod",
+  "descriptions": [
+   "5-10-15Hang clean 115/75pullups10-20-30SitupsAlt KB snatch 53/3515-25-35Deadlift 115/75Air Squats3 minutes for max rep muscle ups*** each set will have a time cap of 3 minutes, which will be followed by 1 min of rest. total time for this workout including rest is 15 minutes."
+  ],
+  "score": {
+   "type": "text",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "air_squat",
+    "power_snatch",
+    "power_clean",
+    "deadlift",
+    "pull_up",
+    "muscle_up",
+    "sit_up"
+   ],
+   "patterns": [
+    "core",
+    "hinge",
+    "olympic",
+    "pull_v",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "staying-fresh",
+  "name": "Staying fresh",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:400m run25 wall balls15 2x DB Devils press5 Bar muscle up/ Strict Pullup1 lap run"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "wall_ball",
+    "devils_press",
+    "pull_up",
+    "muscle_up",
+    "run"
+   ],
+   "patterns": [
+    "full_body",
+    "locomotion",
+    "pull_v",
+    "push_v",
+    "squat"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "strength-3-position-snatch",
+  "name": "STRENGTH: 3 position Snatch",
+  "kind": "class_wod",
+  "descriptions": [
+   "In 20 minutes, work up to a heavy set:Each set includes a full squat snatch from the following positions1) Snatch from high hang (slight hip dip)2) Snatch from the low hang (just above the knee)3) Snatch from the ground"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "squat_snatch",
+    "power_snatch"
+   ],
+   "patterns": [
+    "olympic"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "strict-handstand-push-ups-week-6",
+  "name": "Strict Handstand Push-ups: Week 6",
+  "kind": "class_wod",
+  "descriptions": [
+   "This is the final week of our strict handstand push-up gymnastic strength cycle. Its retest day!Freedom: 1 set of max strict handstand push-upsIndependence: 1 set of max strict box handstand push-ups (note the box height used)Liberty: 1 set of max push-ups or elevated push-ups**********Continuing Homework: For any athlete who wishes to continue with their strict handstand push-up strength work to either achieve their first strict handstand push-up or to build strength in their current abilities, we suggest continuing with this homework, here: https://bit.ly/3zMW7cA"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "hspu",
+    "push_up"
+   ],
+   "patterns": [
+    "push_h",
+    "push_v"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "strict-press-5-3-1-5-3-1-1",
+  "name": "Strict Press 5-3-1-5-3-1-1",
+  "kind": "strength",
+  "descriptions": [
+   "Strict Press5-3-1-5-3-1-15 @ 80%3 @ 90%1 @ 95%5 @ 85%3 @ 95%1 @ 97%1 @ 100%"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "shoulder_press"
+   ],
+   "patterns": [
+    "push_v"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "strict-pullups-max",
+  "name": "Unbroken strict pull-ups",
+  "aliases": [
+   "Unbroken pull-ups",
+   "Pull-ups (Strict): Max Reps",
+   "Max Strict Pullups"
+  ],
+  "kind": "test",
+  "format": "max_reps",
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "home_ok": true,
+  "sources": [
+   "raw/google-sheet/tests.json",
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "descriptions": [
+   "Pull-ups (Strict): Max Reps"
+  ],
+  "tags": {
+   "movements": [
+    "pull_up"
+   ],
+   "patterns": [
+    "pull_v"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "sumo-dead-lift-high-pulls",
+  "name": "Sumo Dead Lift High pulls",
+  "kind": "strength",
+  "descriptions": [
+   "Strength: Sumo Deadlift High pulls5x8Increase weight every round"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "sdhp"
+   ],
+   "patterns": [
+    "hinge",
+    "pull_v"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "superstition",
+  "name": "Superstition",
+  "kind": "class_wod",
+  "descriptions": [
+   "Freedom (RXd)5 sets2:00 AMRAP200m RunMax V-Ups-Rest 1:00 between sets-* Affiliate Compete5 sets2:00 AMRAP200m RunMax GHDs-Rest 1:00 between sets-* IndependenceNo Change to Workout * Liberty5 sets2:00 AMRAP150m RunMax Sit Ups-Rest 1:00 between sets-"
+  ],
+  "score": {
+   "type": "reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "sit_up",
+    "v_up",
+    "run"
+   ],
+   "patterns": [
+    "core",
+    "locomotion"
+   ],
+   "modality": "MG",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "syndee-cindy-strict",
+  "name": "Syndee (Cindy Strict+)",
+  "kind": "class_wod",
+  "descriptions": [
+   "20 minutes AMRAP:5 strict pull-ups10 hand release push-ups 15 jumping air-squats"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "air_squat",
+    "pull_up",
+    "push_up"
+   ],
+   "patterns": [
+    "pull_v",
+    "push_h",
+    "squat"
+   ],
+   "modality": "G",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "tall-cleans-jerk",
+  "name": "Tall Cleans + Jerk",
+  "kind": "class_wod",
+  "descriptions": [
+   "Strength:7 X 3 start at 50%** Gradually increase weight*** Movement begins from the tall hang position from their you will clean and jerk, split if you need to."
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "jerk"
+   ],
+   "patterns": [
+    "olympic",
+    "push_v"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "the-chief",
+  "name": "The Chief",
+  "kind": "hero",
+  "descriptions": [
+   "Max rounds in 3 minutes of:\u2022 135 pound Power cleans, 3 reps\u2022 6 Push-ups\u2022 9 SquatsRest 1 minute. Repeat for a total of 5 cycles."
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "push_up"
+   ],
+   "patterns": [
+    "olympic",
+    "push_h"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "the-countdown",
+  "name": "The Countdown",
+  "kind": "class_wod",
+  "descriptions": [
+   "For Time10-9-8-7-6-5-4-3-2-1 reps of:Hang Cleans (95/65 lb)Box Jumps (24/20 in)Toes 2 BarSumo Deadlift High-Pulls (95/65 lb)"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_clean",
+    "sdhp",
+    "box_jump",
+    "toes_to_bar"
+   ],
+   "patterns": [
+    "core",
+    "hinge",
+    "olympic",
+    "pull_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "the-jungle-book",
+  "name": "The Jungle Book",
+  "kind": "class_wod",
+  "descriptions": [
+   "Freedom (RXd)14:00 AMRAP7 Dumbbell Thrusters (50s/35s)7 Burpee Over Dumbbell 7 Toes to Bar* Affiliate Compete14:00 AMRAP10 Dumbbell Thrusters (50s/35s)10 Burpee Over Dumbbell 10 Toes to Bar* Independence14:00 AMRAP7 Dumbbell Thrusters (35s/25s)7 Burpee Over Dumbbell 7 Knees to Elbows* Liberty14:00 AMRAP7 Dumbbell Thrusters (light)7 Up Down Over Dumbbell 7 Hanging Knee Raises"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "thruster",
+    "burpee",
+    "toes_to_bar",
+    "knees_to_elbow"
+   ],
+   "patterns": [
+    "core",
+    "full_body",
+    "push_v",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "the-simple-bare-necessities",
+  "name": "\u201cThe simple bare necessities\u201d",
+  "kind": "class_wod",
+  "descriptions": [
+   "Freedom (RXd)Every 3:00 (8 sets)Odd Sets: 20/16 Calorie BikeEven Sets: 200m Run* Affiliate CompeteEvery 3:00 (8 sets)Odd Sets: 25/20 Calorie BikeEven Sets: 300m Run* IndependenceEvery 3:00 (8 sets)Odd Sets: 16/14 Calorie BikeEven Sets: 200m Run * LibertyEvery 3:00 (8 sets)Odd Sets: 12/10 Calorie BikeEven Sets: 150m Run"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "run",
+    "bike"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "there-once-was-a-man",
+  "name": "There once was a man",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:Buy In: 50 Barbell Curls10-9-8--7-6-5-4-3-2-1Dumbell Bench Press (moderate)1-2-3-4-5-6-7-8-9-10Burpee Box Jump OversBuy out: 50 Barbell curls"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "bench_press",
+    "box_jump",
+    "burpee"
+   ],
+   "patterns": [
+    "full_body",
+    "push_h",
+    "squat"
+   ],
+   "modality": "GW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "trick-or-treating",
+  "name": "Trick-or-Treating",
+  "kind": "class_wod",
+  "descriptions": [
+   "Freedom (RXd)1600m Run80 Toes to Bar40 Box Jumps (30/24)-Partition any way. Athletes can break up and rotate movements however they desire.* Affiliate Compete1600m Run100 Toes to Bar50 Box Jumps (30/24)-Partition as needed-* Independence1200m Run60 Toes to Bar30 Box Jumps (24/20)-Partition as needed- * Liberty800m Run50 Hanging Knee Raises50 Box Step Ups (20/16)-Partition as needed-"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "box_jump",
+    "toes_to_bar",
+    "run"
+   ],
+   "patterns": [
+    "core",
+    "locomotion",
+    "squat"
+   ],
+   "modality": "MG",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "tune-up",
+  "name": "Tune up",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD40-30-20-10Cals4-3-2-1 (Laps)running"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [],
+   "patterns": [],
+   "modality": "",
+   "home_ok_auto": null,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "turkey-trot-triple",
+  "name": "Turkey Trot Triple",
+  "kind": "personal",
+  "favorite": true,
+  "recurrence": "annual: Thanksgiving week",
+  "description": "For time, each piece timed: 5k run, 5k row, 5k assault bike. Total = sum.",
+  "format": "for_time",
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "equipment": [
+   "run",
+   "rower",
+   "assault_bike"
+  ],
+  "home_ok": false,
+  "home_note": "rower only at rec center",
+  "sources": [
+   "raw/apple-notes/turkey-trot-triple.txt"
+  ],
+  "tags": {
+   "movements": [
+    "run",
+    "row",
+    "bike"
+   ],
+   "patterns": [
+    "locomotion"
+   ],
+   "modality": "M",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "wendler-back-squats-week-2-cycle-2",
+  "name": "Wendler Back Squats, Week 2, Cycle 2",
+  "kind": "strength",
+  "descriptions": [
+   "Back Squat for load: #1: 3 reps #2: 3 reps #3: 3 reps"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "back_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "wendler-back-squats-week-3-cycle-1",
+  "name": "Wendler Back Squats, Week 3, Cycle 1",
+  "kind": "strength",
+  "descriptions": [
+   "Back Squat for load: #1: 5 reps @ 75% #2: 3 reps @ 85% #3: 1 rep @ 95%"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "back_squat"
+   ],
+   "patterns": [
+    "squat"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "wendler-deadlift-week-1-cycle-1",
+  "name": "Wendler Deadlift Week 1, Cycle 1",
+  "kind": "strength",
+  "descriptions": [
+   "Deadlift for load: #1: 5 reps #2: 5 reps #3: 5 reps"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "deadlift"
+   ],
+   "patterns": [
+    "hinge"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "who-needs-shoulders",
+  "name": "Who Needs Shoulders",
+  "kind": "class_wod",
+  "descriptions": [
+   "WOD:AMRAP 1210 burpee pull-ups 5 handstand push-up 10 KB swing 50/35"
+  ],
+  "score": {
+   "type": "rounds_reps",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "kb_swing",
+    "burpee",
+    "pull_up",
+    "hspu"
+   ],
+   "patterns": [
+    "full_body",
+    "hinge",
+    "pull_v",
+    "push_v"
+   ],
+   "modality": "GW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "wing-it",
+  "name": "wing it",
+  "kind": "class_wod",
+  "descriptions": [
+   "Immediately following 21.35 mins to establish 1 rep max snatch"
+  ],
+  "score": {
+   "type": "load_lb",
+   "better": "higher"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "power_snatch"
+   ],
+   "patterns": [
+    "olympic"
+   ],
+   "modality": "W",
+   "home_ok_auto": true,
+   "tag_source": "auto"
+  }
+ },
+ {
+  "id": "zeus",
+  "name": "ZEUS",
+  "kind": "hero",
+  "descriptions": [
+   "Three rounds for time of:\u2022 30 Wall ball shots, 20 pound ball\u2022 75/55 pound Sumo deadlift high-pull, 30 reps\u2022 30 Box jump, 20\"\" box\u2022 75/55 pound Push press, 30 reps\u2022 Row 30 calories\u2022 30 Push-ups\u2022 Body weight Back squat, 10 reps"
+  ],
+  "score": {
+   "type": "time",
+   "better": "lower"
+  },
+  "sources": [
+   "raw/sugarwod/workouts_export_2026-11-17.csv"
+  ],
+  "tags": {
+   "movements": [
+    "wall_ball",
+    "back_squat",
+    "push_press",
+    "sdhp",
+    "box_jump",
+    "push_up",
+    "row"
+   ],
+   "patterns": [
+    "hinge",
+    "locomotion",
+    "pull_v",
+    "push_h",
+    "push_v",
+    "squat"
+   ],
+   "modality": "MGW",
+   "home_ok_auto": false,
+   "tag_source": "auto"
+  }
+ }
+]

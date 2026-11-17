@@ -1,0 +1,246 @@
+{
+ "_about": "Hand-transcribed from SugarWOD profile screenshots taken 2026-11-17 (raw/sugarwod-screens). Shows SugarWOD's current best per lift/benchmark. Barbell table is complete (athlete confirmed Thruster is the last entry). other benchmark categories (e.g. Heroes, Open) and the Personal Records tab were not captured.",
+ "barbell_maxes_lb": [
+  {
+   "lift": "back-pause-squat",
+   "2RM": 235,
+   "3RM": 215
+  },
+  {
+   "lift": "back-squat",
+   "1RM": 295,
+   "3RM": 275,
+   "5RM": 205
+  },
+  {
+   "lift": "back-squat",
+   "1RM": 235,
+   "note": "second 'Back Squat' row in SugarWOD (duplicate lift entry)"
+  },
+  {
+   "lift": "bench-press",
+   "1RM": 275,
+   "3RM": 245,
+   "5RM": 215
+  },
+  {
+   "lift": "deadlift",
+   "1RM": 365,
+   "2RM": 325,
+   "3RM": 345,
+   "5RM": 295,
+   "note": "2RM < 3RM as recorded"
+  },
+  {
+   "lift": "front-squat",
+   "1RM": 245,
+   "3RM": 225,
+   "5RM": 205
+  },
+  {
+   "lift": "hang-squat-clean-push-press",
+   "2RM": 175
+  },
+  {
+   "lift": "overhead-squat",
+   "5RM": 135
+  },
+  {
+   "lift": "power-clean-and-jerk",
+   "3RM": 215,
+   "5RM": 155
+  },
+  {
+   "lift": "power-clean-front-squat-jerk",
+   "3RM": 185
+  },
+  {
+   "lift": "push-jerk",
+   "1RM": 220
+  },
+  {
+   "lift": "push-jerk",
+   "1RM": 205,
+   "3RM": 165,
+   "note": "second 'Push Jerk' row"
+  },
+  {
+   "lift": "push-press",
+   "5RM": 185
+  },
+  {
+   "lift": "shoulder-press",
+   "1RM": 165,
+   "3RM": 150
+  },
+  {
+   "lift": "snatch",
+   "1RM": 175
+  },
+  {
+   "lift": "snatch-grip-deadlift"
+  },
+  {
+   "lift": "snatch-pull",
+   "5RM": 175
+  },
+  {
+   "lift": "split-jerk",
+   "1RM": 205
+  },
+  {
+   "lift": "squat-clean",
+   "1RM": 225,
+   "2RM": 195,
+   "3RM": 185,
+   "5RM": 155
+  },
+  {
+   "lift": "squat-clean",
+   "1RM": 215,
+   "note": "second 'Squat Clean' row"
+  },
+  {
+   "lift": "squat-snatch",
+   "1RM": 185
+  },
+  {
+   "lift": "thruster",
+   "1RM": 195
+  }
+ ],
+ "benchmark_bests": [
+  {
+   "name": "Annie",
+   "date": "2023-01-01",
+   "rx": "RX",
+   "result": "8:46"
+  },
+  {
+   "name": "Cindy",
+   "date": "2023-08-16",
+   "rx": "RX",
+   "result": "22+16"
+  },
+  {
+   "name": "Diane",
+   "date": "2024-02-12",
+   "rx": "RX",
+   "result": "8:31"
+  },
+  {
+   "name": "Fran",
+   "date": "2023-05-11",
+   "rx": "RX",
+   "result": "4:43"
+  },
+  {
+   "name": "Grace",
+   "date": "2024-02-10",
+   "rx": "RX",
+   "result": "2:25"
+  },
+  {
+   "name": "Grettel",
+   "date": "2022-11-21",
+   "rx": "RX",
+   "result": "5:16"
+  },
+  {
+   "name": "Helen",
+   "date": "2021-11-08",
+   "rx": "RX",
+   "result": "9:08"
+  },
+  {
+   "name": "Ingrid",
+   "date": "2022-10-19",
+   "rx": "RX",
+   "result": "8:03"
+  },
+  {
+   "name": "Isabel",
+   "date": "2022-04-08",
+   "rx": "RX",
+   "result": "3:14"
+  },
+  {
+   "name": "Jackie",
+   "date": "2024-10-21",
+   "rx": "RX",
+   "result": "13:43"
+  },
+  {
+   "name": "Kelly",
+   "date": "2021-06-16",
+   "rx": "Scaled",
+   "result": "14:24"
+  },
+  {
+   "name": "Nicole",
+   "date": "2021-07-26",
+   "rx": "RX",
+   "result": "106"
+  },
+  {
+   "name": "Baseline",
+   "date": "2021-05-05",
+   "rx": "RX",
+   "result": "3:37"
+  },
+  {
+   "name": "Bear Complex",
+   "date": "2021-08-30",
+   "rx": "Scaled",
+   "result": "135"
+  },
+  {
+   "name": "CrossFit Total",
+   "date": "2023-10-30",
+   "rx": "RX",
+   "result": "845"
+  },
+  {
+   "name": "Fight Gone Bad",
+   "date": "2023-04-13",
+   "rx": "RX",
+   "result": "368"
+  },
+  {
+   "name": "The Chief",
+   "date": "2023-02-04",
+   "rx": "RX",
+   "result": "20+22"
+  },
+  {
+   "name": "Row 5k",
+   "date": "2023-04-14",
+   "rx": "RX",
+   "result": "19:15"
+  },
+  {
+   "name": "Run 200m",
+   "date": "2023-02-21",
+   "rx": "RX",
+   "result": "0:35.5"
+  },
+  {
+   "name": "Run 400m",
+   "date": "2023-04-15",
+   "rx": "RX",
+   "result": "1:07"
+  },
+  {
+   "name": "Run 5k",
+   "date": "2022-08-22",
+   "rx": "RX",
+   "result": "22:50"
+  },
+  {
+   "name": "Ski 2000m",
+   "date": "2023-04-05",
+   "rx": "RX",
+   "result": "7:58"
+  }
+ ]
+}

@@ -1,0 +1,19 @@
+PROFILE DONE: profiles/seiler.md
+1) Count by SESSION across whole week. Cap hard sessions at 2-3/wk TOTAL, metcons included [INFERENCE on metcons]. 3-4 hard/wk risks overreaching.
+2) Runs 4/wk (recreational athletes described at 4-5 sessions/wk). Galloway/FIRST 3/wk not supported by his work; FIRST's mostly-hard runs are the opposite of 80/20.
+   Sat long Z1, 60 -> 90 min. 2 easy Z1 runs 25-35 min on lift days.
+   1 quality run, alternating weekly: (a) 4x8 min, 2 min rest, ~90% HRmax, even effort; start pace = 10k pace + 10-15 s/mi [INFERENCE]. (b) 3x10 min, 2 min rest, ~85-90% HRmax; start = 10k pace + 20-30 s/mi [INFERENCE]. Cites a 2025 IPD meta-analysis he co-authored favoring pyramidal for recreational athletes (VERIFIED by moderator: Rosenblat et al., Sports Med 2025;55:655-673, doi:10.1007/s40279-024-02149-3; 13 studies, 348 athletes; POL vs PYR no overall difference; subgroup: recreational may benefit from PYR, competitive from POL).
+3) Z1 = conversational, <~75% HRmax or RPE <=3/10; gate by HR/RPE, not pace. Avoid the 'black hole'.
+4) >=1 easy or strength day between hard days [INFERENCE]. Never 4x8 + long metcon same day.
+5) Progress by adding Z1 duration/frequency, not intensity.
+Conflicts: glassman (metcons count as hard days), first (3 quality runs), bare/wendler (quality runs on squat/DL days).
+
+#benchmarks: add, replace nothing. (1) Record HR on all endurance tests: avg HR of last 20 min of 10k (threshold proxy), peak HR on mile/400/2mi bike (HRmax) [INFERENCE]. (2) NEW submax test: 30 min treadmill at 10k pace +75 s/mi, 1% grade; log avg HR + session RPE; same pace each evolution; repeatable at 4-wk checkpoints. Order: submax on day 1, fresh; >=48h between 10k, mile/400, row 5k. Session RPE (Foster) on every test day.
+
+#metcons: metcons count (session-RPE, Foster, ~30 min after; RPE>=7 = hard) [INFERENCE: Seiler never addresses CF]. 20-min triplet is easy only if it truly finishes RPE<=4; most land 6-7 = black hole -> counts hard. Cap 2-3 hard/wk all modalities. Strawman (Mon couplet + Tue quality + Thu triplet) = 3 hard, no room for 2nd quality run. Fix: one metcon truly hard + short; other = long aerobic piece capped RPE 4 / <75% HRmax (25-30 min bike/calisthenics flow). Variance -> defer glassman. Assault bike OK for Z1 by distance/time with HR ceiling.
+
+POSITION #running (FINAL): accepts converged block. 4 runs/wk, 1-2 hard; 2nd only inside 3-hard cap (session RPE>=7). Quality A alt 4x8 (P10+0..15, ~90% HRmax) / 3x10 threshold (P10+15..20, 85-90%). Quality B = hinshaw Bombolini/ladder. 1 easy + Sat long (P10+75 or slower). HR/RPE ceilings override pace. Frandsen + weekly +10%; progress by Z1 duration. No hard run on squat day or day after heavy squat/DL; DL-day hard run only run-first = one hard day [INFERENCE]; athlete OK needed. No doubling missed sessions.
+
+#metcons msg2: "moderate" is not free: a light-moderate triplet is Z2 and spends the non-easy budget. Glassman's week = 4 non-easy (over cap). Proposal: (a) cap 3 non-Z1 sessions/wk by session RPE (1-4 easy, 5-6 Z2, 7+ hard); (b) Glassman's 5-6 short efforts are reps INSIDE sessions, each session counts once; (c) Fri = gymnastics skill only, or bike intervals REPLACE Quality B that week (alternating); in 2-quality weeks Thu triplet must be RPE<=4 or become a skill piece; (d) accepts family rotation, Girls every 3-4 wks as the hard metcon slot, upper/G-biased Mon couplet.
+
+POSITION #metcons (FINAL): cap 3 non-Z1 sessions/wk by session RPE (1-4 easy, 5-6 Z2, 7+ hard); each session counts once. Week: Mon squat + upper/G couplet (hard); Tue Quality A; Wed press + strict Z1 run; Thu DL + Quality B (run first); Fri triplet or skill; Sat long Z1. Quality-B weeks: Fri triplet RPE<=4 or skill only. Non-B weeks: Fri may be moderate/hard or short bike intervals. Accepts family rotation, Girls every 3-4 wks; bike Z1 HR-capped; wendler 3-wk ramp fits.

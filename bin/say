@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# say <to> <thread> <message...>
+# Sends a message to a herdr agent and logs it to the shared transcript.
+# The sender is resolved from this pane's herdr agent name (not self-reported).
+set -euo pipefail
+[ $# -ge 3 ] || { echo "usage: say <to> <thread> <message...>" >&2; exit 2; }
+to=$1; thread=$2; shift 2; msg="$*"
+log="${GH_CHAT_LOG:-$HOME/Documents/golden-hour/chat.jsonl}"
+from=$(herdr agent list | python3 -c '
+import sys, json, os
+p = os.environ.get("HERDR_PANE_ID")
+names = [a.get("name") for a in json.load(sys.stdin)["result"]["agents"] if a.get("pane_id") == p]
+print(names[0] if names and names[0] else "user")')
+python3 -c '
+import json, sys, datetime
+f, t, th, m, path = sys.argv[1:]
+with open(path, "a") as fh:
+    fh.write(json.dumps({"ts": datetime.datetime.now().isoformat(timespec="seconds"),
+                         "from": f, "to": t, "thread": th, "msg": m}) + "\n")' "$from" "$to" "$thread" "$msg" "$log"
+herdr agent prompt "$to" "[from: $from -> $to | thread: $thread] $msg
+(To reply: ~/Documents/golden-hour/bin/say $from $thread \"<your message>\")" >/dev/null
+echo "sent to $to on #$thread"

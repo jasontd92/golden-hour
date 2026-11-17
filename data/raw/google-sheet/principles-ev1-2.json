@@ -1,0 +1,74 @@
+{
+"range": "'General Principles (Ev. 1 &2)'!A1:Z150",
+"values": [
+[
+"Wendler Cycle, 3 lifts a week",
+"",
+"",
+"EXAMPLE",
+"",
+"Sun",
+"M",
+"T",
+"W",
+"Th",
+"F",
+"Sat"
+],
+[
+"Two \"endurance\" per week",
+"",
+"",
+"Week A",
+"3 WL\n3 Run\n1 Metcon\n1 Rest",
+"Rest",
+"Wendler Lift 1\n10-15 min Metcon\n",
+"Run Intervals/Speed",
+"Wendler Lift 2",
+"Run Tempo ",
+"Wendler Lift 3",
+"Long Run"
+],
+[
+"Min. one \"pure\" endurance per 2 weeks",
+"",
+"",
+"Week B",
+"3 WL\n2 Run\n2 Metcon\n2 Rest",
+"Rest",
+"Wendler Lift 1\n<10min Metcon",
+"Wendler Lift 2\nRun Intervals/Speed",
+"Rest/active recovery",
+"Wendler Lift 3",
+"Long Run",
+"20-30 min Metcon"
+],
+[
+"1-2 rest days/week"
+],
+[
+"Alternate 2/3 running days/week"
+],
+[
+"1-2 Metcons/wk"
+],
+[],
+[],
+[
+"Warmup",
+"10 minutes"
+],
+[
+"Cool Down",
+"5 minutes"
+],
+[
+"Modality Transition",
+"5 minutes"
+],
+[
+"Wendler Lift",
+"12-15 minutes"
+]
+]
+}
