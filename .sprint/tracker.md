@@ -7,10 +7,11 @@
 - Stage: 0 — design front-loaded (mockups → v0 sign-off) before engineering
 - Shape: INDEPENDENT PRs to main (all work is additive)
 - Repo: github.com/jasontd92/golden-hour (private), main @ 338fba7
-- Vercel: NOT connected yet (repo not visible in Vercel import → Vercel GitHub app likely needs repo access)
+- Vercel: NOT connected. Repo is pushed + private; Vercel's GitHub app needs access to golden-hour (GitHub → Settings → Applications → Vercel → Configure)
 - Codex review: not confirmed
 - Open PRs / worktrees / subagents: none
-- Next: design mockups artifact → CEO picks v0 direction
+- Mockups: https://claude.ai/artifact/VAMdGRd2S13J3HBGDoPCDs (A: dark gym-floor, 4 screens; B: light notebook/timeline, 2 screens). Session content is PLACEHOLDER until the debate.
+- Next: CEO feedback on mockups → v0 direction → WS1
 
 ## §2 CEO directives (durable)
 - Stack: SvelteKit + TypeScript, installable PWA (no Apple dev license). Web-enabled, phone-first. Single user; no auth; don't productize.
@@ -20,6 +21,8 @@
 - Pattern source: Lauren Tan "All Code Is Slop (Except Mine)": lint > prose, ~no comments, minimal agent-facing markdown, feature map, runtime verification with screenshots.
 - Front-load design: mockups before v0, then PM runs with it.
 - Docker is available if useful.
+- Working memory: this tracker (repo-local, git-tracked) so EMs in worktrees can read it; Obsidian vault at ~/Documents/Obsidian Vault not used for sprint state.
+- DB: CEO open; PM recommends Turso. Review bot: Codex (CEO has plan; Cubic quota reserved for Unstale).
 - Programming debate (Evolution 5) runs in parallel, moderated by PM; it writes into the WS2 PlanSession format.
 - Commits: conventional, NEVER an AI co-author trailer, `git add <paths>` never -A.
 
