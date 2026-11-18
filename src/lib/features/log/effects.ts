@@ -55,3 +55,11 @@ export function startSyncLoop(
 		}
 	};
 }
+
+let persistRequested = false;
+
+export function persistLocalLog(storage: Pick<StorageManager, 'persist'> | undefined = globalThis.navigator?.storage): void {
+	if (persistRequested || typeof storage?.persist !== 'function') return;
+	persistRequested = true;
+	void storage.persist().catch(() => false);
+}

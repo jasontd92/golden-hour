@@ -2,7 +2,7 @@
   route: /
   e2e: e2e/today.e2e.ts
   flags:
-    start: false
+    start: true
 - name: week
   route: /week
   e2e: e2e/week.e2e.ts
@@ -18,3 +18,9 @@
 - name: lift-history
   route: /progress/lifts/[id]
   e2e: e2e/progress.e2e.ts
+- name: log
+  route: /log/[date]
+  e2e: e2e/log.e2e.ts
+- name: sync
+  route: /sync
+  e2e: e2e/log.e2e.ts

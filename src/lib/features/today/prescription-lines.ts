@@ -1,6 +1,6 @@
 import type { Block, MovementWork, PercentSet, Prescription } from '#lib/domain/plan.ts';
 import { wendlerSet } from '#lib/domain/strength.ts';
-import { movementLabels } from './movement-labels.ts';
+import { movementLabels } from '#lib/ui/movement-labels.ts';
 import type { MovementId } from '#lib/domain/movements.ts';
 
 export type LineTone = 'plain' | 'quiet' | 'strong';
