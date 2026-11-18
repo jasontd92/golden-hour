@@ -173,7 +173,7 @@ export function buildNormalized(root = dataDir): NormalizedFiles {
 		const sets = row.set_details ? (parsePythonJson(row.set_details) as Json[]) : [];
 		let scoreType = sugarwodScoreType[row.score_type ?? ''] ?? 'text';
 		const first = sets[0];
-		const hasClock = (first !== undefined && 'mins' in first) || (first !== undefined && 'secs' in first);
+		const hasClock = first !== undefined && ('mins' in first || 'secs' in first);
 		if (scoreType === 'time' && !hasClock && row.score_type === '' && sets.length === 0) scoreType = 'text';
 		let workout = workouts.get(id);
 		if (!workout) {
