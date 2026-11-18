@@ -6,5 +6,6 @@
 		"erasableSyntaxOnly": true,
 		"types": ["$app/types", "node"]
 	},
-	"include": ["src", "lint", "scripts", "e2e", "vite.config.ts", "eslint.config.js", "playwright.config.ts"]
+	"include": ["src", "lint", "scripts", "e2e", "vite.config.ts", "eslint.config.js", "playwright.config.ts"],
+	"exclude": ["src/service-worker"]
 }
