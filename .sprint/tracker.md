@@ -630,6 +630,27 @@ Explicitly cut, so don't reintroduce:
   - Labels: "Effort (RPE)" and "session RPE" both read "RPE" (P3 mockups use "RPE"). Input idioms are unchanged (select vs stepper: a CEO call).
 - Not done, by brief (CEO decisions for the morning report): Undo-last-set on the Session step; a one-session-per-date limit.
 - Status: MERGED. Verifier pending.
+- VERIFIER: WS5e — PASS WITH GAPS (fresh clone of `6700c94`)
+  - criteria met: 5/5 (excluding descoped)
+    - Termination → `syncOutbox` reads `syncRoundLimit(pendingCount(), batch)` at call start and returns `unfinished` at the limit. `startSyncLoop` retries every non-synced, non-401 outcome with backoff, `unfinished` included. Reproduced: `sync.spec.ts` (a writer logs during every send) passes and ends `unfinished` after exactly `syncRoundLimit(1,1)`=3 sends with 1 pending. With the bound removed it times out at 5s.
+    - No-loss proof → `pnpm proof:sync` EXIT 0: the control passes and 15/15 mutants are killed by tags. Own mutants, all killed and then reverted:
+      - acknowledge before send: [client], [server], [drain], [tombstone]
+      - drop the zero-mark failure guard: [terminates]
+      - bound taken from the first batch instead of the outbox: [drain]
+    - `[terminates]` vs V3 → the EM's claim holds, but only half of it.
+      - With the bound, V3 is caught only by the resend assertion. Removing that assertion lets V3 survive: 4/4 pass.
+      - Without the bound, the resend assertion never runs, because it is checked after `syncOutbox` returns. V3 then shows up only as a 30s test timeout, the same failure mode WS5d found.
+      - So the bound and the resend check each need the other: the bound makes the livelock end, and the resend check makes it visible.
+    - RPE polish → the select has two `linear-gradient` chevrons in `--text-muted`. The e2e asserts the computed background-image matches /linear-gradient/, and both labels read "RPE" (LogSet.svelte:74 and 157). The three-sets e2e passed on mobile-webkit and mobile-chromium in run 44316158368 (55/55).
+    - Gates → `pnpm check` EXIT 0 in the clone (430 tests). PR head d89f52c: all CI jobs pass (run 44316158368). Main 44316925911 on 6700c94 succeeded. 0 review threads. No AI trailer.
+  - criteria FAILED: none
+  - criteria DESCOPED: Undo-last-set on the Session step; a one-session-per-date limit (by brief, CEO for the morning report).
+  - criteria HUMAN: whether the chevron reads well on the phone. The e2e proves the gradient is applied, not how it looks; the evidence is the note-open screenshot.
+  - UNVERIFIABLE: the Vercel production deploy of 6700c94 ("Deployment rate limited — retry in 24 hours"), an expected rate limit, not a failure.
+  - claims that did NOT hold: none on log loss. Nuance: "the no-unchanged-resend assertion is what catches V3" holds only with the bound in place; on its own it cannot catch a livelock.
+  - Gaps:
+    - (1) No `effects.spec` case drives `startSyncLoop` with an `unfinished` outcome; the backoff was checked by reading the code only.
+    - (2) The property's bound is a literal (`/3 + 2`) duplicated from `sync.ts`. That is deliberate, but changing `roundSlack` requires editing the spec too.
 
 ### WS8 — desktop planning view — MERGED
 - Type: impl EM (ws8-impl). Design: Pass 3 (P3Plan, P3Progress), CEO-approved. Depends: WS4, WS5b, WS6/6b, WS9.
