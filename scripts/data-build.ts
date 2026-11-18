@@ -101,6 +101,17 @@ const sugarwodScoreType: Record<string, ScoreType> = {
 	'': 'time'
 };
 
+const outsidePrintableAscii = /[^ -~]/u;
+
+function plainScore<T extends string | null | undefined>(score: T, record: string): T {
+	const offending = score && outsidePrintableAscii.exec(score)?.[0];
+	if (offending) {
+		const codePoint = `U+${(offending.codePointAt(0) ?? 0).toString(16).toUpperCase().padStart(4, '0')}`;
+		throw new Error(`${record}: score ${JSON.stringify(score)} has ${codePoint}; scores must be printable ASCII`);
+	}
+	return score;
+}
+
 const clockWithFraction = /^\d+:\d{2}\.\d+$/;
 
 function canonical(score: string | null | undefined, type: ScoreType): { value: PyNumber | null; unit: string | null } {
@@ -151,7 +162,7 @@ export interface NormalizedFiles {
 }
 
 export function buildNormalized(root = dataDir): NormalizedFiles {
-	const readJson = (file: string) => parsePythonJson(readFileSync(path.join(root, file), 'utf8'));
+	const readJson = (file: string) => parsePythonJson(readFileSync(path.join(root, file), 'utf8'), file);
 	const vocabulary = MovementVocabulary.parse(readJson('curated/movements.json')).movements;
 	const taggers = movementTaggers(vocabulary);
 	const curatedWorkouts = readJson('curated/workouts.json') as CuratedWorkout[];
@@ -169,8 +180,9 @@ export function buildNormalized(root = dataDir): NormalizedFiles {
 
 	const rows = parseCsvRecords(readFileSync(path.join(root, sugarwodExport), 'utf8'));
 	rows.forEach((row, index) => {
+		const source = `sugarwod#row${index + 2}`;
 		const id = resolve(row.title ?? '');
-		const sets = row.set_details ? (parsePythonJson(row.set_details) as Json[]) : [];
+		const sets = row.set_details ? (parsePythonJson(row.set_details, `${source} set_details`) as Json[]) : [];
 		let scoreType = sugarwodScoreType[row.score_type ?? ''] ?? 'text';
 		const first = sets[0];
 		const hasClock = first !== undefined && ('mins' in first || 'secs' in first);
@@ -194,8 +206,8 @@ export function buildNormalized(root = dataDir): NormalizedFiles {
 		}
 		if (!workout.sources.includes(sugarwodExport)) workout.sources.push(sugarwodExport);
 		const type = workout.score.type;
-		const raw = row.best_result_raw ?? '';
-		let { value, unit } = canonical(row.best_result_display, type);
+		const raw = plainScore(row.best_result_raw ?? '', `${source} best_result_raw`);
+		let { value, unit } = canonical(plainScore(row.best_result_display, `${source} best_result_display`), type);
 		if (type === 'load_lb') {
 			const load = raw ? numberOf(pythonFloat(raw)) : 0;
 			value = load === 0 ? null : new PyFloat(load);
@@ -217,17 +229,18 @@ export function buildNormalized(root = dataDir): NormalizedFiles {
 			barbell_lift: slug(row.barbell_lift ?? '') || null,
 			sets: sets.length > 0 ? sets : null,
 			notes: row.notes || null,
-			source: `sugarwod#row${index + 2}`
+			source
 		});
 	});
 
-	for (const curated of readJson('curated/results.json') as CuratedResult[]) {
+	(readJson('curated/results.json') as CuratedResult[]).forEach((curated, index) => {
 		const workout = workouts.get(curated.w);
 		if (!workout) throw new Error(`curated result names unknown workout ${curated.w}`);
 		const type = workout.score.type;
-		let { value, unit } = canonical(curated.score, type);
-		if (type === 'load_lb' && curated.score) {
-			value = pythonFloat(curated.score);
+		const score = plainScore(curated.score, `curated/results.json[${index}] (${curated.w} ${curated.date ?? 'undated'})`);
+		let { value, unit } = canonical(score, type);
+		if (type === 'load_lb' && score) {
+			value = pythonFloat(score);
 			unit = 'lb';
 		}
 		const field = (key: string) => curated[key] ?? null;
@@ -249,7 +262,7 @@ export function buildNormalized(root = dataDir): NormalizedFiles {
 			conflict: field('conflict') as string | null,
 			source: curated.src
 		});
-	}
+	});
 
 	for (const workout of workouts.values()) {
 		const text = [workout.name, workout.description, ...(workout.descriptions ?? [])].filter(Boolean).join(' ');
