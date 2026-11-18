@@ -571,6 +571,40 @@ Explicitly cut, so don't reintroduce:
   - Week 8 (ws9 plan) has no scored session without sets, so the score e2e reaches the score field through the sets (Squat + Fran).
 - Status: MERGED. Verifier pending. ws8-impl is notified (it derives logged days from `entries()` + `sessions()`).
 
+### WS9b — Evolution 5 plan gaps (WS9 verifier) — MERGED
+- Type: impl EM (ws9b-impl). Source: team/draft-plan.md §G, §C (holiday weeks), §F (ceilings).
+- PR #21, squash-merged as `d3b5ef2`. Final head `542f90d`. Branch deleted.
+- CI: PR runs 44309051931, 44310333790, 44311116437, 44312260566, and 44312963678 (final head). All green on typecheck, lint, unit 428, policy (including "plan matches a fresh generate" and plan:check 17 of 17), e2e 55/55 and evidence (today-week-4-checkpoint and today-week-5-body-comp inline).
+- Main run: 44313587826 on `d3b5ef2` failed e2e on both attempts (see Gotchas). The next main run, 44314179954 on `7856664` (the same tree plus one tracker line), succeeded with e2e 55/55, including the two new Today tests. Vercel: success on `d3b5ef2`.
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws9b` at `542f90d`, after the final rebase onto `d1a66ae`. Logs are PR comments.
+- Reviews: none, 0 threads.
+- Public API:
+  - `#lib/domain/evolution.ts` adds `bodyCompWeeks` (1/5/9/13), `pushUpLadder`, `Rounding` and `bound(value, 'up'|'down', step)`.
+  - `clock(seconds, direction)` now takes a required direction. Sub-minute values show tenths (`0:16.4`).
+  - `weekLayout`, `mondayGirl`, `checkpointWeeks` and `qualityB` are unchanged.
+- Decisions:
+  - Body comp: a 1-min non-hard `warmup`-kind block, "Fasted, before eating: weight · tape". It comes first on Tuesday of weeks 1/5/9/13, the 11/17 baseline weekday (§A2/§A3). The PM approved 1 min, which keeps `Block.minutes` positive.
+  - §G checkpoint, weeks 4/8/12: §G names no day, so it goes on Tuesday, in the same session as the submax. The order is §A2's: press → submax → "Gymnastics maxes" (max L-sit, ring dips, push-ups against the 50/75/100 ladder). The maxes replace that day's skill block.
+  - The maxes are non-hard, like the weekly pull-up AMRAP, so hard days are unchanged.
+  - Push-ups have no baseline. The prescription shows 1 × 50 (the first ladder rung) and the note says max.
+  - Holiday weeks 3–4: the pull-up sets move to Wednesday, after the max set, with the moved easy session.
+  - Bounds round in the strict direction:
+    - "no faster than" paces round up.
+    - Pace ranges round inward.
+    - HR ceilings floor; range lows ceil.
+    - "≥ mi" bike targets ceil to 0.01.
+  - Plan changes from the rounding:
+    - 100 m 0:16 → 0:16.4.
+    - 3 × 10 8:49–8:54 → 8:49–8:53; 4 × 8 8:34–8:49 → 8:34–8:48.
+    - Bike 0.39 → 0.40 mi.
+    - With hrMax 190, Z1 HR <143 → <142.
+  - `plan-grid.ts`: the checkpoint press counts as a `max-l-sit` attempt, so the attempts are weeks 4/8/12/16.
+- Reported for the CEO, not changed: set loads round to the nearest 5 (WS2; the doc fixes only the TM floor); deload weeks cut run time ~10% (wk 7) and ~12% (wk 15), not 20%; warm-up jogs aren't counted in the +10% rule.
+- Gotchas:
+  - Main moved three times during the gate (ws5d, WS8, tracker). The WS8 merge conflicted in today.e2e.ts; both sides were kept.
+  - The main run's first attempt failed the untouched "Why this session" test on mobile-webkit; the same tree passed on the PR. The re-run failed the same way. The test opens 2026-12-07, which this PR doesn't change. Likely cause: on iPhone 15 the "Why this session" button sits under the fixed Start button and nav, so the tap can land on Start. This is unconfirmed; flagged to the PM, not fixed here (Today layout is WS4's).
+  - Playwright browsers aren't installed locally, so e2e ran in CI only.
+
 ### WS8 — desktop planning view — MERGED
 - Type: impl EM (ws8-impl). Design: Pass 3 (P3Plan, P3Progress), CEO-approved. Depends: WS4, WS5b, WS6/6b, WS9.
 - PR #20, squash-merged as `c1ed16c`. Head `ef8148d`. Branch deleted.
