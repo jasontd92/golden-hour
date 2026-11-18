@@ -1,9 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { dateRange, monthDay, weekdayName, weekdayShort } from '#lib/domain/calendar.ts';
+	import { addDays, dateRange, monthDay, weekdayName, weekdayShort } from '#lib/domain/calendar.ts';
 	import { planWeeks, type PlanSession } from '#lib/domain/plan.ts';
 	import { columnNames, planGrid, type GridDay } from '#lib/domain/plan-grid.ts';
 	import { focusDate, pickToday } from '#lib/domain/schedule.ts';
+	import { viewport } from '#lib/ui/viewport.svelte.ts';
 	import WeekSummary from './WeekSummary.svelte';
 
 	let {
@@ -24,7 +25,7 @@
 	const columns = $derived(columnNames(plan));
 	const home = $derived(focusDate(pickToday(plan, today)));
 	const homeWeek = $derived(plan.find((s) => s.date >= home)?.week ?? plan[0]?.week ?? 1);
-	const span = $derived(grid.length > 0 ? dateRange(grid[0]?.monday ?? '', grid.at(-1)?.days.at(-1)?.date ?? '') : '');
+	const span = $derived(grid.length > 0 ? dateRange(grid[0]?.monday ?? '', addDays(grid.at(-1)?.monday ?? '', 6)) : '');
 
 	let chosen = $state<Selection | null | undefined>();
 	const selection = $derived(chosen === undefined ? { kind: 'day' as const, date: home } : chosen);
@@ -153,6 +154,8 @@
 								{#if day.hard}<i class="dot" class:hollow={day.scaled}></i>{/if}
 								{#if day.test}
 									<span class="trunc">{day.test}</span>
+								{:else if day.moved}
+									<span class="trunc">{day.moved}</span>
 								{:else if day.holiday}
 									<span class="trunc muted">{day.holiday}</span>
 								{/if}
@@ -174,11 +177,11 @@
 					<WeekSummary {plan} week={selection.week} {logged} {today} />
 				{:else if selectedDay}
 					{@const label = `${weekdayName(selectedDay.date)}, ${monthDay(selectedDay.date)}${selectedDay.holiday ? ` · ${selectedDay.holiday}` : ''}`}
-					{#if selectedDay.session}
+					{#if selectedDay.session && viewport.hydrated}
 						{#key selectedDay.date}
 							{@render session(selectedDay.session, label, status(selectedDay.date))}
 						{/key}
-					{:else}
+					{:else if !selectedDay.session}
 						<p class="day-label">{label}</p>
 						<h2>Rest</h2>
 					{/if}

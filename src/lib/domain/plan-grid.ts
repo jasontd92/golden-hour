@@ -20,6 +20,7 @@ export interface GridDay {
 	hard: boolean;
 	scaled: boolean;
 	test: string | undefined;
+	moved: string | undefined;
 	holiday: string | undefined;
 }
 
@@ -112,6 +113,7 @@ const isScaled = (session: PlanSession) => isHardSession(session) && conditionin
 
 export function planGrid(plan: readonly PlanSession[]): GridWeek[] {
 	const weeks = [...new Set(plan.map((s) => s.week))].toSorted((a, b) => a - b);
+	const columns = columnNames(plan).map((name) => name.toLowerCase());
 	return weeks.map((week, i) => {
 		const sessions = plan.filter((s) => s.week === week);
 		const monday = mondayOf(sessions[0]?.date ?? '');
@@ -120,12 +122,14 @@ export function planGrid(plan: readonly PlanSession[]): GridWeek[] {
 		const days = weekdays.map((_, d) => {
 			const date = addDays(monday, d);
 			const session = sessions.find((s) => s.date === date);
+			const usual = session?.title.toLowerCase().includes(columns[d] ?? '') ?? true;
 			return {
 				date,
 				session,
 				hard: session ? isHardSession(session) : false,
 				scaled: session ? isScaled(session) : false,
 				test: session ? testLabel(session) : undefined,
+				moved: usual ? undefined : session?.title,
 				holiday: holidayName(date)
 			};
 		});

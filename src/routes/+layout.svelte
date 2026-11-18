@@ -8,11 +8,14 @@
 	import { appUpdate, watchServiceWorker } from '#lib/ui/service-worker.svelte.ts';
 	import DeskNav from '#lib/ui/DeskNav.svelte';
 	import TabBar from '#lib/ui/TabBar.svelte';
+	import Viewport from '#lib/ui/Viewport.svelte';
+	import { trackHydration } from '#lib/ui/viewport.svelte.ts';
 	import UpdatePrompt from '#lib/ui/UpdatePrompt.svelte';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
 
+	trackHydration();
 	trackToday();
 	watchServiceWorker();
 	keepSyncing();
@@ -21,9 +24,9 @@
 </script>
 
 <div class="shell" class:mid-session={midSession}>
-	{#if !midSession}<div data-view="desk"><DeskNav /></div>{/if}
+	{#if !midSession}<Viewport only="desk"><DeskNav /></Viewport>{/if}
 	{@render children()}
-	{#if !midSession}<div data-view="phone"><TabBar /></div>{/if}
+	{#if !midSession}<Viewport only="phone"><TabBar /></Viewport>{/if}
 	{#if appUpdate.ready && !midSession}<UpdatePrompt />{/if}
 </div>
 

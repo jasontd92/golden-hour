@@ -45,7 +45,7 @@ function niceStep(span: number): number {
 function ticksFor(values: readonly number[]): { ticks: number[]; domain: [number, number] } {
 	const low = Math.min(...values);
 	const high = Math.max(...values);
-	const step = niceStep(Math.max(high - low, 1));
+	const step = niceStep(Math.max(high - low, Math.abs(high) * 0.1, 1));
 	const first = Math.floor(low / step) * step;
 	const last = Math.ceil(high / step) * step;
 	const ticks: number[] = [];

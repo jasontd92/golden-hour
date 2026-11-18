@@ -21,7 +21,7 @@
 	<header>
 		<p class="day">{dayLabel}</p>
 		<svelte:element this={nested ? 'h2' : 'h1'} class="title">{session.title}</svelte:element>
-		<p class="minutes"><span class="num">{sessionMinutes(session)}</span> min{#if status} · {status}{/if}</p>
+		<p class="minutes"><span class="num">{sessionMinutes(session)}</span> min{status ? ` · ${status}` : ''}</p>
 	</header>
 	<svelte:element this={nested ? 'div' : 'main'} class="blocks">
 		{#each session.blocks as block, i (i)}
