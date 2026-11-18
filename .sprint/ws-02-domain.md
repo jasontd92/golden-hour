@@ -32,11 +32,11 @@ zod schemas and inferred types in `src/lib/domain/`. This is the single contract
   The other days are as in `.sprint/design/P2Week.dc.html`, with plausible detail. This is a PLACEHOLDER, replaced by the debate output.
 
 ## Acceptance criteria
-- [ ] Every line of `data/normalized/results.jsonl` and every entry in `workouts.json` and `lifts.json` parses (mechanical: a vitest test over the real files).
-- [ ] `week-01.json` parses (mechanical).
-- [ ] Calculator tests: `estimatedOneRm(225, 7)` → 277 (rounded), `wendlerSet(265, 0.85)` → 225, `trainingMax(295)` → 265 (rounded to 5) (mechanical).
-- [ ] `domain` has zero imports from outside `domain` and zod (mechanical: lint boundary).
-- [ ] A JSON Schema export (`pnpm schema:emit` → `schemas/*.json`) so the debate tooling can validate without TS (mechanical: the files exist and validate the fixture).
+- [x] Every line of `data/normalized/results.jsonl` and every entry in `workouts.json` and `lifts.json` parses (mechanical: a vitest test over the real files). Verifier: recounted 259/366/86; history.spec asserts `toStrictEqual(parse(x), x)` on strictObject schemas; a strict-to-strip mutant fails the unknown-keys test.
+- [x] `week-01.json` parses (mechanical). Verifier: plan.spec "parses without loss" passes; `pnpm plan:check` prints 1 plan files valid, EXIT 0.
+- [x] Calculator tests: `estimatedOneRm(225, 7)` → 277 (rounded), `wendlerSet(265, 0.85)` → 225, `trainingMax(295)` → 265 (rounded to 5) (mechanical). Verifier: 277 and 225 (65/75/85% → 170/200/225) pass. `trainingMax(295)` → 265 is SUPERSEDED by team/draft-plan.md §B FLOOR(0.85 × 1RM, 5) (PM scope ruling): the tests assert 250 by default and 265 at 0.9.
+- [x] `domain` has zero imports from outside `domain` and zod (mechanical: lint boundary). Verifier: non-spec domain imports are only zod and ./ files. Probe files importing node:fs, data/normalized, data/curated, yaml and svelte each got a golden-hour/layer-boundaries error.
+- [x] A JSON Schema export (`pnpm schema:emit` → `schemas/*.json`) so the debate tooling can validate without TS (mechanical: the files exist and validate the fixture). Verifier: re-emitting leaves a clean tree (6 files). A separate Ajv 2020 script accepts the fixture and rejects week 18 (maximum 17).
 
 ## Risks
 Over-modeling the prescription union. Add a variant only when a real session needs it, and use `freeText` otherwise.
