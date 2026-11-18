@@ -1,0 +1,3 @@
+- name: today
+  route: /
+  e2e: e2e/today.e2e.ts

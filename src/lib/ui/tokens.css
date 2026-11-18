@@ -1,0 +1,99 @@
+:root {
+	--bg-base: #06090b;
+	--bg-glass: #ffffff0d;
+	--border-glass: #ffffff1a;
+	--text-primary: #eef4f3;
+	--text-muted: #93a3a1;
+	--accent: #2fd8c6;
+	--accent-2: #2aa9c9;
+	--radius: 16px;
+	--blur: 16px;
+	--font-sans: 'Geist Variable', system-ui, sans-serif;
+	--font-mono: 'Geist Mono Variable', ui-monospace, monospace;
+	--ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+	--press-duration: 140ms;
+	--safe-top: env(safe-area-inset-top);
+	--safe-right: env(safe-area-inset-right);
+	--safe-bottom: env(safe-area-inset-bottom);
+	--safe-left: env(safe-area-inset-left);
+	color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	background: var(--bg-base);
+	overscroll-behavior: none;
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+}
+
+body {
+	margin: 0;
+	min-height: 100dvh;
+	padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
+	background: var(--bg-base);
+	color: var(--text-primary);
+	font-family: var(--font-sans);
+	font-weight: 400;
+	letter-spacing: 0;
+	-webkit-font-smoothing: antialiased;
+	-webkit-tap-highlight-color: transparent;
+	touch-action: manipulation;
+	overscroll-behavior: none;
+}
+
+h1,
+h2,
+h3 {
+	margin: 0;
+	font-weight: 650;
+	letter-spacing: -0.02em;
+}
+
+.num {
+	font-family: var(--font-mono);
+	font-variant-numeric: tabular-nums;
+}
+
+input,
+select,
+textarea {
+	font: inherit;
+	font-size: 16px;
+}
+
+button,
+[role='button'],
+[role='tab'] {
+	font: inherit;
+	color: inherit;
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+	transition: transform var(--press-duration) var(--ease-out);
+}
+
+button:active,
+[role='button']:active,
+[role='tab']:active {
+	transform: scale(0.97);
+}
+
+:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		transition-duration: 0ms !important;
+		animation-duration: 0ms !important;
+	}
+}
