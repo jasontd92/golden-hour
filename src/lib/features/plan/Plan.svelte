@@ -2,7 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import { addDays, dateRange, monthDay, weekdayName, weekdayShort } from '#lib/domain/calendar.ts';
 	import { planWeeks, type PlanSession } from '#lib/domain/plan.ts';
-	import { columnNames, planGrid, type GridDay } from '#lib/domain/plan-grid.ts';
+	import { columnHeader, columnNames, planGrid, type GridDay } from '#lib/domain/plan-grid.ts';
 	import { focusDate, pickToday } from '#lib/domain/schedule.ts';
 	import { viewport } from '#lib/ui/viewport.svelte.ts';
 	import WeekSummary from './WeekSummary.svelte';
@@ -111,9 +111,9 @@
 				<span role="columnheader"><span class="visually-hidden">Phase</span></span>
 				<span role="columnheader"><span class="visually-hidden">Week</span></span>
 				{#each columns as name, d (d)}
-					<span role="columnheader" class="column">
+					<span role="columnheader" class="column" title={name}>
 						<span class="muted">{weekdayShort(grid[0]?.days[d]?.date ?? '')}</span>
-						<span class="trunc">{name}</span>
+						<span class="trunc">{columnHeader(name)}</span>
 					</span>
 				{/each}
 			</div>
@@ -152,12 +152,8 @@
 								onclick={() => select(row, col)}
 							>
 								{#if day.hard}<i class="dot" class:hollow={day.scaled}></i>{/if}
-								{#if day.test}
-									<span class="trunc">{day.test}</span>
-								{:else if day.moved}
-									<span class="trunc">{day.moved}</span>
-								{:else if day.holiday}
-									<span class="trunc muted">{day.holiday}</span>
+								{#if day.label}
+									<span class="trunc" class:muted={!day.test && !day.moved}>{day.label}</span>
 								{/if}
 							</button>
 						</span>

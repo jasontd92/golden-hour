@@ -1,14 +1,15 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { PlanWeek, type Block, type Prescription } from '#lib/domain/plan.ts';
-import { blockLines, distance, duration, movementLine } from './prescription-lines.ts';
+import { dayLog, type LogRecord, type SessionRecord } from '#lib/domain/log.ts';
+import { blockLines, distance, duration, loggedText, movementLine } from './prescription-lines.ts';
 
 const planWeek = (week: string) => PlanWeek.parse(JSON.parse(readFileSync(`plan/week-${week}.json`, 'utf8')));
 const blockNamed = (week: string, date: string, name: string) =>
 	planWeek(week)
 		.find((s) => s.date === date)
 		?.blocks.find((b) => b.name === name);
-const linesOf = (block: Block | undefined) => (block ? blockLines(block) : []);
+const linesOf = (block: Block | undefined) => (block ? blockLines(block).map(({ text, tone }) => ({ text, tone })) : []);
 const work = (name: string, prescriptions: Prescription[], notes?: string): Block => ({
 	name,
 	kind: 'metcon',
@@ -55,6 +56,55 @@ describe('blockLines', () => {
 
 	it('keeps free text quiet', () => {
 		expect(linesOf(blockNamed('01', '2026-12-07', 'Cool-down'))).toEqual([{ text: 'Easy walk · stretch', tone: 'quiet' }]);
+	});
+});
+
+const set = (blockIndex: number, setIndex: number, reps: number, minute = 0, prescriptionIndex = 0): LogRecord => ({
+	id: `01938a5e-0000-7000-8000-${String(prescriptionIndex * 1000 + blockIndex * 100 + setIndex * 10 + minute).padStart(12, '0')}`,
+	sessionDate: '2026-12-07',
+	blockIndex,
+	prescriptionIndex,
+	setIndex,
+	movement: 'back_squat',
+	reps,
+	loggedAt: `2026-12-07T10:0${minute}:00Z`,
+	deviceId: 'd',
+	revision: 1
+});
+
+const sessionRecord = (score?: SessionRecord['score']): SessionRecord => ({
+	kind: 'session',
+	id: '01938a5e-0000-7000-8000-000000009999',
+	sessionDate: '2026-12-07',
+	rpe: 8,
+	...(score ? { score } : {}),
+	loggedAt: '2026-12-07T11:00:00Z',
+	deviceId: 'd',
+	revision: 1
+});
+
+describe('loggedText', () => {
+	const squat = blockNamed('01', '2026-12-07', 'Back squat');
+
+	it('puts the logged reps beside each set line, and every set of a collapsed group on its line', () => {
+		if (!squat) throw new Error('no squat block');
+		const log = dayLog([set(1, 0, 5), set(1, 1, 5), set(1, 2, 7), set(1, 0, 5, 3, 1), set(1, 1, 4, 4, 1)], '2026-12-07');
+		expect(blockLines(squat).map((line) => loggedText(line, 1, log))).toEqual(['✓ 5', '✓ 5', '✓ 7', '✓ 5/4']);
+	});
+
+	it('shows nothing for sets that are not logged, and the latest of a set logged twice', () => {
+		if (!squat) throw new Error('no squat block');
+		const log = dayLog([set(1, 2, 9, 2), set(1, 2, 6, 1)], '2026-12-07');
+		expect(blockLines(squat).map((line) => loggedText(line, 1, log))).toEqual([undefined, undefined, '✓ 9', undefined]);
+		expect(blockLines(squat).map((line) => loggedText(line, 0, log))).toEqual([undefined, undefined, undefined, undefined]);
+	});
+
+	it("puts the session score on the scored prescription's first line", () => {
+		const fran = work('Fran', [{ kind: 'forTime', rounds: 1, movements: [{ movement: 'thruster', reps: 21, load: 95 }] }]);
+		const log = dayLog([sessionRecord({ blockIndex: 2, prescriptionIndex: 0, type: 'time', value: 283 })], '2026-12-07');
+		expect(blockLines(fran).map((line) => loggedText(line, 2, log))).toEqual(['✓ 4:43', undefined]);
+		expect(blockLines(fran).map((line) => loggedText(line, 1, log))).toEqual([undefined, undefined]);
+		expect(blockLines(fran).map((line) => loggedText(line, 2, dayLog([sessionRecord()], '2026-12-07')))).toEqual([undefined, undefined]);
 	});
 });
 

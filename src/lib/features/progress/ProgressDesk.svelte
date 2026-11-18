@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { monthDay } from '#lib/domain/calendar.ts';
 	import { planWeeks, type PlanSession } from '#lib/domain/plan.ts';
 	import { nextAttempt } from '#lib/domain/plan-grid.ts';
 	import type { ProgressDetail } from '#lib/domain/progress-detail.ts';
@@ -48,7 +49,7 @@
 	<section aria-label="Results">
 		<header>
 			<p>
-				Evolution 5 · {week < 1 ? `starts ${firstMonday}` : week > planWeeks ? 'done' : `week ${week} of ${planWeeks}`}
+				Evolution 5 · {week < 1 ? `starts ${monthDay(firstMonday)}` : week > planWeeks ? 'done' : `week ${week} of ${planWeeks}`}
 			</p>
 			<h1>Progress</h1>
 		</header>

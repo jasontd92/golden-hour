@@ -1,9 +1,17 @@
 <script lang="ts">
+	import type { DayLog } from '#lib/domain/log.ts';
 	import type { Block } from '#lib/domain/plan.ts';
 	import HardDot from '#lib/ui/HardDot.svelte';
-	import { blockLines } from './prescription-lines.ts';
+	import { blockLines, loggedText } from './prescription-lines.ts';
 
-	let { block, id, open, ontoggle }: { block: Block; id: string; open: boolean; ontoggle: () => void } = $props();
+	let {
+		block,
+		blockIndex,
+		log,
+		id,
+		open,
+		ontoggle
+	}: { block: Block; blockIndex: number; log?: DayLog; id: string; open: boolean; ontoggle: () => void } = $props();
 </script>
 
 <div class="block">
@@ -15,7 +23,15 @@
 	{#if open}
 		<div class="lines" {id}>
 			{#each blockLines(block) as line, i (i)}
-				<p class={line.tone}>{line.text}</p>
+				{@const logged = log ? loggedText(line, blockIndex, log) : undefined}
+				{#if logged}
+					<p class="{line.tone} with-log">
+						<span>{line.text}</span>
+						<span class="logged num">{logged}</span>
+					</p>
+				{:else}
+					<p class={line.tone}>{line.text}</p>
+				{/if}
 			{/each}
 		</div>
 	{/if}
@@ -70,6 +86,21 @@
 	}
 
 	.quiet {
+		color: var(--text-muted);
+	}
+
+	.with-log {
+		display: flex;
+		gap: 12px;
+	}
+
+	.with-log > :first-child {
+		flex: 1;
+	}
+
+	.logged {
+		font-size: 14px;
+		font-weight: 400;
 		color: var(--text-muted);
 	}
 

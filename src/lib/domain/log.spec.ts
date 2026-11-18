@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LogEntry, LogRecord, SessionRecord, SyncRequest, syncBatchLimit } from './log.ts';
+import { dayLog, LogEntry, LogRecord, SessionRecord, SyncRequest, syncBatchLimit } from './log.ts';
 
 const entry = {
 	id: '019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e5f',
@@ -85,5 +85,26 @@ describe('SessionRecord', () => {
 		const { kind, ...withoutKind } = session;
 		expect(SyncRequest.safeParse({ records: [session] }).success).toBe(true);
 		expect(SyncRequest.safeParse({ records: [withoutKind] }).success).toBe(false);
+	});
+});
+
+describe('dayLog', () => {
+	it("splits one day's records into sets in logged order and the latest session record", () => {
+		const record = LogRecord.parse({ ...entry, revision: 1 });
+		const later = { ...record, id: '019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e60', reps: 5, loggedAt: '2026-12-08T00:50:00Z' };
+		const otherDay = { ...record, id: '019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e61', sessionDate: '2026-12-08' };
+		const session = (id: string, rpe: number, loggedAt: string): SessionRecord => ({
+			kind: 'session',
+			id,
+			sessionDate: '2026-12-07',
+			rpe,
+			loggedAt,
+			deviceId: 'phone-1',
+			revision: 1
+		});
+		const first = session('019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e62', 6, '2026-12-07T18:00:00-07:00');
+		const second = session('019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e63', 8, '2026-12-08T02:00:00Z');
+		expect(dayLog([later, second, otherDay, first, record], '2026-12-07')).toEqual({ sets: [record, later], session: second });
+		expect(dayLog([otherDay], '2026-12-07')).toEqual({ sets: [], session: undefined });
 	});
 });

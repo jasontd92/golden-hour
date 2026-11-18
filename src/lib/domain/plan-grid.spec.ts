@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { PlanWeek, type PlanSession } from './plan.ts';
 import {
 	attemptDates,
+	columnHeader,
 	columnNames,
 	loggedDates,
 	nextAttempt,
@@ -51,10 +52,39 @@ describe('planGrid', () => {
 		expect(day('2026-12-25')).toMatchObject({ session: undefined, holiday: 'Christmas' });
 		expect(day('2027-01-01')).toMatchObject({ session: undefined, holiday: "New Year's" });
 		expect(day('2027-03-22')?.test).toBe('CFT');
-		expect(day('2026-12-24')).toMatchObject({ test: undefined, moved: 'Deadlift + bike' });
-		expect(day('2026-12-23')?.moved).toBe('Z1 run + gymnastics');
+		expect(day('2026-12-24')).toMatchObject({ test: undefined, moved: 'Deadlift' });
+		expect(day('2026-12-23')?.moved).toBe('Gymnastics');
 		expect(day('2026-12-11')?.moved).toBeUndefined();
 		expect(day('2027-04-02')?.session).toBeUndefined();
+	});
+});
+
+describe('cell labels', () => {
+	const labels = (week: number) =>
+		planGrid(plan)
+			.find((w) => w.week === week)
+			?.days.map((d) => d.label ?? '');
+
+	it('show a test beside the session that moved in with it', () => {
+		expect(labels(3)).toEqual(['', '', 'Gymnastics', 'Deadlift', 'Christmas', '']);
+		expect(labels(4)).toEqual(['Grace', 'Submax', 'Gymnastics', 'Mile TT · DL', "New Year's", '']);
+		expect(labels(8)).toEqual(['Fran', 'Submax', '', '', 'Mile TT', '']);
+	});
+
+	it('keep retest labels alone, since their sessions replace the week', () => {
+		expect(labels(16)).toEqual(['CFT', 'Submax', '400 m, Grace', 'Bike 2 mi', 'Mile, Cindy', 'Cunningham']);
+	});
+
+	it('fall back to the title when a moved session matches no column', () => {
+		const week = plan.filter((s) => s.week === 1);
+		const moved = week.map((s) => (s.date === '2026-12-10' ? { ...s, title: 'Swim' } : s));
+		expect(planGrid([...moved, ...plan.filter((s) => s.week !== 1)])[0]?.days[3]?.label).toBe('Swim');
+	});
+});
+
+describe('columnHeader', () => {
+	it('keeps the words that fit a cell header', () => {
+		expect(columnNames(plan).map(columnHeader)).toEqual(['Squat', 'Press', 'Threshold', 'Gymnastics', 'Deadlift', 'Long run']);
 	});
 });
 
