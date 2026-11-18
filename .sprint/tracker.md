@@ -217,7 +217,17 @@ Explicitly cut, so don't reintroduce:
   - (2) Reject score strings with non-ASCII digits, BOM or control characters, failing loudly in the build.
   - (3) Accepted, and recorded here.
 
-### WS3b — data build hardening — NOT STARTED
+### WS3b — data build hardening — MERGED
+- PR #9, squash-merged as `87fed7d`. Head `a47c6ab`. Branch deleted.
+- CI: PR runs 44228279582 and 44228489769 (after rebase on `8d41ec2`) green (typecheck, lint, unit, policy, e2e, evidence). Main run 44228686106 success; Vercel production success on `87fed7d`; production 200.
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws3b` at `a47c6ab` (227 tests). `pnpm data:build` gives zero diff in `data/normalized`. Logs are PR comments.
+- Reviews: none, 0 threads.
+- Decisions:
+  - (1) Reject over preserve. `parsePythonJson(text, origin)` throws on any non-array key matching `^\d+$`, naming the origin (the curated file, or `sugarwod#rowN set_details`) and the key. Since JS has already reordered the keys, the message names the first key in JS order (e.g. "1", not "10").
+  - (2) Score strings (curated `score`, SugarWOD `best_result_display`/`best_result_raw`) must be printable ASCII U+0020–U+007E. Otherwise the build throws, naming the record (`curated/results.json[i] (workout date)` or `sugarwod#rowN column`) and the code point. Today's data has no such characters.
+  - (3) Accepted per the ruling; no work.
+- Tests: `scripts/data-build.spec.ts` builds perturbed copies of `data/curated` and `data/raw/sugarwod` in a temp root. It covers the integer-key case (curated splits and set_details), Arabic-Indic and full-width digits, BOM, `\x1c`, `\x85` and NBSP, plus SugarWOD display/raw. Mutation proof (in the PR body): removing the key guard fails 2 tests; removing the score guard fails 8.
+- Gotchas: a fixture built with `JSON.stringify` already reorders integer keys, so the integer-key fixture is written as raw text.
 
 ### WS5a — logging data layer + sync — NOT STARTED
 ### WS5b — log UI — NOT STARTED (after WS4)
