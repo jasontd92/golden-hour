@@ -16,10 +16,15 @@ export function pythonFloat(text: string): PyFloat {
 	return new PyFloat(Number(text));
 }
 
-export function parsePythonJson(text: string): unknown {
-	return JSON.parse(text, (_key, value: unknown, context?: { source?: string }) =>
-		typeof value === 'number' && /[.eE]/.test(context?.source ?? '') ? new PyFloat(value) : value
-	);
+const integerLikeKey = /^\d+$/;
+
+export function parsePythonJson(text: string, origin: string): unknown {
+	return JSON.parse(text, function (this: unknown, key: string, value: unknown, context?: { source?: string }) {
+		if (!Array.isArray(this) && integerLikeKey.test(key)) {
+			throw new Error(`${origin}: object key ${JSON.stringify(key)} is integer-like, which JS reorders; rename it`);
+		}
+		return typeof value === 'number' && /[.eE]/.test(context?.source ?? '') ? new PyFloat(value) : value;
+	});
 }
 
 export function floatRepr(n: number): string {

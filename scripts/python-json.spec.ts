@@ -33,7 +33,7 @@ describe('pythonJsonDumps matches json.dumps', () => {
 	});
 
 	it('round-trips float literals from parsed JSON', () => {
-		expect(pythonJsonDumps(parsePythonJson('[1, 1.0, 1e2, 2.5]'))).toBe('[1, 1.0, 100.0, 2.5]');
+		expect(pythonJsonDumps(parsePythonJson('[1, 1.0, 1e2, 2.5]', 'test'))).toBe('[1, 1.0, 100.0, 2.5]');
 	});
 });
 
