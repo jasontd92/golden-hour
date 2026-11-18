@@ -44,6 +44,8 @@ jobs:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup
       - run: pnpm policy
+      - name: normalized data matches a fresh build
+        run: pnpm data:build && git diff --exit-code data/normalized
 
   e2e:
     runs-on: ubuntu-latest

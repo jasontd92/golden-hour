@@ -13,7 +13,7 @@ const results = read('results.jsonl')
 	.map((line) => Result.parse(JSON.parse(line)));
 const typeOf = (workout: string): ScoreType => scoreType.get(workout) ?? 'text';
 
-describe('parseClock matches build.py parse_time', () => {
+describe('parseClock', () => {
 	it.each([
 		['7:10', 430],
 		['1:04.95', 64.95],
@@ -25,7 +25,7 @@ describe('parseClock matches build.py parse_time', () => {
 	])('%s → %s', (text, seconds) => expect(parseClock(text)).toBe(seconds));
 });
 
-describe('parseScore matches build.py canonical', () => {
+describe('parseScore', () => {
 	it.each<[string | number, ScoreType, ReturnType<typeof parseScore>]>([
 		['46:18', 'time', { value: 2778, unit: 's' }],
 		['4+32', 'rounds_reps', { value: 4.032, unit: 'rounds.reps' }],
