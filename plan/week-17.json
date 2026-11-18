@@ -1,0 +1,231 @@
+[
+	{
+		"date": "2027-03-29",
+		"week": 17,
+		"title": "10k",
+		"why": "The 10k anchors the next evolution’s paces. Its last 20 minutes’ HR is the threshold proxy.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 15,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "General warm-up · build to test effort" }
+				]
+			},
+			{
+				"name": "10k",
+				"kind": "conditioning",
+				"minutes": 55,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "forTime",
+						"rounds": 1,
+						"movements": [
+							{ "movement": "run", "meters": 10000 }
+						]
+					}
+				],
+				"notes": "Log avg HR over the last 20 min"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Easy walk · stretch" }
+				]
+			}
+		]
+	},
+	{
+		"date": "2027-03-30",
+		"week": 17,
+		"title": "Amanda",
+		"why": "Amanda at the rec center, for the muscle-ups.",
+		"location": "rec",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 15,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "General warm-up · build to test effort" }
+				]
+			},
+			{
+				"name": "Amanda",
+				"kind": "metcon",
+				"minutes": 15,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "forTime",
+						"rounds": 1,
+						"movements": [
+							{ "movement": "muscle_up", "reps": 9 },
+							{ "movement": "squat_snatch", "load": 135, "reps": 9 },
+							{ "movement": "muscle_up", "reps": 7 },
+							{ "movement": "squat_snatch", "load": 135, "reps": 7 },
+							{ "movement": "muscle_up", "reps": 5 },
+							{ "movement": "squat_snatch", "load": 135, "reps": 5 }
+						]
+					}
+				],
+				"notes": "Same standard as before"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Easy walk · stretch" }
+				]
+			}
+		]
+	},
+	{
+		"date": "2027-03-31",
+		"week": 17,
+		"title": "Row 5k",
+		"why": "The row 5k at the rec center, the long test on a third machine.",
+		"location": "rec",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 15,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "General warm-up · build to test effort" }
+				]
+			},
+			{
+				"name": "Row 5k",
+				"kind": "conditioning",
+				"minutes": 22,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "forTime",
+						"rounds": 1,
+						"movements": [
+							{ "movement": "row", "meters": 5000 }
+						]
+					}
+				]
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Easy walk · stretch" }
+				]
+			}
+		]
+	},
+	{
+		"date": "2027-04-01",
+		"week": 17,
+		"title": "Fran",
+		"why": "Fran comes the day after the row this time, not after rest: read the comparison with that in mind.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 15,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "General warm-up · build to test effort" }
+				]
+			},
+			{
+				"name": "Fran",
+				"kind": "metcon",
+				"minutes": 10,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "forTime",
+						"rounds": 1,
+						"movements": [
+							{ "movement": "thruster", "load": 95, "reps": 21 },
+							{ "movement": "pull_up", "reps": 21 },
+							{ "movement": "thruster", "load": 95, "reps": 15 },
+							{ "movement": "pull_up", "reps": 15 },
+							{ "movement": "thruster", "load": 95, "reps": 9 },
+							{ "movement": "pull_up", "reps": 9 }
+						]
+					}
+				],
+				"notes": "Same pull-up style and load as before"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Easy walk · stretch" }
+				]
+			}
+		]
+	},
+	{
+		"date": "2027-04-03",
+		"week": 17,
+		"title": "Diane",
+		"why": "Diane moves to Saturday this time: read the comparison with that in mind.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 15,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "General warm-up · build to test effort" }
+				]
+			},
+			{
+				"name": "Diane",
+				"kind": "metcon",
+				"minutes": 12,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "forTime",
+						"rounds": 1,
+						"movements": [
+							{ "movement": "deadlift", "load": 225, "reps": 21 },
+							{ "movement": "hspu", "reps": 21 },
+							{ "movement": "deadlift", "load": 225, "reps": 15 },
+							{ "movement": "hspu", "reps": 15 },
+							{ "movement": "deadlift", "load": 225, "reps": 9 },
+							{ "movement": "hspu", "reps": 9 }
+						]
+					}
+				],
+				"notes": "Same standard as before"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Easy walk · stretch" }
+				]
+			}
+		]
+	}
+]

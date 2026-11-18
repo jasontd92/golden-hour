@@ -1,0 +1,304 @@
+[
+	{
+		"date": "2027-03-22",
+		"week": 16,
+		"title": "CrossFit Total + pull-ups",
+		"why": "The retest opens with the CrossFit Total, done to November’s standard.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 15,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "General warm-up · build to test effort" }
+				]
+			},
+			{
+				"name": "CrossFit Total",
+				"kind": "strength",
+				"minutes": 40,
+				"hard": true,
+				"prescriptions": [
+					{ "kind": "fixedSets", "movement": "back_squat", "sets": 1, "reps": 1 },
+					{ "kind": "fixedSets", "movement": "shoulder_press", "sets": 1, "reps": 1 },
+					{ "kind": "fixedSets", "movement": "deadlift", "sets": 1, "reps": 1 }
+				],
+				"notes": "Up to 3 attempts per lift"
+			},
+			{
+				"name": "Strict pull-ups",
+				"kind": "skill",
+				"minutes": 5,
+				"hard": true,
+				"prescriptions": [
+					{ "kind": "fixedSets", "movement": "pull_up", "sets": 1, "reps": 13 }
+				],
+				"notes": "One unbroken strict set to failure"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Easy walk · stretch" }
+				]
+			}
+		]
+	},
+	{
+		"date": "2027-03-23",
+		"week": 16,
+		"title": "Submax + gymnastics tests",
+		"why": "Body comp and the submax run under November’s conditions, then the max L-sit and ring dips.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Submax run",
+				"kind": "conditioning",
+				"minutes": 30,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "steady", "movement": "run", "minutes": 30 }
+				],
+				"notes": "Body comp first: fasted weight, tape. Treadmill 1% · 9:49/mi fixed · log avg HR and RPE"
+			},
+			{
+				"name": "Gymnastics tests",
+				"kind": "skill",
+				"minutes": 10,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "intervals",
+						"rounds": 1,
+						"restSeconds": 0,
+						"movements": [
+							{ "movement": "l_sit", "seconds": 25 }
+						]
+					}
+				],
+				"notes": "One max L-sit hold, then max unbroken ring dips"
+			}
+		]
+	},
+	{
+		"date": "2027-03-24",
+		"week": 16,
+		"title": "400 m + Grace",
+		"why": "The 400 pairs with Friday’s mile for the fatigue factor. Grace follows after at least 20 minutes.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 15,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "General warm-up · build to test effort" }
+				]
+			},
+			{
+				"name": "400 m",
+				"kind": "conditioning",
+				"minutes": 5,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "forTime",
+						"rounds": 1,
+						"movements": [
+							{ "movement": "run", "meters": 400 }
+						]
+					}
+				],
+				"notes": "Same surface as before · log peak HR"
+			},
+			{
+				"name": "Grace",
+				"kind": "metcon",
+				"minutes": 25,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "forTime",
+						"rounds": 1,
+						"movements": [
+							{ "movement": "clean_and_jerk", "load": 135, "reps": 30 }
+						]
+					}
+				],
+				"notes": "At least 20 min after the 400 · same standard as before"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Easy walk · stretch" }
+				]
+			}
+		]
+	},
+	{
+		"date": "2027-03-25",
+		"week": 16,
+		"title": "2-mile bike",
+		"why": "The 2-mile assault bike sets peak HR and the bike pace for the next evolution.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 15,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "General warm-up · build to test effort" }
+				]
+			},
+			{
+				"name": "2-mile bike",
+				"kind": "conditioning",
+				"minutes": 8,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "forTime",
+						"rounds": 1,
+						"movements": [
+							{ "movement": "bike", "meters": 3219 }
+						]
+					}
+				],
+				"notes": "Log peak HR"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Easy walk · stretch" }
+				]
+			}
+		]
+	},
+	{
+		"date": "2027-03-26",
+		"week": 16,
+		"title": "Mile + Cindy",
+		"why": "The mile completes the 400–mile pair. Cindy follows after at least 20 minutes.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 15,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "General warm-up · build to test effort" }
+				]
+			},
+			{
+				"name": "Mile",
+				"kind": "conditioning",
+				"minutes": 10,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "forTime",
+						"rounds": 1,
+						"movements": [
+							{ "movement": "run", "meters": 1609 }
+						]
+					}
+				],
+				"notes": "Even effort, all out · log peak HR"
+			},
+			{
+				"name": "Cindy",
+				"kind": "metcon",
+				"minutes": 40,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "amrap",
+						"minutes": 20,
+						"movements": [
+							{ "movement": "pull_up", "reps": 5 },
+							{ "movement": "push_up", "reps": 10 },
+							{ "movement": "air_squat", "reps": 15 }
+						]
+					}
+				],
+				"notes": "At least 20 min after the mile"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Easy walk · stretch" }
+				]
+			}
+		]
+	},
+	{
+		"date": "2027-03-27",
+		"week": 16,
+		"title": "Jason Cunningham",
+		"why": "The long loaded test, done as in 2023.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 15,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "General warm-up · build to test effort" }
+				]
+			},
+			{
+				"name": "Jason Cunningham",
+				"kind": "metcon",
+				"minutes": 45,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "forTime",
+						"rounds": 10,
+						"movements": [
+							{ "movement": "run", "meters": 200 },
+							{ "movement": "bear_complex", "load": 115, "reps": 3 },
+							{ "movement": "burpee", "reps": 4 }
+						]
+					},
+					{
+						"kind": "forTime",
+						"rounds": 1,
+						"movements": [
+							{ "movement": "front_squat", "load": 115, "reps": 26 },
+							{ "movement": "deadlift", "load": 115, "reps": 38 },
+							{ "movement": "run", "meters": 1609 }
+						]
+					}
+				],
+				"notes": "Burpees over the bar · the second part follows round 10"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Easy walk · stretch" }
+				]
+			}
+		]
+	}
+]

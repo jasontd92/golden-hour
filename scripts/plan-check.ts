@@ -1,9 +1,9 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
+import { evolutionWeeks } from '#lib/domain/evolution.ts';
 import { freeTextInWorkBlocks, PlanWeek } from '#lib/domain/plan.ts';
+import { planDir, weekFileName } from './plan-generate.ts';
 import { report } from './repo-files.ts';
-
-export const planDir = 'fixtures/plan';
 
 export function checkPlanFile(file: string): { problems: string[]; freeText: string[] } {
 	const parsed = PlanWeek.safeParse(JSON.parse(readFileSync(file, 'utf8')));
@@ -13,18 +13,25 @@ export function checkPlanFile(file: string): { problems: string[]; freeText: str
 			freeText: []
 		};
 	}
+	const week = parsed.data[0]?.week;
+	const expected = week === undefined ? undefined : weekFileName(week);
+	const problems = expected === path.basename(file) ? [] : [`${file}: holds week ${week}, so it should be named ${expected}`];
 	const freeText = freeTextInWorkBlocks(parsed.data).map((use) => `${file}: ${use.date} ${use.block}: freeText "${use.text}"`);
-	return { problems: [], freeText };
+	return { problems, freeText };
+}
+
+export function missingWeeks(names: string[]): string[] {
+	return Array.from({ length: evolutionWeeks }, (_, i) => weekFileName(i + 1))
+		.filter((name) => !names.includes(name))
+		.map((name) => `${planDir}/${name}: missing`);
 }
 
 if (import.meta.main) {
-	const files = readdirSync(planDir)
-		.filter((name) => name.endsWith('.json'))
-		.map((name) => path.join(planDir, name));
-	const results = files.map(checkPlanFile);
+	const names = readdirSync(planDir).filter((name) => name.startsWith('week-'));
+	const results = names.map((name) => checkPlanFile(path.join(planDir, name)));
 	for (const line of results.flatMap((r) => r.freeText)) console.log(line);
 	report(
-		results.flatMap((r) => r.problems),
-		`plan:check: ${files.length} plan files valid`
+		[...missingWeeks(names), ...results.flatMap((r) => r.problems)],
+		`plan:check: ${names.length} of ${evolutionWeeks} plan weeks valid`
 	);
 }

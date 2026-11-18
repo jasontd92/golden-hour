@@ -15,16 +15,26 @@ const quiet = (text: string): Line => ({ text, tone: 'quiet' });
 const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 const label = (movement: MovementId, count: number) => movementLabels[movement][count === 1 ? 0 : 1];
 
+const metersPerMile = 1609.344;
+
+export function distance(meters: number): string {
+	const miles = Math.round(meters / metersPerMile);
+	if (miles >= 1 && Math.abs(miles * metersPerMile - meters) < 1) return `${miles} mi`;
+	return meters >= 1000 && meters % 1000 === 0 ? `${meters / 1000} km` : `${meters} m`;
+}
+
+export const duration = (seconds: number) => (seconds >= 60 && seconds % 60 === 0 ? `${seconds / 60} min` : `${seconds} s`);
+
 export function movementLine(work: MovementWork): string {
 	const name = movementLabels[work.movement][0];
 	const amount =
 		'reps' in work
 			? `${work.reps} ${label(work.movement, work.reps)}`
 			: 'meters' in work
-				? `${work.meters} m ${name}`
+				? `${distance(work.meters)} ${name}`
 				: 'calories' in work
 					? `${work.calories} cal ${name}`
-					: `${work.seconds} s ${name}`;
+					: `${duration(work.seconds)} ${name}`;
 	const load = work.load === undefined ? '' : `, ${work.load} lb`;
 	const height = work.heightInches === undefined ? '' : `, ${work.heightInches}"`;
 	return amount + load + height;
@@ -54,7 +64,8 @@ function schemeHeader(p: Prescription): string | undefined {
 			return p.timeCapMinutes === undefined ? scheme : `${scheme} · ${p.timeCapMinutes} min cap`;
 		}
 		case 'intervals':
-			return p.restSeconds === 0 ? `${p.rounds} rounds` : `${p.rounds} rounds · ${p.restSeconds} s rest`;
+			if (p.restSeconds === 0) return p.rounds === 1 ? undefined : `${p.rounds} rounds`;
+			return `${p.rounds} rounds · ${duration(p.restSeconds)} rest`;
 		default:
 			return undefined;
 	}

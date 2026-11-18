@@ -46,6 +46,8 @@ jobs:
       - run: pnpm policy
       - name: normalized data matches a fresh build
         run: pnpm data:build && git diff --exit-code data/normalized
+      - name: plan matches a fresh generate
+        run: pnpm plan:generate && git diff --exit-code plan
 
   e2e:
     runs-on: ubuntu-latest

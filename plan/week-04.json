@@ -1,0 +1,299 @@
+[
+	{
+		"date": "2026-12-28",
+		"week": 4,
+		"title": "Squat + Grace",
+		"why": "Leader block: 5s at every step and 5 × 5 at the first weight build volume, with no PR set. A benchmark Girl after squats: compare it only with other in-plan Girls.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 10,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "General warm-up · 3 × 5 box jumps" }
+				]
+			},
+			{
+				"name": "Back squat",
+				"kind": "strength",
+				"minutes": 20,
+				"hard": false,
+				"prescriptions": [
+					{
+						"kind": "percentSets",
+						"lift": "back_squat",
+						"trainingMax": 225,
+						"sets": [
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.75, "reps": 5, "amrap": false },
+							{ "pct": 0.85, "reps": 5, "amrap": false }
+						]
+					},
+					{
+						"kind": "percentSets",
+						"lift": "back_squat",
+						"trainingMax": 225,
+						"sets": [
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false }
+						]
+					}
+				]
+			},
+			{
+				"name": "Grace",
+				"kind": "metcon",
+				"minutes": 10,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "forTime",
+						"rounds": 1,
+						"movements": [
+							{ "movement": "clean_and_jerk", "load": 135, "reps": 30 }
+						]
+					}
+				],
+				"notes": "Same standard as before"
+			},
+			{
+				"name": "Single-leg",
+				"kind": "strength",
+				"minutes": 8,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "fixedSets", "movement": "lunge", "sets": 3, "reps": 10 }
+				],
+				"notes": "Reps per leg"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Easy walk · stretch" }
+				]
+			}
+		]
+	},
+	{
+		"date": "2026-12-29",
+		"week": 4,
+		"title": "Press + submax test",
+		"why": "Press and gymnastics, then the submax checkpoint at November’s pace: a lower HR means aerobic gain.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 6,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "General warm-up · 3 × 5 plyo push-ups" }
+				]
+			},
+			{
+				"name": "Shoulder press",
+				"kind": "strength",
+				"minutes": 15,
+				"hard": false,
+				"prescriptions": [
+					{
+						"kind": "percentSets",
+						"lift": "shoulder_press",
+						"trainingMax": 140,
+						"sets": [
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.75, "reps": 5, "amrap": false },
+							{ "pct": 0.85, "reps": 5, "amrap": false }
+						]
+					},
+					{
+						"kind": "percentSets",
+						"lift": "shoulder_press",
+						"trainingMax": 140,
+						"sets": [
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false }
+						]
+					}
+				]
+			},
+			{
+				"name": "Gymnastics",
+				"kind": "skill",
+				"minutes": 8,
+				"hard": false,
+				"prescriptions": [
+					{
+						"kind": "intervals",
+						"rounds": 5,
+						"restSeconds": 30,
+						"movements": [
+							{ "movement": "l_sit", "seconds": 15 }
+						]
+					}
+				],
+				"notes": "Then ring dips: 4 sets of half your max"
+			},
+			{
+				"name": "Submax run",
+				"kind": "conditioning",
+				"minutes": 30,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "steady", "movement": "run", "minutes": 30 }
+				],
+				"notes": "Treadmill 1% · 9:49/mi fixed · log avg HR and RPE"
+			}
+		]
+	},
+	{
+		"date": "2026-12-30",
+		"week": 4,
+		"title": "Z1 bike + gymnastics",
+		"why": "Thursday’s easy session, a day early for the holiday, so the day before the deadlift stays easy. Quality A is skipped this week, not doubled.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Z1 bike",
+				"kind": "conditioning",
+				"minutes": 25,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "steady", "movement": "bike", "minutes": 25 }
+				],
+				"notes": "RPE ≤4 · HR <75% max"
+			},
+			{
+				"name": "Gymnastics",
+				"kind": "skill",
+				"minutes": 10,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "fixedSets", "movement": "hspu", "sets": 3, "reps": 5 }
+				],
+				"notes": "Pike or box HSPU until strict wall HSPU is solid"
+			},
+			{
+				"name": "Pull-up max",
+				"kind": "skill",
+				"minutes": 3,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "fixedSets", "movement": "pull_up", "sets": 1, "reps": 13 }
+				],
+				"notes": "One unbroken strict set to failure"
+			}
+		]
+	},
+	{
+		"date": "2026-12-31",
+		"week": 4,
+		"title": "Mile TT + deadlift",
+		"why": "Mile checkpoint, a day early for the holiday: it resets the speed paces. Deadlift follows with lighter supplemental work.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 10,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "5 min easy jog · drills · 4 strides" }
+				]
+			},
+			{
+				"name": "Mile time trial",
+				"kind": "conditioning",
+				"minutes": 10,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "forTime",
+						"rounds": 1,
+						"movements": [
+							{ "movement": "run", "meters": 1609 }
+						]
+					}
+				],
+				"notes": "Even effort, all out · log peak HR"
+			},
+			{
+				"name": "Deadlift",
+				"kind": "strength",
+				"minutes": 15,
+				"hard": false,
+				"prescriptions": [
+					{
+						"kind": "percentSets",
+						"lift": "deadlift",
+						"trainingMax": 290,
+						"sets": [
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.75, "reps": 5, "amrap": false },
+							{ "pct": 0.85, "reps": 5, "amrap": false }
+						]
+					},
+					{
+						"kind": "percentSets",
+						"lift": "deadlift",
+						"trainingMax": 290,
+						"sets": [
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false }
+						]
+					}
+				],
+				"notes": "Broad jumps 3 × 5 first"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Easy walk · stretch" }
+				]
+			}
+		]
+	},
+	{
+		"date": "2027-01-02",
+		"week": 4,
+		"title": "Long run",
+		"why": "The long Z1 run builds the aerobic base. Easy means easy: slower is fine.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Long run",
+				"kind": "conditioning",
+				"minutes": 73,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "steady", "movement": "run", "minutes": 73 }
+				],
+				"notes": "9:49/mi or slower · HR <75% max · RPE ≤3"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Walk · calf and hip stretch" }
+				]
+			}
+		]
+	}
+]
