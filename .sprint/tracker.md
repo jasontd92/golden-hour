@@ -393,7 +393,56 @@ Explicitly cut, so don't reintroduce:
 ### Fixture cleanup (fold into the debate output)
 - week-01.json: hard days and Monday TM 265/AMRAP don't match the plan. The notes repeat the structured sets, so drop the duplicate notes. The real plan JSON from the debate replaces the fixture.
 
-### WS5b — log UI — IN PROGRESS (ws5b-impl)
+### WS5b — log UI — MERGED
+- Type: impl EM (ws5b-impl). Doc: ws-05-logging-sync.md (the log UI and the UI e2e). Depends: WS4 (Start seam), WS5a (store, outbox).
+- PR #12, squash-merged as `2d3f61f`. Head `8c451d5`. Branch deleted.
+- CI:
+  - PR runs 44230526746 (e2e red: a WebKit test-order bug, see gotchas), then 44261014714, 44261427724, 44261800750 and 44262136918 (final head): all green (typecheck, lint, unit, policy, e2e 34/34 = 17 tests × mobile-webkit + mobile-chromium, evidence).
+  - main: 44262422906 on `2d3f61f` was cancelled (superseded in the concurrency group); 44262424688 on the tip `d6959ad`, which contains it, succeeded. Vercel success on `2d3f61f`.
+  - Production `/`, `/log/2026-12-07` and `/sync` return 200, and Start is live.
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws5b` at `8c451d5` after the final rebase onto `7f9a0cc` (298 unit tests). Logs are PR comments.
+- Reviews: none, 0 threads. Codex has still never posted.
+- Public API (all in `#lib/features/log/`):
+  - `steps.ts`: `logSteps(session)` → `LogStep[]` (percentSets and fixedSets only, in plan order), `stepTitle`, `repsTarget`, `nextLabel`, `loggedAt(steps, records)`.
+  - `flow.svelte.ts`: `LogFlow`, the state machine (resume / less / more / done / undo / advance), with injected store, clock and rest memory. No effects or timers.
+  - `rest.ts`: `restSeconds` (90), `rememberedRest` / `rememberRest` (localStorage `golden-hour.rest`, `{sessionDate, entryId, endsAt}`), `restLeftSeconds`, `formatRest`, `wallClock`.
+  - `effects.svelte.ts`:
+    - `keepSyncing()` is called once in the root layout. It starts WS5a's `startSyncLoop` on app open and on `online`, and tracks `online` / `pending` / `hasToken` / `rejected`.
+    - `logSync`, `requestSync`, `useSyncToken`, `restCountdown` (a 250ms interval over the stored end time, vibrating once on finish), `resumeOnOpen`.
+  - `effects.ts` adds `persistLocalLog()`: `navigator.storage.persist()` once per load, on the first save, where supported, silently.
+  - `local.ts` `localLog()`: one shared `LogStore` handle.
+  - `LogSet.svelte` is the screen; `SyncSettings.svelte` is `/sync`.
+  - `movement-labels.ts` moved to `#lib/ui/` (now shared by today and log).
+- Routes:
+  - `/log/[date]` is prerendered from `loadPlan()` entries, so it loads offline from the SW cache.
+  - `/sync` is unlinked; `features.yaml` has entries for both.
+  - `today.flags.start: true`.
+  - `SessionView` takes `startable` and calls `resolve('/log/[date]')` itself; the eslint-disable is gone.
+  - Today gets `startable(session)` from the route. That's `logSteps(session).length > 0`, so Start shows on any session with sets, including before the plan (PM ruling).
+  - The layout hides the tab bar on `/log*`.
+- Decisions, all PM-approved:
+  - `/sync` token page. The log header's right slot shows a muted "Offline" or "Not synced" (pending entries and no or rejected token) only when true, linking to `/sync`. "synced" is never shown.
+  - Rest is a fixed 1:30, ending at `loggedAt` + 90s.
+  - Only sets are logged.
+- Other decisions:
+  - Reload resumes at the first unlogged set, or on the resting set while its rest is remembered.
+  - Undo is `store.undo` (a tombstone that stays pending) and returns to the same set.
+  - RPE is a native select (1–10 in steps of 0.5). Note and RPE are saved with the entry, not amended later.
+  - A bodyweight set shows "Bodyweight" and no estimated max.
+- e2e: `playwright.config.ts` `webServer.env` = `e2e/sync-env.ts` (`SYNC_TOKEN` test value, `TURSO_DATABASE_URL=:memory:`), so sync really runs against the preview server.
+- Gotchas:
+  - With a fixed clock, all v7 ids share one millisecond, so IndexedDB `getAll` order is random. Sort by set position, not id.
+  - The WebKit screenshot caught the `@starting-style` fade part-way. Evidence now waits for `getAnimations()` to finish and opacity 1 before capturing.
+  - `svelte/prefer-svelte-reactivity` bans `new Date` in `.svelte.ts`, so the clock is an injected `() => Date` from a plain `.ts`.
+  - The production health check (after the CEO's env change) returns `{"token":true,"database":"unmigrated","reason":"LibsqlError URL_SCHEME_NOT_SUPPORTED","urlScheme":"other"}` 503. TURSO_DATABASE_URL still has a bad scheme (CEO, reported to the PM). Until that's fixed, logs stay pending on the phone, which is safe.
+- Brief errors:
+  - The brief said `/+page.svelte` passes `startHref` to `SessionView`; it passes it to `Today`, which passes it on.
+  - An href passed through a prop can't satisfy `svelte/no-navigation-without-resolve`, so the seam became a `startable` boolean.
+  - The worktree and branch did not exist yet; I created them.
+  - The WS4 e2e "no Start before the plan" was updated, per the PM's ruling.
+- Not built: a session-level record (pending CEO). `LogFlow` takes `steps`, so a session step slots in later.
+- HUMAN pending: the CEO logs a real set in airplane mode, then enters the token on /sync and syncs, once TURSO_DATABASE_URL is fixed.
+- Status: MERGED. Verifier pending.
 ### WS7b — scorer fixes — MERGED
 - Type: impl EM (ws7b-impl). Fixes from the WS7 verdict.
 - PR #11, squash-merged as `6c9a0fe`. Head `fea17a9`. Branch deleted.
