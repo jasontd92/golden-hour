@@ -1,0 +1,1745 @@
+{
+	"$id": "golden-hour/plan-session.json",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"type": "object",
+	"properties": {
+		"date": {
+			"type": "string",
+			"format": "date",
+			"pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+		},
+		"week": {
+			"type": "integer",
+			"minimum": 1,
+			"maximum": 17
+		},
+		"title": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 40
+		},
+		"why": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 280
+		},
+		"location": {
+			"type": "string",
+			"enum": [
+				"home",
+				"rec"
+			]
+		},
+		"blocks": {
+			"minItems": 1,
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string",
+						"minLength": 1,
+						"maxLength": 40
+					},
+					"kind": {
+						"type": "string",
+						"enum": [
+							"warmup",
+							"strength",
+							"metcon",
+							"conditioning",
+							"skill",
+							"cooldown"
+						]
+					},
+					"minutes": {
+						"type": "integer",
+						"exclusiveMinimum": 0,
+						"maximum": 9007199254740991
+					},
+					"hard": {
+						"type": "boolean"
+					},
+					"prescriptions": {
+						"minItems": 1,
+						"type": "array",
+						"items": {
+							"oneOf": [
+								{
+									"type": "object",
+									"properties": {
+										"kind": {
+											"type": "string",
+											"const": "percentSets"
+										},
+										"lift": {
+											"type": "string",
+											"enum": [
+												"thruster",
+												"wall_ball",
+												"overhead_squat",
+												"front_squat",
+												"back_squat",
+												"air_squat",
+												"pistol",
+												"squat_snatch",
+												"db_snatch",
+												"power_snatch",
+												"squat_clean",
+												"power_clean",
+												"clean_and_jerk",
+												"jerk",
+												"push_press",
+												"shoulder_press",
+												"bench_press",
+												"deadlift",
+												"sdhp",
+												"kb_swing",
+												"devils_press",
+												"turkish_getup",
+												"bear_complex",
+												"lunge",
+												"box_jump",
+												"burpee",
+												"pull_up",
+												"chest_to_bar",
+												"muscle_up",
+												"ring_row",
+												"weighted_row",
+												"rope_climb",
+												"hspu",
+												"push_up",
+												"dip",
+												"handstand_walk",
+												"toes_to_bar",
+												"knees_to_elbow",
+												"sit_up",
+												"l_sit",
+												"plank",
+												"v_up",
+												"double_under",
+												"run",
+												"row",
+												"bike",
+												"ski",
+												"farmers_carry",
+												"sled",
+												"sandbag"
+											]
+										},
+										"trainingMax": {
+											"type": "number",
+											"exclusiveMinimum": 0
+										},
+										"sets": {
+											"minItems": 1,
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"pct": {
+														"type": "number",
+														"exclusiveMinimum": 0,
+														"maximum": 1.1
+													},
+													"reps": {
+														"type": "integer",
+														"exclusiveMinimum": 0,
+														"maximum": 9007199254740991
+													},
+													"amrap": {
+														"type": "boolean"
+													}
+												},
+												"required": [
+													"pct",
+													"reps",
+													"amrap"
+												],
+												"additionalProperties": false
+											}
+										}
+									},
+									"required": [
+										"kind",
+										"lift",
+										"trainingMax",
+										"sets"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"kind": {
+											"type": "string",
+											"const": "fixedSets"
+										},
+										"movement": {
+											"type": "string",
+											"enum": [
+												"thruster",
+												"wall_ball",
+												"overhead_squat",
+												"front_squat",
+												"back_squat",
+												"air_squat",
+												"pistol",
+												"squat_snatch",
+												"db_snatch",
+												"power_snatch",
+												"squat_clean",
+												"power_clean",
+												"clean_and_jerk",
+												"jerk",
+												"push_press",
+												"shoulder_press",
+												"bench_press",
+												"deadlift",
+												"sdhp",
+												"kb_swing",
+												"devils_press",
+												"turkish_getup",
+												"bear_complex",
+												"lunge",
+												"box_jump",
+												"burpee",
+												"pull_up",
+												"chest_to_bar",
+												"muscle_up",
+												"ring_row",
+												"weighted_row",
+												"rope_climb",
+												"hspu",
+												"push_up",
+												"dip",
+												"handstand_walk",
+												"toes_to_bar",
+												"knees_to_elbow",
+												"sit_up",
+												"l_sit",
+												"plank",
+												"v_up",
+												"double_under",
+												"run",
+												"row",
+												"bike",
+												"ski",
+												"farmers_carry",
+												"sled",
+												"sandbag"
+											]
+										},
+										"sets": {
+											"type": "integer",
+											"exclusiveMinimum": 0,
+											"maximum": 9007199254740991
+										},
+										"reps": {
+											"type": "integer",
+											"exclusiveMinimum": 0,
+											"maximum": 9007199254740991
+										},
+										"load": {
+											"type": "number",
+											"exclusiveMinimum": 0
+										}
+									},
+									"required": [
+										"kind",
+										"movement",
+										"sets",
+										"reps"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"kind": {
+											"type": "string",
+											"const": "amrap"
+										},
+										"minutes": {
+											"type": "integer",
+											"exclusiveMinimum": 0,
+											"maximum": 9007199254740991
+										},
+										"movements": {
+											"minItems": 1,
+											"type": "array",
+											"items": {
+												"anyOf": [
+													{
+														"type": "object",
+														"properties": {
+															"movement": {
+																"type": "string",
+																"enum": [
+																	"thruster",
+																	"wall_ball",
+																	"overhead_squat",
+																	"front_squat",
+																	"back_squat",
+																	"air_squat",
+																	"pistol",
+																	"squat_snatch",
+																	"db_snatch",
+																	"power_snatch",
+																	"squat_clean",
+																	"power_clean",
+																	"clean_and_jerk",
+																	"jerk",
+																	"push_press",
+																	"shoulder_press",
+																	"bench_press",
+																	"deadlift",
+																	"sdhp",
+																	"kb_swing",
+																	"devils_press",
+																	"turkish_getup",
+																	"bear_complex",
+																	"lunge",
+																	"box_jump",
+																	"burpee",
+																	"pull_up",
+																	"chest_to_bar",
+																	"muscle_up",
+																	"ring_row",
+																	"weighted_row",
+																	"rope_climb",
+																	"hspu",
+																	"push_up",
+																	"dip",
+																	"handstand_walk",
+																	"toes_to_bar",
+																	"knees_to_elbow",
+																	"sit_up",
+																	"l_sit",
+																	"plank",
+																	"v_up",
+																	"double_under",
+																	"run",
+																	"row",
+																	"bike",
+																	"ski",
+																	"farmers_carry",
+																	"sled",
+																	"sandbag"
+																]
+															},
+															"load": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"heightInches": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"reps": {
+																"type": "integer",
+																"exclusiveMinimum": 0,
+																"maximum": 9007199254740991
+															}
+														},
+														"required": [
+															"movement",
+															"reps"
+														],
+														"additionalProperties": false
+													},
+													{
+														"type": "object",
+														"properties": {
+															"movement": {
+																"type": "string",
+																"enum": [
+																	"thruster",
+																	"wall_ball",
+																	"overhead_squat",
+																	"front_squat",
+																	"back_squat",
+																	"air_squat",
+																	"pistol",
+																	"squat_snatch",
+																	"db_snatch",
+																	"power_snatch",
+																	"squat_clean",
+																	"power_clean",
+																	"clean_and_jerk",
+																	"jerk",
+																	"push_press",
+																	"shoulder_press",
+																	"bench_press",
+																	"deadlift",
+																	"sdhp",
+																	"kb_swing",
+																	"devils_press",
+																	"turkish_getup",
+																	"bear_complex",
+																	"lunge",
+																	"box_jump",
+																	"burpee",
+																	"pull_up",
+																	"chest_to_bar",
+																	"muscle_up",
+																	"ring_row",
+																	"weighted_row",
+																	"rope_climb",
+																	"hspu",
+																	"push_up",
+																	"dip",
+																	"handstand_walk",
+																	"toes_to_bar",
+																	"knees_to_elbow",
+																	"sit_up",
+																	"l_sit",
+																	"plank",
+																	"v_up",
+																	"double_under",
+																	"run",
+																	"row",
+																	"bike",
+																	"ski",
+																	"farmers_carry",
+																	"sled",
+																	"sandbag"
+																]
+															},
+															"load": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"heightInches": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"meters": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															}
+														},
+														"required": [
+															"movement",
+															"meters"
+														],
+														"additionalProperties": false
+													},
+													{
+														"type": "object",
+														"properties": {
+															"movement": {
+																"type": "string",
+																"enum": [
+																	"thruster",
+																	"wall_ball",
+																	"overhead_squat",
+																	"front_squat",
+																	"back_squat",
+																	"air_squat",
+																	"pistol",
+																	"squat_snatch",
+																	"db_snatch",
+																	"power_snatch",
+																	"squat_clean",
+																	"power_clean",
+																	"clean_and_jerk",
+																	"jerk",
+																	"push_press",
+																	"shoulder_press",
+																	"bench_press",
+																	"deadlift",
+																	"sdhp",
+																	"kb_swing",
+																	"devils_press",
+																	"turkish_getup",
+																	"bear_complex",
+																	"lunge",
+																	"box_jump",
+																	"burpee",
+																	"pull_up",
+																	"chest_to_bar",
+																	"muscle_up",
+																	"ring_row",
+																	"weighted_row",
+																	"rope_climb",
+																	"hspu",
+																	"push_up",
+																	"dip",
+																	"handstand_walk",
+																	"toes_to_bar",
+																	"knees_to_elbow",
+																	"sit_up",
+																	"l_sit",
+																	"plank",
+																	"v_up",
+																	"double_under",
+																	"run",
+																	"row",
+																	"bike",
+																	"ski",
+																	"farmers_carry",
+																	"sled",
+																	"sandbag"
+																]
+															},
+															"load": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"heightInches": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"calories": {
+																"type": "integer",
+																"exclusiveMinimum": 0,
+																"maximum": 9007199254740991
+															}
+														},
+														"required": [
+															"movement",
+															"calories"
+														],
+														"additionalProperties": false
+													},
+													{
+														"type": "object",
+														"properties": {
+															"movement": {
+																"type": "string",
+																"enum": [
+																	"thruster",
+																	"wall_ball",
+																	"overhead_squat",
+																	"front_squat",
+																	"back_squat",
+																	"air_squat",
+																	"pistol",
+																	"squat_snatch",
+																	"db_snatch",
+																	"power_snatch",
+																	"squat_clean",
+																	"power_clean",
+																	"clean_and_jerk",
+																	"jerk",
+																	"push_press",
+																	"shoulder_press",
+																	"bench_press",
+																	"deadlift",
+																	"sdhp",
+																	"kb_swing",
+																	"devils_press",
+																	"turkish_getup",
+																	"bear_complex",
+																	"lunge",
+																	"box_jump",
+																	"burpee",
+																	"pull_up",
+																	"chest_to_bar",
+																	"muscle_up",
+																	"ring_row",
+																	"weighted_row",
+																	"rope_climb",
+																	"hspu",
+																	"push_up",
+																	"dip",
+																	"handstand_walk",
+																	"toes_to_bar",
+																	"knees_to_elbow",
+																	"sit_up",
+																	"l_sit",
+																	"plank",
+																	"v_up",
+																	"double_under",
+																	"run",
+																	"row",
+																	"bike",
+																	"ski",
+																	"farmers_carry",
+																	"sled",
+																	"sandbag"
+																]
+															},
+															"load": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"heightInches": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"seconds": {
+																"type": "integer",
+																"exclusiveMinimum": 0,
+																"maximum": 9007199254740991
+															}
+														},
+														"required": [
+															"movement",
+															"seconds"
+														],
+														"additionalProperties": false
+													}
+												]
+											}
+										}
+									},
+									"required": [
+										"kind",
+										"minutes",
+										"movements"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"kind": {
+											"type": "string",
+											"const": "forTime"
+										},
+										"rounds": {
+											"type": "integer",
+											"exclusiveMinimum": 0,
+											"maximum": 9007199254740991
+										},
+										"timeCapMinutes": {
+											"type": "integer",
+											"exclusiveMinimum": 0,
+											"maximum": 9007199254740991
+										},
+										"movements": {
+											"minItems": 1,
+											"type": "array",
+											"items": {
+												"anyOf": [
+													{
+														"type": "object",
+														"properties": {
+															"movement": {
+																"type": "string",
+																"enum": [
+																	"thruster",
+																	"wall_ball",
+																	"overhead_squat",
+																	"front_squat",
+																	"back_squat",
+																	"air_squat",
+																	"pistol",
+																	"squat_snatch",
+																	"db_snatch",
+																	"power_snatch",
+																	"squat_clean",
+																	"power_clean",
+																	"clean_and_jerk",
+																	"jerk",
+																	"push_press",
+																	"shoulder_press",
+																	"bench_press",
+																	"deadlift",
+																	"sdhp",
+																	"kb_swing",
+																	"devils_press",
+																	"turkish_getup",
+																	"bear_complex",
+																	"lunge",
+																	"box_jump",
+																	"burpee",
+																	"pull_up",
+																	"chest_to_bar",
+																	"muscle_up",
+																	"ring_row",
+																	"weighted_row",
+																	"rope_climb",
+																	"hspu",
+																	"push_up",
+																	"dip",
+																	"handstand_walk",
+																	"toes_to_bar",
+																	"knees_to_elbow",
+																	"sit_up",
+																	"l_sit",
+																	"plank",
+																	"v_up",
+																	"double_under",
+																	"run",
+																	"row",
+																	"bike",
+																	"ski",
+																	"farmers_carry",
+																	"sled",
+																	"sandbag"
+																]
+															},
+															"load": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"heightInches": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"reps": {
+																"type": "integer",
+																"exclusiveMinimum": 0,
+																"maximum": 9007199254740991
+															}
+														},
+														"required": [
+															"movement",
+															"reps"
+														],
+														"additionalProperties": false
+													},
+													{
+														"type": "object",
+														"properties": {
+															"movement": {
+																"type": "string",
+																"enum": [
+																	"thruster",
+																	"wall_ball",
+																	"overhead_squat",
+																	"front_squat",
+																	"back_squat",
+																	"air_squat",
+																	"pistol",
+																	"squat_snatch",
+																	"db_snatch",
+																	"power_snatch",
+																	"squat_clean",
+																	"power_clean",
+																	"clean_and_jerk",
+																	"jerk",
+																	"push_press",
+																	"shoulder_press",
+																	"bench_press",
+																	"deadlift",
+																	"sdhp",
+																	"kb_swing",
+																	"devils_press",
+																	"turkish_getup",
+																	"bear_complex",
+																	"lunge",
+																	"box_jump",
+																	"burpee",
+																	"pull_up",
+																	"chest_to_bar",
+																	"muscle_up",
+																	"ring_row",
+																	"weighted_row",
+																	"rope_climb",
+																	"hspu",
+																	"push_up",
+																	"dip",
+																	"handstand_walk",
+																	"toes_to_bar",
+																	"knees_to_elbow",
+																	"sit_up",
+																	"l_sit",
+																	"plank",
+																	"v_up",
+																	"double_under",
+																	"run",
+																	"row",
+																	"bike",
+																	"ski",
+																	"farmers_carry",
+																	"sled",
+																	"sandbag"
+																]
+															},
+															"load": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"heightInches": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"meters": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															}
+														},
+														"required": [
+															"movement",
+															"meters"
+														],
+														"additionalProperties": false
+													},
+													{
+														"type": "object",
+														"properties": {
+															"movement": {
+																"type": "string",
+																"enum": [
+																	"thruster",
+																	"wall_ball",
+																	"overhead_squat",
+																	"front_squat",
+																	"back_squat",
+																	"air_squat",
+																	"pistol",
+																	"squat_snatch",
+																	"db_snatch",
+																	"power_snatch",
+																	"squat_clean",
+																	"power_clean",
+																	"clean_and_jerk",
+																	"jerk",
+																	"push_press",
+																	"shoulder_press",
+																	"bench_press",
+																	"deadlift",
+																	"sdhp",
+																	"kb_swing",
+																	"devils_press",
+																	"turkish_getup",
+																	"bear_complex",
+																	"lunge",
+																	"box_jump",
+																	"burpee",
+																	"pull_up",
+																	"chest_to_bar",
+																	"muscle_up",
+																	"ring_row",
+																	"weighted_row",
+																	"rope_climb",
+																	"hspu",
+																	"push_up",
+																	"dip",
+																	"handstand_walk",
+																	"toes_to_bar",
+																	"knees_to_elbow",
+																	"sit_up",
+																	"l_sit",
+																	"plank",
+																	"v_up",
+																	"double_under",
+																	"run",
+																	"row",
+																	"bike",
+																	"ski",
+																	"farmers_carry",
+																	"sled",
+																	"sandbag"
+																]
+															},
+															"load": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"heightInches": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"calories": {
+																"type": "integer",
+																"exclusiveMinimum": 0,
+																"maximum": 9007199254740991
+															}
+														},
+														"required": [
+															"movement",
+															"calories"
+														],
+														"additionalProperties": false
+													},
+													{
+														"type": "object",
+														"properties": {
+															"movement": {
+																"type": "string",
+																"enum": [
+																	"thruster",
+																	"wall_ball",
+																	"overhead_squat",
+																	"front_squat",
+																	"back_squat",
+																	"air_squat",
+																	"pistol",
+																	"squat_snatch",
+																	"db_snatch",
+																	"power_snatch",
+																	"squat_clean",
+																	"power_clean",
+																	"clean_and_jerk",
+																	"jerk",
+																	"push_press",
+																	"shoulder_press",
+																	"bench_press",
+																	"deadlift",
+																	"sdhp",
+																	"kb_swing",
+																	"devils_press",
+																	"turkish_getup",
+																	"bear_complex",
+																	"lunge",
+																	"box_jump",
+																	"burpee",
+																	"pull_up",
+																	"chest_to_bar",
+																	"muscle_up",
+																	"ring_row",
+																	"weighted_row",
+																	"rope_climb",
+																	"hspu",
+																	"push_up",
+																	"dip",
+																	"handstand_walk",
+																	"toes_to_bar",
+																	"knees_to_elbow",
+																	"sit_up",
+																	"l_sit",
+																	"plank",
+																	"v_up",
+																	"double_under",
+																	"run",
+																	"row",
+																	"bike",
+																	"ski",
+																	"farmers_carry",
+																	"sled",
+																	"sandbag"
+																]
+															},
+															"load": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"heightInches": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"seconds": {
+																"type": "integer",
+																"exclusiveMinimum": 0,
+																"maximum": 9007199254740991
+															}
+														},
+														"required": [
+															"movement",
+															"seconds"
+														],
+														"additionalProperties": false
+													}
+												]
+											}
+										}
+									},
+									"required": [
+										"kind",
+										"rounds",
+										"movements"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"kind": {
+											"type": "string",
+											"const": "emom"
+										},
+										"minutes": {
+											"type": "integer",
+											"exclusiveMinimum": 0,
+											"maximum": 9007199254740991
+										},
+										"movements": {
+											"minItems": 1,
+											"type": "array",
+											"items": {
+												"anyOf": [
+													{
+														"type": "object",
+														"properties": {
+															"movement": {
+																"type": "string",
+																"enum": [
+																	"thruster",
+																	"wall_ball",
+																	"overhead_squat",
+																	"front_squat",
+																	"back_squat",
+																	"air_squat",
+																	"pistol",
+																	"squat_snatch",
+																	"db_snatch",
+																	"power_snatch",
+																	"squat_clean",
+																	"power_clean",
+																	"clean_and_jerk",
+																	"jerk",
+																	"push_press",
+																	"shoulder_press",
+																	"bench_press",
+																	"deadlift",
+																	"sdhp",
+																	"kb_swing",
+																	"devils_press",
+																	"turkish_getup",
+																	"bear_complex",
+																	"lunge",
+																	"box_jump",
+																	"burpee",
+																	"pull_up",
+																	"chest_to_bar",
+																	"muscle_up",
+																	"ring_row",
+																	"weighted_row",
+																	"rope_climb",
+																	"hspu",
+																	"push_up",
+																	"dip",
+																	"handstand_walk",
+																	"toes_to_bar",
+																	"knees_to_elbow",
+																	"sit_up",
+																	"l_sit",
+																	"plank",
+																	"v_up",
+																	"double_under",
+																	"run",
+																	"row",
+																	"bike",
+																	"ski",
+																	"farmers_carry",
+																	"sled",
+																	"sandbag"
+																]
+															},
+															"load": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"heightInches": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"reps": {
+																"type": "integer",
+																"exclusiveMinimum": 0,
+																"maximum": 9007199254740991
+															}
+														},
+														"required": [
+															"movement",
+															"reps"
+														],
+														"additionalProperties": false
+													},
+													{
+														"type": "object",
+														"properties": {
+															"movement": {
+																"type": "string",
+																"enum": [
+																	"thruster",
+																	"wall_ball",
+																	"overhead_squat",
+																	"front_squat",
+																	"back_squat",
+																	"air_squat",
+																	"pistol",
+																	"squat_snatch",
+																	"db_snatch",
+																	"power_snatch",
+																	"squat_clean",
+																	"power_clean",
+																	"clean_and_jerk",
+																	"jerk",
+																	"push_press",
+																	"shoulder_press",
+																	"bench_press",
+																	"deadlift",
+																	"sdhp",
+																	"kb_swing",
+																	"devils_press",
+																	"turkish_getup",
+																	"bear_complex",
+																	"lunge",
+																	"box_jump",
+																	"burpee",
+																	"pull_up",
+																	"chest_to_bar",
+																	"muscle_up",
+																	"ring_row",
+																	"weighted_row",
+																	"rope_climb",
+																	"hspu",
+																	"push_up",
+																	"dip",
+																	"handstand_walk",
+																	"toes_to_bar",
+																	"knees_to_elbow",
+																	"sit_up",
+																	"l_sit",
+																	"plank",
+																	"v_up",
+																	"double_under",
+																	"run",
+																	"row",
+																	"bike",
+																	"ski",
+																	"farmers_carry",
+																	"sled",
+																	"sandbag"
+																]
+															},
+															"load": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"heightInches": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"meters": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															}
+														},
+														"required": [
+															"movement",
+															"meters"
+														],
+														"additionalProperties": false
+													},
+													{
+														"type": "object",
+														"properties": {
+															"movement": {
+																"type": "string",
+																"enum": [
+																	"thruster",
+																	"wall_ball",
+																	"overhead_squat",
+																	"front_squat",
+																	"back_squat",
+																	"air_squat",
+																	"pistol",
+																	"squat_snatch",
+																	"db_snatch",
+																	"power_snatch",
+																	"squat_clean",
+																	"power_clean",
+																	"clean_and_jerk",
+																	"jerk",
+																	"push_press",
+																	"shoulder_press",
+																	"bench_press",
+																	"deadlift",
+																	"sdhp",
+																	"kb_swing",
+																	"devils_press",
+																	"turkish_getup",
+																	"bear_complex",
+																	"lunge",
+																	"box_jump",
+																	"burpee",
+																	"pull_up",
+																	"chest_to_bar",
+																	"muscle_up",
+																	"ring_row",
+																	"weighted_row",
+																	"rope_climb",
+																	"hspu",
+																	"push_up",
+																	"dip",
+																	"handstand_walk",
+																	"toes_to_bar",
+																	"knees_to_elbow",
+																	"sit_up",
+																	"l_sit",
+																	"plank",
+																	"v_up",
+																	"double_under",
+																	"run",
+																	"row",
+																	"bike",
+																	"ski",
+																	"farmers_carry",
+																	"sled",
+																	"sandbag"
+																]
+															},
+															"load": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"heightInches": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"calories": {
+																"type": "integer",
+																"exclusiveMinimum": 0,
+																"maximum": 9007199254740991
+															}
+														},
+														"required": [
+															"movement",
+															"calories"
+														],
+														"additionalProperties": false
+													},
+													{
+														"type": "object",
+														"properties": {
+															"movement": {
+																"type": "string",
+																"enum": [
+																	"thruster",
+																	"wall_ball",
+																	"overhead_squat",
+																	"front_squat",
+																	"back_squat",
+																	"air_squat",
+																	"pistol",
+																	"squat_snatch",
+																	"db_snatch",
+																	"power_snatch",
+																	"squat_clean",
+																	"power_clean",
+																	"clean_and_jerk",
+																	"jerk",
+																	"push_press",
+																	"shoulder_press",
+																	"bench_press",
+																	"deadlift",
+																	"sdhp",
+																	"kb_swing",
+																	"devils_press",
+																	"turkish_getup",
+																	"bear_complex",
+																	"lunge",
+																	"box_jump",
+																	"burpee",
+																	"pull_up",
+																	"chest_to_bar",
+																	"muscle_up",
+																	"ring_row",
+																	"weighted_row",
+																	"rope_climb",
+																	"hspu",
+																	"push_up",
+																	"dip",
+																	"handstand_walk",
+																	"toes_to_bar",
+																	"knees_to_elbow",
+																	"sit_up",
+																	"l_sit",
+																	"plank",
+																	"v_up",
+																	"double_under",
+																	"run",
+																	"row",
+																	"bike",
+																	"ski",
+																	"farmers_carry",
+																	"sled",
+																	"sandbag"
+																]
+															},
+															"load": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"heightInches": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"seconds": {
+																"type": "integer",
+																"exclusiveMinimum": 0,
+																"maximum": 9007199254740991
+															}
+														},
+														"required": [
+															"movement",
+															"seconds"
+														],
+														"additionalProperties": false
+													}
+												]
+											}
+										}
+									},
+									"required": [
+										"kind",
+										"minutes",
+										"movements"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"kind": {
+											"type": "string",
+											"const": "intervals"
+										},
+										"rounds": {
+											"type": "integer",
+											"exclusiveMinimum": 0,
+											"maximum": 9007199254740991
+										},
+										"restSeconds": {
+											"type": "integer",
+											"minimum": 0,
+											"maximum": 9007199254740991
+										},
+										"movements": {
+											"minItems": 1,
+											"type": "array",
+											"items": {
+												"anyOf": [
+													{
+														"type": "object",
+														"properties": {
+															"movement": {
+																"type": "string",
+																"enum": [
+																	"thruster",
+																	"wall_ball",
+																	"overhead_squat",
+																	"front_squat",
+																	"back_squat",
+																	"air_squat",
+																	"pistol",
+																	"squat_snatch",
+																	"db_snatch",
+																	"power_snatch",
+																	"squat_clean",
+																	"power_clean",
+																	"clean_and_jerk",
+																	"jerk",
+																	"push_press",
+																	"shoulder_press",
+																	"bench_press",
+																	"deadlift",
+																	"sdhp",
+																	"kb_swing",
+																	"devils_press",
+																	"turkish_getup",
+																	"bear_complex",
+																	"lunge",
+																	"box_jump",
+																	"burpee",
+																	"pull_up",
+																	"chest_to_bar",
+																	"muscle_up",
+																	"ring_row",
+																	"weighted_row",
+																	"rope_climb",
+																	"hspu",
+																	"push_up",
+																	"dip",
+																	"handstand_walk",
+																	"toes_to_bar",
+																	"knees_to_elbow",
+																	"sit_up",
+																	"l_sit",
+																	"plank",
+																	"v_up",
+																	"double_under",
+																	"run",
+																	"row",
+																	"bike",
+																	"ski",
+																	"farmers_carry",
+																	"sled",
+																	"sandbag"
+																]
+															},
+															"load": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"heightInches": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"reps": {
+																"type": "integer",
+																"exclusiveMinimum": 0,
+																"maximum": 9007199254740991
+															}
+														},
+														"required": [
+															"movement",
+															"reps"
+														],
+														"additionalProperties": false
+													},
+													{
+														"type": "object",
+														"properties": {
+															"movement": {
+																"type": "string",
+																"enum": [
+																	"thruster",
+																	"wall_ball",
+																	"overhead_squat",
+																	"front_squat",
+																	"back_squat",
+																	"air_squat",
+																	"pistol",
+																	"squat_snatch",
+																	"db_snatch",
+																	"power_snatch",
+																	"squat_clean",
+																	"power_clean",
+																	"clean_and_jerk",
+																	"jerk",
+																	"push_press",
+																	"shoulder_press",
+																	"bench_press",
+																	"deadlift",
+																	"sdhp",
+																	"kb_swing",
+																	"devils_press",
+																	"turkish_getup",
+																	"bear_complex",
+																	"lunge",
+																	"box_jump",
+																	"burpee",
+																	"pull_up",
+																	"chest_to_bar",
+																	"muscle_up",
+																	"ring_row",
+																	"weighted_row",
+																	"rope_climb",
+																	"hspu",
+																	"push_up",
+																	"dip",
+																	"handstand_walk",
+																	"toes_to_bar",
+																	"knees_to_elbow",
+																	"sit_up",
+																	"l_sit",
+																	"plank",
+																	"v_up",
+																	"double_under",
+																	"run",
+																	"row",
+																	"bike",
+																	"ski",
+																	"farmers_carry",
+																	"sled",
+																	"sandbag"
+																]
+															},
+															"load": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"heightInches": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"meters": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															}
+														},
+														"required": [
+															"movement",
+															"meters"
+														],
+														"additionalProperties": false
+													},
+													{
+														"type": "object",
+														"properties": {
+															"movement": {
+																"type": "string",
+																"enum": [
+																	"thruster",
+																	"wall_ball",
+																	"overhead_squat",
+																	"front_squat",
+																	"back_squat",
+																	"air_squat",
+																	"pistol",
+																	"squat_snatch",
+																	"db_snatch",
+																	"power_snatch",
+																	"squat_clean",
+																	"power_clean",
+																	"clean_and_jerk",
+																	"jerk",
+																	"push_press",
+																	"shoulder_press",
+																	"bench_press",
+																	"deadlift",
+																	"sdhp",
+																	"kb_swing",
+																	"devils_press",
+																	"turkish_getup",
+																	"bear_complex",
+																	"lunge",
+																	"box_jump",
+																	"burpee",
+																	"pull_up",
+																	"chest_to_bar",
+																	"muscle_up",
+																	"ring_row",
+																	"weighted_row",
+																	"rope_climb",
+																	"hspu",
+																	"push_up",
+																	"dip",
+																	"handstand_walk",
+																	"toes_to_bar",
+																	"knees_to_elbow",
+																	"sit_up",
+																	"l_sit",
+																	"plank",
+																	"v_up",
+																	"double_under",
+																	"run",
+																	"row",
+																	"bike",
+																	"ski",
+																	"farmers_carry",
+																	"sled",
+																	"sandbag"
+																]
+															},
+															"load": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"heightInches": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"calories": {
+																"type": "integer",
+																"exclusiveMinimum": 0,
+																"maximum": 9007199254740991
+															}
+														},
+														"required": [
+															"movement",
+															"calories"
+														],
+														"additionalProperties": false
+													},
+													{
+														"type": "object",
+														"properties": {
+															"movement": {
+																"type": "string",
+																"enum": [
+																	"thruster",
+																	"wall_ball",
+																	"overhead_squat",
+																	"front_squat",
+																	"back_squat",
+																	"air_squat",
+																	"pistol",
+																	"squat_snatch",
+																	"db_snatch",
+																	"power_snatch",
+																	"squat_clean",
+																	"power_clean",
+																	"clean_and_jerk",
+																	"jerk",
+																	"push_press",
+																	"shoulder_press",
+																	"bench_press",
+																	"deadlift",
+																	"sdhp",
+																	"kb_swing",
+																	"devils_press",
+																	"turkish_getup",
+																	"bear_complex",
+																	"lunge",
+																	"box_jump",
+																	"burpee",
+																	"pull_up",
+																	"chest_to_bar",
+																	"muscle_up",
+																	"ring_row",
+																	"weighted_row",
+																	"rope_climb",
+																	"hspu",
+																	"push_up",
+																	"dip",
+																	"handstand_walk",
+																	"toes_to_bar",
+																	"knees_to_elbow",
+																	"sit_up",
+																	"l_sit",
+																	"plank",
+																	"v_up",
+																	"double_under",
+																	"run",
+																	"row",
+																	"bike",
+																	"ski",
+																	"farmers_carry",
+																	"sled",
+																	"sandbag"
+																]
+															},
+															"load": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"heightInches": {
+																"type": "number",
+																"exclusiveMinimum": 0
+															},
+															"seconds": {
+																"type": "integer",
+																"exclusiveMinimum": 0,
+																"maximum": 9007199254740991
+															}
+														},
+														"required": [
+															"movement",
+															"seconds"
+														],
+														"additionalProperties": false
+													}
+												]
+											}
+										}
+									},
+									"required": [
+										"kind",
+										"rounds",
+										"restSeconds",
+										"movements"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"kind": {
+											"type": "string",
+											"const": "steady"
+										},
+										"movement": {
+											"type": "string",
+											"enum": [
+												"thruster",
+												"wall_ball",
+												"overhead_squat",
+												"front_squat",
+												"back_squat",
+												"air_squat",
+												"pistol",
+												"squat_snatch",
+												"db_snatch",
+												"power_snatch",
+												"squat_clean",
+												"power_clean",
+												"clean_and_jerk",
+												"jerk",
+												"push_press",
+												"shoulder_press",
+												"bench_press",
+												"deadlift",
+												"sdhp",
+												"kb_swing",
+												"devils_press",
+												"turkish_getup",
+												"bear_complex",
+												"lunge",
+												"box_jump",
+												"burpee",
+												"pull_up",
+												"chest_to_bar",
+												"muscle_up",
+												"ring_row",
+												"weighted_row",
+												"rope_climb",
+												"hspu",
+												"push_up",
+												"dip",
+												"handstand_walk",
+												"toes_to_bar",
+												"knees_to_elbow",
+												"sit_up",
+												"l_sit",
+												"plank",
+												"v_up",
+												"double_under",
+												"run",
+												"row",
+												"bike",
+												"ski",
+												"farmers_carry",
+												"sled",
+												"sandbag"
+											]
+										},
+										"minutes": {
+											"type": "integer",
+											"exclusiveMinimum": 0,
+											"maximum": 9007199254740991
+										}
+									},
+									"required": [
+										"kind",
+										"movement",
+										"minutes"
+									],
+									"additionalProperties": false
+								},
+								{
+									"type": "object",
+									"properties": {
+										"kind": {
+											"type": "string",
+											"const": "freeText"
+										},
+										"text": {
+											"type": "string",
+											"minLength": 1
+										}
+									},
+									"required": [
+										"kind",
+										"text"
+									],
+									"additionalProperties": false
+								}
+							]
+						}
+					},
+					"notes": {
+						"type": "string",
+						"minLength": 1,
+						"maxLength": 140
+					}
+				},
+				"required": [
+					"name",
+					"kind",
+					"minutes",
+					"hard",
+					"prescriptions"
+				],
+				"additionalProperties": false
+			}
+		}
+	},
+	"required": [
+		"date",
+		"week",
+		"title",
+		"why",
+		"location",
+		"blocks"
+	],
+	"additionalProperties": false
+}

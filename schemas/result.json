@@ -1,0 +1,211 @@
+{
+	"$id": "golden-hour/result.json",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"type": "object",
+	"properties": {
+		"workout": {
+			"type": "string",
+			"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+		},
+		"date": {
+			"anyOf": [
+				{
+					"type": "string",
+					"format": "date",
+					"pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+				},
+				{
+					"type": "string",
+					"pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+				}
+			]
+		},
+		"date_precision": {
+			"type": "string",
+			"enum": [
+				"day",
+				"approx",
+				"month",
+				"unknown"
+			]
+		},
+		"date_text": {
+			"type": "string"
+		},
+		"score_display": {
+			"type": "string"
+		},
+		"value": {
+			"type": "number"
+		},
+		"unit": {
+			"type": "string",
+			"enum": [
+				"s",
+				"lb",
+				"rounds.reps",
+				"rounds",
+				"reps",
+				"pts"
+			]
+		},
+		"rx": {
+			"type": "string",
+			"enum": [
+				"rx",
+				"scaled",
+				"scaled_up"
+			]
+		},
+		"pr_flag": {
+			"type": "boolean"
+		},
+		"barbell_lift": {
+			"type": "string",
+			"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+		},
+		"sets": {
+			"type": "array",
+			"items": {
+				"anyOf": [
+					{
+						"type": "object",
+						"properties": {
+							"load": {
+								"type": "number"
+							},
+							"success": {
+								"type": "boolean"
+							}
+						},
+						"required": [
+							"load",
+							"success"
+						],
+						"additionalProperties": false
+					},
+					{
+						"type": "object",
+						"properties": {
+							"mins": {
+								"type": "integer",
+								"minimum": -9007199254740991,
+								"maximum": 9007199254740991
+							},
+							"secs": {
+								"type": "number"
+							}
+						},
+						"required": [
+							"secs"
+						],
+						"additionalProperties": false
+					},
+					{
+						"type": "object",
+						"properties": {
+							"rnds": {
+								"type": "integer",
+								"minimum": -9007199254740991,
+								"maximum": 9007199254740991
+							},
+							"reps": {
+								"type": "integer",
+								"minimum": -9007199254740991,
+								"maximum": 9007199254740991
+							}
+						},
+						"required": [
+							"rnds"
+						],
+						"additionalProperties": false
+					},
+					{
+						"type": "object",
+						"properties": {
+							"reps": {
+								"type": "integer",
+								"minimum": -9007199254740991,
+								"maximum": 9007199254740991
+							}
+						},
+						"required": [
+							"reps"
+						],
+						"additionalProperties": false
+					},
+					{
+						"type": "object",
+						"properties": {
+							"other": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"other"
+						],
+						"additionalProperties": false
+					},
+					{
+						"type": "object",
+						"properties": {
+							"boolean": {
+								"anyOf": [
+									{
+										"type": "number",
+										"const": 0
+									},
+									{
+										"type": "number",
+										"const": 1
+									}
+								]
+							}
+						},
+						"required": [
+							"boolean"
+						],
+						"additionalProperties": false
+					}
+				]
+			}
+		},
+		"detail": {
+			"type": "string"
+		},
+		"splits": {
+			"type": "object",
+			"propertyNames": {
+				"type": "string"
+			},
+			"additionalProperties": {
+				"type": "string"
+			}
+		},
+		"location": {
+			"type": "string"
+		},
+		"test_round": {
+			"type": "string"
+		},
+		"notes": {
+			"type": "string"
+		},
+		"duplicate_of": {
+			"type": "string"
+		},
+		"conflict": {
+			"type": "string"
+		},
+		"source": {
+			"type": "string",
+			"minLength": 1
+		}
+	},
+	"required": [
+		"workout",
+		"date_precision",
+		"source"
+	],
+	"additionalProperties": false
+}

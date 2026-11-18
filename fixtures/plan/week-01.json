@@ -1,0 +1,309 @@
+[
+	{
+		"date": "2026-12-07",
+		"week": 1,
+		"title": "Squat + short sprint",
+		"why": "Your top squat set resets the training max for this cycle. The AMRAP is the first of three hard efforts this week, so keep it short and fast.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 8,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "2 rounds: 200 m jog · 10 air squats · 10 pass-throughs · 5 inchworms" }
+				]
+			},
+			{
+				"name": "Back squat",
+				"kind": "strength",
+				"minutes": 22,
+				"hard": false,
+				"prescriptions": [
+					{
+						"kind": "percentSets",
+						"lift": "back_squat",
+						"trainingMax": 265,
+						"sets": [
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.75, "reps": 5, "amrap": false },
+							{ "pct": 0.85, "reps": 5, "amrap": true }
+						]
+					},
+					{
+						"kind": "percentSets",
+						"lift": "back_squat",
+						"trainingMax": 265,
+						"sets": [
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false }
+						]
+					},
+					{ "kind": "fixedSets", "movement": "pull_up", "sets": 5, "reps": 6 }
+				],
+				"notes": "Strict pull-ups between the 5 × 5 sets"
+			},
+			{
+				"name": "AMRAP 12",
+				"kind": "metcon",
+				"minutes": 14,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "amrap",
+						"minutes": 12,
+						"movements": [
+							{ "movement": "db_snatch", "reps": 8, "load": 45 },
+							{ "movement": "box_jump", "reps": 10, "heightInches": 24 },
+							{ "movement": "run", "meters": 200 }
+						]
+					}
+				],
+				"notes": "Aim for 5+ rounds"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 6,
+				"hard": false,
+				"prescriptions": [{ "kind": "freeText", "text": "Couch stretch · dead hang" }]
+			}
+		]
+	},
+	{
+		"date": "2026-12-08",
+		"week": 1,
+		"title": "Easy run",
+		"why": "An easy day between two lifting days. Keep it conversational so the run builds your base without costing tomorrow.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Easy run",
+				"kind": "conditioning",
+				"minutes": 35,
+				"hard": false,
+				"prescriptions": [{ "kind": "steady", "movement": "run", "minutes": 35 }],
+				"notes": "Zone 1: RPE 3 or lower, HR under 75% of max"
+			},
+			{
+				"name": "Mobility",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [{ "kind": "freeText", "text": "Hip openers · calf stretch" }]
+			}
+		]
+	},
+	{
+		"date": "2026-12-09",
+		"week": 1,
+		"title": "Press + gymnastics",
+		"why": "Press volume plus the gymnastics ladders that carry over to the retest. Nothing here should feel hard.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 6,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Band pull-aparts · scap push-ups · 10 plyo push-ups" }
+				]
+			},
+			{
+				"name": "Shoulder press",
+				"kind": "strength",
+				"minutes": 20,
+				"hard": false,
+				"prescriptions": [
+					{
+						"kind": "percentSets",
+						"lift": "shoulder_press",
+						"trainingMax": 135,
+						"sets": [
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.75, "reps": 5, "amrap": false },
+							{ "pct": 0.85, "reps": 5, "amrap": false }
+						]
+					},
+					{
+						"kind": "percentSets",
+						"lift": "shoulder_press",
+						"trainingMax": 135,
+						"sets": [
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false }
+						]
+					}
+				]
+			},
+			{
+				"name": "Gymnastics",
+				"kind": "skill",
+				"minutes": 15,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "intervals", "rounds": 5, "restSeconds": 60, "movements": [{ "movement": "l_sit", "seconds": 15 }] },
+					{ "kind": "fixedSets", "movement": "dip", "sets": 3, "reps": 8 },
+					{ "kind": "fixedSets", "movement": "hspu", "sets": 3, "reps": 5 }
+				],
+				"notes": "Pike or box HSPU; ring dips"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 4,
+				"hard": false,
+				"prescriptions": [{ "kind": "freeText", "text": "Doorway pec stretch · wrist circles" }]
+			}
+		]
+	},
+	{
+		"date": "2026-12-10",
+		"week": 1,
+		"title": "Track intervals",
+		"why": "The second hard effort of the week. Hold the target pace as a ceiling, never faster.",
+		"location": "rec",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 10,
+				"hard": false,
+				"prescriptions": [{ "kind": "freeText", "text": "10 min easy jog · drills · 2 strides" }]
+			},
+			{
+				"name": "6 × 400 m",
+				"kind": "conditioning",
+				"minutes": 18,
+				"hard": true,
+				"prescriptions": [
+					{ "kind": "intervals", "rounds": 6, "restSeconds": 90, "movements": [{ "movement": "run", "meters": 400 }] }
+				],
+				"notes": "Mile pace or slower"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 8,
+				"hard": false,
+				"prescriptions": [{ "kind": "freeText", "text": "Easy jog · calf and hip stretch" }]
+			}
+		]
+	},
+	{
+		"date": "2026-12-11",
+		"week": 1,
+		"title": "Deadlift + bike",
+		"why": "Deadlift volume, then an easy spin to flush the legs before tomorrow's long effort.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 6,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "10 broad jumps · hip hinges · glute bridges" }
+				]
+			},
+			{
+				"name": "Deadlift",
+				"kind": "strength",
+				"minutes": 20,
+				"hard": false,
+				"prescriptions": [
+					{
+						"kind": "percentSets",
+						"lift": "deadlift",
+						"trainingMax": 280,
+						"sets": [
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.75, "reps": 5, "amrap": false },
+							{ "pct": 0.85, "reps": 5, "amrap": false }
+						]
+					},
+					{
+						"kind": "percentSets",
+						"lift": "deadlift",
+						"trainingMax": 280,
+						"sets": [
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false },
+							{ "pct": 0.65, "reps": 5, "amrap": false }
+						]
+					}
+				]
+			},
+			{
+				"name": "Easy bike",
+				"kind": "conditioning",
+				"minutes": 12,
+				"hard": false,
+				"prescriptions": [{ "kind": "steady", "movement": "bike", "minutes": 12 }],
+				"notes": "Zone 1, nasal breathing"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [{ "kind": "freeText", "text": "Pigeon stretch · hamstring floss" }]
+			}
+		]
+	},
+	{
+		"date": "2026-12-12",
+		"week": 1,
+		"title": "Long chipper",
+		"why": "The third hard effort, long and steady. Pace it so the last run is as fast as the first.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 6,
+				"hard": false,
+				"prescriptions": [{ "kind": "freeText", "text": "3 min jog · 10 air squats · 10 push-ups" }]
+			},
+			{
+				"name": "Chipper",
+				"kind": "metcon",
+				"minutes": 30,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "forTime",
+						"rounds": 1,
+						"timeCapMinutes": 30,
+						"movements": [
+							{ "movement": "run", "meters": 800 },
+							{ "movement": "burpee", "reps": 40 },
+							{ "movement": "db_snatch", "reps": 30, "load": 45 },
+							{ "movement": "sit_up", "reps": 40 },
+							{ "movement": "push_up", "reps": 30 },
+							{ "movement": "box_jump", "reps": 20, "heightInches": 24 },
+							{ "movement": "run", "meters": 800 }
+						]
+					}
+				]
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 6,
+				"hard": false,
+				"prescriptions": [{ "kind": "freeText", "text": "Walk · couch stretch · dead hang" }]
+			}
+		]
+	}
+]
