@@ -1,11 +1,13 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { SyncRequest, type SyncResponse } from '#lib/domain/log.ts';
 import type { Database } from './db/ready.ts';
+import type { UrlScheme } from './db/url.ts';
 import { logEntriesReadable, upsertLogRecords } from './db/log-entries.ts';
 
 export interface SyncDeps {
 	token: string | undefined;
 	database: () => Promise<Database>;
+	urlScheme?: UrlScheme;
 }
 
 const digest = (value: string) => createHash('sha256').update(value).digest();
@@ -48,5 +50,6 @@ export async function syncHealth(deps: SyncDeps): Promise<Response> {
 	const status = readable ? database.status : 'unmigrated';
 	const token = Boolean(deps.token);
 	const reason = database.status === 'unmigrated' ? { reason: database.reason } : {};
-	return Response.json({ token, database: status, ...reason }, { status: token && status === 'ready' ? 200 : 503 });
+	const scheme = status === 'unmigrated' && deps.urlScheme ? { urlScheme: deps.urlScheme } : {};
+	return Response.json({ token, database: status, ...reason, ...scheme }, { status: token && status === 'ready' ? 200 : 503 });
 }
