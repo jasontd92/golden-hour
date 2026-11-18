@@ -83,7 +83,7 @@
 			{/if}
 		</main>
 		{#if noteOpen && !flow.saved}
-			<div class="swap note" id="note">
+			<div class="swap note" id="note" data-testid="note">
 				<label>
 					<span>Effort (RPE)</span>
 					<select bind:value={flow.rpe}>

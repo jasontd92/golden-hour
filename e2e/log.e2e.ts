@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 import { estimatedOneRm } from '../src/lib/domain/strength.ts';
 import { openOn } from './clock.ts';
 import { captureEvidence } from './evidence.ts';
@@ -46,6 +46,11 @@ async function saveToken(page: Page): Promise<void> {
 	await expect(page.getByPlaceholder('Token saved on this device')).toBeVisible();
 }
 
+async function settled(swap: Locator): Promise<void> {
+	await swap.evaluate((el) => Promise.all(el.getAnimations().map((animation) => animation.finished)));
+	await expect(swap).toHaveCSS('opacity', '1');
+}
+
 const syncAccepted = (page: Page) =>
 	page.waitForResponse((r) => r.url().endsWith('/api/sync') && r.request().method() === 'POST' && r.status() === 200);
 
@@ -79,6 +84,7 @@ test('three sets logged offline survive a reload and reach the API once online',
 	const swapMs = await saved.evaluate((el) => Math.max(...getComputedStyle(el).transitionDuration.split(',').map((d) => parseFloat(d) * 1000)));
 	expect(swapMs).toBeGreaterThan(0);
 	expect(swapMs).toBeLessThan(250);
+	await settled(saved);
 	await captureEvidence(page, testInfo, 'saved-rest');
 
 	await page.getByRole('button', { name: 'Next: 200 × 5' }).click();
@@ -92,6 +98,7 @@ test('three sets logged offline survive a reload and reach the API once online',
 	await page.getByRole('button', { name: 'Add a note' }).click();
 	await page.getByRole('combobox', { name: 'Effort (RPE)' }).selectOption('8');
 	await page.getByRole('textbox', { name: 'Note' }).fill('Moved well');
+	await settled(page.getByTestId('note'));
 	await captureEvidence(page, testInfo, 'note-open');
 	await page.getByRole('button', { name: 'Done' }).click();
 	await expect(saved.getByText(`Estimated max ${estimatedOneRm(225, 5)} lb`)).toBeVisible();
