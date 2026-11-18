@@ -1,4 +1,4 @@
-import { expect, test } from './test.ts';
+import { disclosure, expect, hydrated, test } from './test.ts';
 import { openOn } from './clock.ts';
 import { captureEvidence } from './evidence.ts';
 
@@ -18,7 +18,7 @@ test('before the plan starts, Today shows the first session with its date', asyn
 test('week 1 Monday: Leader squat sets from TM 215, then the hard couplet', async ({ page }, testInfo) => {
 	await openOn(page, '2026-12-07');
 	await expect(page.getByRole('heading', { level: 1, name: 'Squat + couplet' })).toBeVisible();
-	await page.getByRole('button', { name: /^Back squat/ }).click();
+	await disclosure(page, /^Back squat/).click();
 	await expect(page.getByText('185 × 5', { exact: true })).toBeVisible();
 	await expect(page.getByText('5 × 5 at 140')).toBeVisible();
 	await captureEvidence(page, testInfo, 'today-week-1');
@@ -29,7 +29,7 @@ test('week 4: Friday moves to Thursday for New Year, and the holiday itself is r
 	await expect(page.getByRole('heading', { level: 1, name: 'Mile TT + deadlift' })).toBeVisible();
 	await expect(page.getByText('Thursday', { exact: true })).toBeVisible();
 	await expect(page.getByRole('img', { name: 'Hard effort' })).toHaveCount(1);
-	await page.getByRole('button', { name: /^Mile time trial/ }).click();
+	await disclosure(page, /^Mile time trial/).click();
 	await expect(page.getByText('1 mi run')).toBeVisible();
 	await captureEvidence(page, testInfo, 'today-week-4');
 
@@ -39,44 +39,65 @@ test('week 4: Friday moves to Thursday for New Year, and the holiday itself is r
 
 test('a block expands to its prescription on tap, one at a time, and collapses on a second tap', async ({ page }, testInfo) => {
 	await openOn(page, '2027-01-25');
-	const squat = page.getByRole('button', { name: /^Back squat/ });
-	const fran = page.getByRole('button', { name: /^Fran/ });
+	const squat = disclosure(page, /^Back squat/);
+	const fran = disclosure(page, /^Fran/);
 	const topSet = page.getByText('200 × 5+');
+	const thrusters = page.getByText('21 thrusters, 95 lb');
 
-	await expect(topSet).toHaveCount(0);
+	await expect(topSet).toBeHidden();
 	await squat.click();
-	await expect(squat).toHaveAttribute('aria-expanded', 'true');
 	await expect(topSet).toBeVisible();
 	await expect(topSet).toHaveCSS('font-weight', '600');
 	await captureEvidence(page, testInfo, 'today-expanded');
 
 	await fran.click();
-	await expect(page.getByText('21 thrusters, 95 lb')).toBeVisible();
-	await expect(topSet).toHaveCount(0);
+	await expect(thrusters).toBeVisible();
+	await expect(topSet).toBeHidden();
 
 	await fran.click();
-	await expect(fran).toHaveAttribute('aria-expanded', 'false');
-	await expect(page.getByText('21 thrusters, 95 lb')).toHaveCount(0);
+	await expect(thrusters).toBeHidden();
 });
 
 test('"Why this session" discloses the reason and hides it again', async ({ page }) => {
 	await openOn(page, '2026-12-07');
 	const why = page.getByText('Leader block: 5s at every step');
-	await expect(why).toHaveCount(0);
-	await page.getByRole('button', { name: 'Why this session' }).click();
+	await expect(why).toBeHidden();
+	await disclosure(page, 'Why this session').click();
 	await expect(why).toBeVisible();
-	await page.getByRole('button', { name: 'Hide why' }).click();
-	await expect(why).toHaveCount(0);
+	await disclosure(page, 'Hide why').click();
+	await expect(why).toBeHidden();
 });
 
-test('a tap right after opening, while the app is still starting, is not lost', async ({ page }) => {
+test.describe('before the app script runs', () => {
+	test.use({ javaScriptEnabled: false });
+
+	test('with JavaScript off, a block and "Why this session" still open on tap', async ({ page }) => {
+		await page.goto('/day/2026-12-07');
+		await expect(page.getByRole('heading', { level: 1, name: 'Squat + couplet' })).toBeVisible();
+		await disclosure(page, /^Back squat/).click();
+		await expect(page.getByText('5 × 5 at 140')).toBeVisible();
+		await disclosure(page, 'Why this session').click();
+		await expect(page.getByText('Leader block: 5s at every step')).toBeVisible();
+	});
+});
+
+test('a disclosure opened while the app script is held back stays open once the app starts', async ({ page }) => {
+	let release = () => {};
+	const held = new Promise<void>((resolve) => (release = resolve));
 	await page.route('**/_app/immutable/entry/app.*.js', async (route) => {
-		await new Promise((resolve) => setTimeout(resolve, 1500));
+		await held;
 		await route.continue();
 	});
-	await openOn(page, '2026-12-07');
-	await page.getByRole('button', { name: 'Why this session' }).click();
-	await expect(page.getByText('Leader block: 5s at every step')).toBeVisible();
+	await page.goto('/day/2026-12-07', { waitUntil: 'commit' });
+	await disclosure(page, 'Why this session').click();
+	const why = page.getByText('Leader block: 5s at every step');
+	await expect(why).toBeVisible();
+	await expect(page.locator('html[data-hydrated]')).toHaveCount(0);
+	release();
+	await hydrated(page);
+	await expect(why).toBeVisible();
+	await disclosure(page, 'Hide why').click();
+	await expect(why).toBeHidden();
 });
 
 test("today's date picks the session, and a day without one is rest", async ({ page }) => {
@@ -100,8 +121,8 @@ test('week 4 Tuesday: the §G checkpoint, the submax then gymnastics maxes, with
 	await openOn(page, '2026-12-29');
 	await expect(page.getByRole('heading', { level: 1, name: 'Press + checkpoint tests' })).toBeVisible();
 	await expect(page.getByRole('img', { name: 'Hard effort' })).toHaveCount(0);
-	await expect(page.getByRole('button', { name: /^Submax run/ })).toBeVisible();
-	await page.getByRole('button', { name: /^Gymnastics maxes/ }).click();
+	await expect(disclosure(page, /^Submax run/)).toBeVisible();
+	await disclosure(page, /^Gymnastics maxes/).click();
 	await expect(page.getByText('Push-ups 1 × 50')).toBeVisible();
 	await expect(page.getByText(/then max push-ups · ladders: push-ups 50\/75\/100/)).toBeVisible();
 	await captureEvidence(page, testInfo, 'today-week-4-checkpoint');
@@ -110,7 +131,7 @@ test('week 4 Tuesday: the §G checkpoint, the submax then gymnastics maxes, with
 test('week 5 Tuesday: body comp comes first, fasted, as a 1-min non-hard block', async ({ page }, testInfo) => {
 	await openOn(page, '2027-01-05');
 	await expect(page.getByRole('heading', { level: 1, name: 'Press + Z1 run' })).toBeVisible();
-	const bodyComp = page.getByRole('button', { name: /^Body comp/ });
+	const bodyComp = disclosure(page, /^Body comp/);
 	await expect(page.getByRole('img', { name: 'Hard effort' })).toHaveCount(0);
 	await bodyComp.click();
 	await expect(page.getByText('Fasted, before eating: weight · tape')).toBeVisible();

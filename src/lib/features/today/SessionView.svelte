@@ -23,9 +23,6 @@
 	const rpe = $derived(log?.session ? ` · RPE ${log.session.rpe}` : '');
 
 	const uid = $props.id();
-
-	let openBlock = $state<number | undefined>();
-	let whyOpen = $state(false);
 </script>
 
 <div class="screen" class:nested>
@@ -36,20 +33,13 @@
 	</header>
 	<svelte:element this={nested ? 'div' : 'main'} class="blocks">
 		{#each session.blocks as block, i (i)}
-			<BlockRow
-				{block}
-				blockIndex={i}
-				{log}
-				id="{uid}-block-{i}"
-				open={openBlock === i}
-				ontoggle={() => (openBlock = openBlock === i ? undefined : i)}
-			/>
+			<BlockRow {block} blockIndex={i} {log} group="{uid}-blocks" />
 		{/each}
 		<div class="rule"></div>
-		<button type="button" class="why" aria-expanded={whyOpen} aria-controls="{uid}-why" onclick={() => (whyOpen = !whyOpen)}>
-			{whyOpen ? 'Hide why' : 'Why this session'}
-		</button>
-		{#if whyOpen}<p class="why-text" id="{uid}-why">{session.why}</p>{/if}
+		<details class="why">
+			<summary><span class="closed">Why this session</span><span class="opened">Hide why</span></summary>
+			<p class="why-text">{session.why}</p>
+		</details>
 	</svelte:element>
 	{#if startable}
 		<div class="start">
@@ -108,14 +98,27 @@
 	}
 
 	.why {
-		align-self: flex-start;
 		margin-top: 14px;
+	}
+
+	summary {
+		width: fit-content;
 		min-height: 44px;
 		padding: 0 8px;
-		background: transparent;
-		border: 0;
+		display: flex;
+		align-items: center;
+		list-style: none;
 		color: var(--text-muted);
 		font-size: 15px;
+	}
+
+	summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.why[open] .closed,
+	.why:not([open]) .opened {
+		display: none;
 	}
 
 	.why-text {
@@ -125,9 +128,14 @@
 		font-size: 15px;
 		line-height: 1.5;
 		color: var(--text-muted);
-		transition: opacity 200ms var(--ease-out);
+	}
 
-		@starting-style {
+	.why[open] .why-text {
+		animation: reveal 200ms var(--ease-out);
+	}
+
+	@keyframes reveal {
+		from {
 			opacity: 0;
 		}
 	}
