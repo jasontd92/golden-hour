@@ -657,6 +657,33 @@ Explicitly cut, so don't reintroduce:
 - Status: MERGED. Verifier pending.
 - VERIFIER: WS8 — PASS WITH GAPS. Reproduced: prod / at 390/800/1023 shows phone only and 1024/1440 desk only, both with JS off (CSS) and on (Viewport drops the other); resize 1440→800→1300 swaps; CLS 0 phone, 0.00004 desk. Breakpoint lives only in +layout (min-width 1024 / width < 1024) and deskMinWidth; spec green. No log link visible or present in the desk DOM of / or /progress; desk SessionView is not startable. Independent grid script (plan/week-*.json → hard, scaled wk 1/2/7/11/15, test label by block name, moved title, Dec 25/Jan 1) vs the c1ed16c build and vs current prod: 102/102 cells, 0 mismatches; headers = most common title segment, matching. Targets match draft-plan §G exactly; squat 275 = latest 255 + 20 is right, since §G splits CFT 750 → 800 (+20/+10/+20) on the 11/16 CFT lifts, not bests. Fran start 6:34, best 4:43, Next wk 8; time axes flipped. CI 44311093535: 23 × mobile-webkit, 23 × mobile-chromium, 5 × desktop-chromium (plan.desktop.e2e.ts only), 51/51. Main 44311730052 green; Vercel success on c1ed16c. `pnpm check` EXIT 0 on a fresh clone of d1a66ae (422). PR diff = 25 intended files, no AI trailers. Perf (c1ed16c^ → c1ed16c): / HTML 7.6 → 10.2 KB gz, preloaded JS 74.4 → 81.8 KB gz; fine for phones. Deviations OK: retest hard dots (true to the plan), holiday-move titles, chart key and tooltips. Gaps: (1) wk4 Thu shows only "Mile TT": the deadlift moved from Fri is hidden, because a test label wins over the moved title; (2) unlisted: the pane shows no logged values (the mockup has ✓ reps) and is empty until hydration; (3) the breakpoint spec checks presence only; (4) the pre-start Progress kicker reads raw ISO "starts 2026-12-07"; (5) the Wed header truncates to "Threshol…" with the pane open.
 
+### WS8b — desktop polish (WS8 verifier gaps) — MERGED
+- Type: impl EM (ws8b-impl). Source: the WS8 VERIFIER gaps 1–5 plus the pane pop-in.
+- PR #23, squash-merged as `31fb8cc`. Head `ee0be77`. Branch deleted.
+- CI: PR run 44316840133 on `2c6345f` was red. 2 desktop e2e tests failed because, with Linux fonts, "Gymnastics" overflowed the ~65px left beside the weekday. Run 44317849791 on `ee0be77` was all green (typecheck, lint, unit, policy, e2e, evidence). Main run 44318667295 on 31fb8cc: typecheck, lint, unit and policy green; e2e was still running at handoff. Vercel: rate-limited (PM gate change: don't wait for it).
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws8b` at `ee0be77` over `b431ab6` (439 unit tests). The log is a PR comment. Reviews: none, 0 threads.
+- Public API:
+  - `#lib/domain/plan-grid.ts`: `GridDay.label`, the cell text. It is the test, then the moved session, joined with " · ", or else the holiday. `GridDay.moved` is now the column name the session came from, not its title. `columnHeader(name)` keeps the words that fit in 10 characters.
+  - `#lib/domain/log.ts`: `DayLog` and `dayLog(records, date)`. `sets` are in logged order; `session` is the latest session record.
+  - `features/today/prescription-lines.ts`: `Line.at` (`prescriptionIndex` and `setIndexes`) and `loggedText(line, blockIndex, log)`. Set lines show "✓ 5" or "✓ 5/5/5/5/5". The score goes on the first line of the scored prescription.
+  - `loggedSessions.on(date)` in `features/log/effects.svelte.ts`. SessionView and BlockRow take an optional `log`. Only the desk pane passes it, so the phone `/day` view is unchanged.
+- Decisions:
+  - Holiday cells:
+    - wk 4 Thu reads "Mile TT · DL".
+    - wk 3/4 Wed read "Gymnastics"; wk 3 Thu reads "Deadlift".
+    - Retest weeks keep their test labels alone.
+    - Beside a test, a moved main lift uses a typed `Record<MainLift, string>` short name. "DL" is the plan's own abbreviation.
+  - Header: derived short name plus the weekday stacked above it, which gives the name about 97px at 1440 with the pane open. Type sizes are unchanged. The shorter name alone passed locally but failed with CI's fonts.
+  - The pane status line adds "· RPE n" from the session record.
+  - `layout-breakpoint.spec.ts` fails on any width query in `src` (`@media`, `MediaQuery(`, `matchMedia(`) outside this set: +layout's 768, 1024 and `width < 1024`, and the `deskMinWidth` template in viewport.
+- Gotchas:
+  - Local e2e runs without Docker if you point Playwright at the cached chromium_headless_shell-1243 through `launchOptions.executablePath` in a throwaway config.
+  - Text widths differ between macOS and CI, so leave real slack in no-truncation asserts.
+- Follow-up candidates:
+  - Pane pop-in: descoped by the PM. Prerendering the pane duplicates the pre-plan session text in the HTML. Playwright `getByText` matches hidden nodes and doesn't retry strict-mode violations, so every mobile spec would race hydration. Fixing it needs hydration waits in every spec.
+  - At 1024–1280px with the pane open, cells and headers still truncate (as before).
+- Status: MERGED. Verifier pending.
+
 ### CLOSE — Stage 5′ — NOT STARTED
 - Runner: the full mobile e2e suite on the final `main` tip.
 - `pnpm sessions:score` over all sprint sessions → turn the findings into checks.
