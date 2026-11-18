@@ -277,7 +277,17 @@ Explicitly cut, so don't reintroduce:
 - Tests: `scripts/data-build.spec.ts` builds perturbed copies of `data/curated` and `data/raw/sugarwod` in a temp root. It covers the integer-key case (curated splits and set_details), Arabic-Indic and full-width digits, BOM, `\x1c`, `\x85` and NBSP, plus SugarWOD display/raw. Mutation proof (in the PR body): removing the key guard fails 2 tests; removing the score guard fails 8.
 - Gotchas: a fixture built with `JSON.stringify` already reorders integer keys, so the integer-key fixture is written as raw text.
 
-### WS5a — logging data layer + sync — MERGED
+### WS5a — logging data layer + sync — VERIFIED (PASS WITH GAPS)
+- The no-loss property holds for one device: two of the verifier's own mutants were killed. Gaps:
+  - the duplicate check is vacuous
+  - partial accepts are never exercised: the ack-all mutant survived
+  - drain isn't asserted: the single-batch mutant survived
+  - no reload or restart command
+  - nothing calls `storage.persist()` (moved to WS5b)
+  - previews can migrate and write production if they get the TURSO vars (a CEO env-scoping question)
+- WS5c closes the proof gaps.
+
+### WS5c — strengthen the no-loss proof — IN PROGRESS (ws5c-impl)
 - Type: impl EM. Doc: ws-05-logging-sync.md (everything except the log UI and the UI e2e). Hold-the-line A.
 - PRs, all squash-merged, branches deleted:
   - #5 → `4fd9a0b` (head `b7ac9b1`): the main chunk.
