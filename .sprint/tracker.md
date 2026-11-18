@@ -202,8 +202,28 @@ Explicitly cut, so don't reintroduce:
 ### WS5 — split into WS5a/WS5b (see below)
 - Depends: WS2 (data layer); WS4 (UI mount). Hold-the-line A. Doc: ws-05-logging-sync.md.
 
-### WS6 — progress — IN PROGRESS (ws6-impl, PR #8)
+### WS6 — progress — MERGED
 - Depends: WS3. Doc: ws-06-progress.md.
+- PR #8, squash-merged as `255fb58`. Head `8eb1692` (rebased onto WS4 `bdc3b36`, then `fcd3cf9`). Branch deleted.
+- CI: PR runs 44228879927 (on e46f64d) and 44229208568 (on 8eb1692) green: typecheck, lint, unit 278, policy, e2e (both mobile projects), evidence. Main: run 44229427972 on `255fb58` was cancelled twice (a newer main push replaces a queued run in `ci-${{ github.ref }}`). The next run, 44229556777 on `c8301c5` (255fb58 + `.sprint/` only), succeeded. Vercel success on `255fb58`; production `/progress` returns 200, and `/progress/benchmarks/fran` serves 4:43.
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws6` at `8eb1692` (up to date with origin/main). Three logs are PR comments.
+- Reviews: none, 0 threads.
+- Public API:
+  - `#lib/domain/progress.ts`: `bestResult(workout, results)` → `{ result, conflicted }`, `benchmarkWorkouts`, `benchmarkRows`, `bestOneRepMax`, `liftRows`, `liftName`, `resultHistory`, `liftHistory`, `dateLabel`, `sourceLabel`, `displayScore`; types `ProgressRow`, `HistoryRow`.
+  - `#lib/server/history-data.ts`: `workouts`, `results`, `lifts`, the normalized files bundled with `?raw` and parsed with the WS2 zod schemas.
+  - Routes (all prerendered): `/progress`, `/progress/benchmarks/[id]`, `/progress/lifts/[id]`. The `TabBar` Progress tab is now a link, current on any `/progress*` route.
+- Decisions:
+  - Best = the `score.better` sort over non-conflicted results only; on a tie, the earliest wins. A muted ring (sr text "Sources disagree") appears when a conflicted result ties or beats the shown best. CrossFit Total shows 845 (SugarWOD 2023-10-30) with the marker; Cindy shows 22+16 with the marker.
+  - Benchmarks: favorites, then `kind: test`, then girls with ≥2 dated scored results; within each group, by scored-result count, then name. Excluded: workouts with `definition_status` (Kong is King, Launchpad), `score.better: null` (vertical jump), and workouts without scored results. That makes 21 rows, against 6 in the mockup.
+  - Lifts: `lifts.json` only, max of `reps === 1` evidence (11 lifts), ordered by load, named from the slug ("Back squat"). History lists all evidence: `load × reps`, or the bare load when reps is null.
+  - Dates: day "May 11, 2023", month "Aug 2025", approx "~Aug 7, 2023", unknown → `date_text`; undated lift evidence → "Undated". Sources: SugarWOD / SugarWOD profile / Sheet / Notes by prefix; an unknown prefix falls through raw.
+  - History is a separate route, not an in-place panel. Duplicate (`duplicate_of`) results stay in the history, since rule 1 keeps every observation.
+- Gotchas:
+  - `svelte/no-navigation-without-resolve` needs `resolve()` inline in the `href` attribute; a helper function returning `resolve(...)` still fails.
+  - Main CI: tracker-only pushes right after a merge make the merge SHA's queued run get cancelled, so check the next main run.
+  - Local Playwright browsers are stale (1243 vs 1255). Rely on CI e2e.
+- Drift from WS doc: none for values. Best Fran 4:43, back squat 1RM 295 and CFT 845 (non-conflicted) all verified against `data/normalized`. The README lists `date_precision` without `approx`; it's handled.
+- Recommendations: (1) The 2026-11-16 CFT lifts (255/160/335) are in `results.jsonl` `detail` only; adding them to lift evidence is a curated-data change for the CEO. (2) CEO: decide whether 21 benchmarks and 11 lifts is "short" enough, or whether to cap to main lifts / recurring tests. (3) `benchmark-anaerobic` (the only unknown-precision results) is not listed: it isn't a favorite, test or girl, and its course varies.
 
 ### WS7 — agent-session scorer — VERIFIED
 - Type: impl EM. Doc: ws-07-session-scorer.md.
