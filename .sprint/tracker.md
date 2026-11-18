@@ -522,3 +522,11 @@ Explicitly cut, so don't reintroduce:
 - Runner: the full mobile e2e suite on the final `main` tip.
 - `pnpm sessions:score` over all sprint sessions → turn the findings into checks.
 - Delete `.sprint/`, then write the morning report.
+
+### Follow-up candidates (PM, collected for the morning report)
+- WS6b:
+  - The lift-rule window is relative to the build date, so a non-main 1RM silently drops off on a rebuild about 3 years later. Pin it to a data-relative date, or accept that.
+  - Nothing ties `testBattery` to the plan's non-catalog tests (ring dips, submax, mile TT, body comp).
+  - The conflict note is internal jargon ("Evo2 test week") and sits on the wrong row.
+- WS5b: the RPE select on WebKit, and the server read-back in e2e. Both are folded into WS5d.
+- WS5c: the property's history length cap is folded into WS5d. Never modelled: a second device, clock skew, and startSyncLoop itself.
