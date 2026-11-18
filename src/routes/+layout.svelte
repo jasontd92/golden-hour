@@ -6,6 +6,7 @@
 	import { keepSyncing } from '#lib/features/log/effects.svelte.ts';
 	import { trackToday } from '#lib/ui/clock.svelte.ts';
 	import { appUpdate, watchServiceWorker } from '#lib/ui/service-worker.svelte.ts';
+	import DeskNav from '#lib/ui/DeskNav.svelte';
 	import TabBar from '#lib/ui/TabBar.svelte';
 	import UpdatePrompt from '#lib/ui/UpdatePrompt.svelte';
 	import type { LayoutProps } from './$types';
@@ -20,8 +21,9 @@
 </script>
 
 <div class="shell" class:mid-session={midSession}>
+	{#if !midSession}<div data-view="desk"><DeskNav /></div>{/if}
 	{@render children()}
-	{#if !midSession}<TabBar />{/if}
+	{#if !midSession}<div data-view="phone"><TabBar /></div>{/if}
 	{#if appUpdate.ready && !midSession}<UpdatePrompt />{/if}
 </div>
 
@@ -45,6 +47,25 @@
 	@media (min-width: 768px) {
 		.shell {
 			--shell-width: 430px;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.shell:has(:global([data-desk-page])) {
+			--shell-width: none;
+			height: 100dvh;
+			min-height: 0;
+			padding-bottom: 0;
+		}
+
+		.shell :global([data-view='phone']) {
+			display: none;
+		}
+	}
+
+	@media (width < 1024px) {
+		.shell :global([data-view='desk']) {
+			display: none;
 		}
 	}
 </style>

@@ -3,33 +3,41 @@
 	import { sessionMinutes, type PlanSession } from '#lib/domain/plan.ts';
 	import BlockRow from './BlockRow.svelte';
 
-	let { session, dayLabel, startable = false }: { session: PlanSession; dayLabel: string; startable?: boolean } = $props();
+	let {
+		session,
+		dayLabel,
+		startable = false,
+		nested = false,
+		status
+	}: { session: PlanSession; dayLabel: string; startable?: boolean; nested?: boolean; status?: string } = $props();
+
+	const uid = $props.id();
 
 	let openBlock = $state<number | undefined>();
 	let whyOpen = $state(false);
 </script>
 
-<div class="screen">
+<div class="screen" class:nested>
 	<header>
 		<p class="day">{dayLabel}</p>
-		<h1>{session.title}</h1>
-		<p class="minutes"><span class="num">{sessionMinutes(session)}</span> min</p>
+		<svelte:element this={nested ? 'h2' : 'h1'} class="title">{session.title}</svelte:element>
+		<p class="minutes"><span class="num">{sessionMinutes(session)}</span> min{#if status} · {status}{/if}</p>
 	</header>
-	<main>
+	<svelte:element this={nested ? 'div' : 'main'} class="blocks">
 		{#each session.blocks as block, i (i)}
 			<BlockRow
 				{block}
-				id="block-{i}"
+				id="{uid}-block-{i}"
 				open={openBlock === i}
 				ontoggle={() => (openBlock = openBlock === i ? undefined : i)}
 			/>
 		{/each}
 		<div class="rule"></div>
-		<button type="button" class="why" aria-expanded={whyOpen} aria-controls="why" onclick={() => (whyOpen = !whyOpen)}>
+		<button type="button" class="why" aria-expanded={whyOpen} aria-controls="{uid}-why" onclick={() => (whyOpen = !whyOpen)}>
 			{whyOpen ? 'Hide why' : 'Why this session'}
 		</button>
-		{#if whyOpen}<p class="why-text" id="why">{session.why}</p>{/if}
-	</main>
+		{#if whyOpen}<p class="why-text" id="{uid}-why">{session.why}</p>{/if}
+	</svelte:element>
 	{#if startable}
 		<div class="start">
 			<a href={resolve('/log/[date]', { date: session.date })}>Start</a>
@@ -57,12 +65,25 @@
 		color: var(--text-muted);
 	}
 
-	h1 {
+	.title {
 		font-size: 34px;
 		line-height: 1.08;
 	}
 
-	main {
+	.nested header {
+		padding: 0 0 24px;
+	}
+
+	.nested .title {
+		font-size: 28px;
+		line-height: 1.1;
+	}
+
+	.nested .blocks {
+		padding: 0;
+	}
+
+	.blocks {
 		flex: 1;
 		padding: 0 16px;
 		display: flex;
