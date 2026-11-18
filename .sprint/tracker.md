@@ -105,6 +105,15 @@ Explicitly cut, so don't reintroduce:
 - Conventional Commits. NEVER an AI co-author trailer (CLAUDE.md, all repos).
 - `git add <paths>`, never `-A`. Never `git stash`.
 
+### Review holds and PR descriptions (CEO, 2026-11-18)
+- Verbatim: "anything that's a fundamental addition or change (like the formal proofs and frameworks, and so on), once we do open those PRs, I want those paused, not auto-merged, for my own review."
+- Verbatim: "The PR description should mainly be a description of what it is, a bulleted list of what was implemented, and maybe interesting areas for me to explore and think about."
+- HOLD chunks cover verification frameworks and tooling (canary, budgets, Stryker, seeded-bug benchmark, oracle agent/traceability, model checking, proofs) and any change to how agents work in the repo.
+  - The EM takes a HOLD chunk through every gate, then stops before merging: label `ceo-review`, PR stays open, handoff status HELD.
+  - The verifier checks the PR head SHA.
+  - The CEO merges.
+- Concurrency (CEO): at most 3 agents running at once, counting EMs and verifiers together.
+
 ### HALT — escalate to the CEO, don't decide
 - Spending money or creating accounts (Turso plan, a paid Vercel feature, domains).
 - Installing global tools beyond pnpm.
