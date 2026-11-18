@@ -145,7 +145,7 @@
 								class:today={day.date === today}
 								class:selected={isSelectedDay(day)}
 								aria-label={dayAria(day)}
-								title={dayAria(day)}
+								title={day.label ? `${day.label}\n${dayAria(day)}` : dayAria(day)}
 								aria-pressed={isSelectedDay(day)}
 								tabindex={tabStop.row === row && tabStop.col === col ? 0 : -1}
 								bind:this={() => cells[row]?.[col], (el) => ((cells[row] ??= [])[col] = el)}
@@ -191,10 +191,13 @@
 	.plan {
 		flex: 1;
 		min-height: 0;
-		padding: 0 48px 36px;
+		--gutter: clamp(24px, 10vw - 96px, 48px);
+		--pane-gap: clamp(24px, 10vw - 104px, 40px);
+		--cell-pad: clamp(6px, 2.5vw - 26px, 10px);
+		padding: 0 var(--gutter) 36px;
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) clamp(320px, 28vw, 400px);
-		gap: 40px;
+		grid-template-columns: minmax(0, 1fr) clamp(264px, 75vw - 680px, 400px);
+		gap: var(--pane-gap);
 		font-variant-numeric: tabular-nums;
 	}
 
@@ -275,7 +278,7 @@
 
 	.row {
 		display: grid;
-		grid-template-columns: 76px 96px repeat(6, minmax(0, 1fr));
+		grid-template-columns: clamp(60px, 4vw + 19px, 76px) clamp(88px, 2vw + 67px, 96px) repeat(6, minmax(0, 1fr));
 		column-gap: 4px;
 		height: 34px;
 		align-items: center;
@@ -291,7 +294,7 @@
 	}
 
 	.column {
-		padding: 0 10px;
+		padding: 0 var(--cell-pad);
 		display: flex;
 		flex-direction: column;
 		line-height: 1.25;
@@ -315,7 +318,7 @@
 		min-width: 0;
 		border: 0;
 		border-radius: var(--radius);
-		padding: 0 10px;
+		padding: 0 var(--cell-pad);
 		display: flex;
 		align-items: center;
 		gap: 8px;
@@ -380,7 +383,7 @@
 	aside {
 		border-left: 1px solid var(--border-glass);
 		position: relative;
-		padding: 24px 0 0 40px;
+		padding: 24px 0 0 var(--pane-gap);
 		display: flex;
 		flex-direction: column;
 		min-height: 0;

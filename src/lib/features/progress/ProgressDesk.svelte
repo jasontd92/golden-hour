@@ -112,7 +112,7 @@
 	.progress {
 		flex: 1;
 		min-height: 0;
-		padding: 0 48px 36px;
+		padding: 0 clamp(24px, 10vw - 96px, 48px) 36px;
 		display: grid;
 		grid-template-columns: 360px minmax(0, 1fr);
 		gap: 40px;

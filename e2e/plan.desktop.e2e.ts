@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { expect, test } from './test.ts';
+import { disclosure, expect, test } from './test.ts';
 import { openOn } from './clock.ts';
 import { captureEvidence } from './evidence.ts';
 
@@ -62,8 +62,8 @@ test('clicking a day opens the pane with that session', async ({ page }, testInf
 	await cell(page, /^Fri Dec 11, Deadlift \+ bike/).click();
 	await expect(pane(page).getByText('Friday, Dec 11')).toBeVisible();
 	await expect(pane(page).getByRole('heading', { level: 2, name: 'Deadlift + bike' })).toBeVisible();
-	await pane(page).getByRole('button', { name: /^Deadlift/ }).click();
-	await expect(pane(page).getByText(/× 5/).first()).toBeVisible();
+	await disclosure(pane(page), /^Deadlift/).click();
+	await expect(pane(page).getByText(/× 5/).filter({ visible: true }).first()).toBeVisible();
 	await cell(page, /^Mon Dec 7/).click();
 	await expect(pane(page).getByText(/min · Not logged$/)).toBeVisible();
 	await captureEvidence(page, testInfo, 'plan-pane');
@@ -147,12 +147,27 @@ test('holiday-week cells show a test and the session that moved in beside it', a
 	await captureEvidence(page, testInfo, 'plan-holiday-weeks');
 });
 
-test('column headers fit at 1440 with the pane open', async ({ page }) => {
+for (const width of [1280, 1440]) {
+	test(`no cell or column header truncates at ${width} with the pane open`, async ({ page }) => {
+		await page.setViewportSize({ width, height: 900 });
+		await openOn(page, '2026-12-09');
+		await expect(pane(page)).toBeVisible();
+		const headers = grid(page).getByRole('columnheader');
+		await expect(headers.filter({ hasText: /^Wed\s*Threshold$/ })).toHaveAttribute('title', 'Threshold intervals');
+		expect(await truncated(grid(page).locator('.trunc'))).toEqual([]);
+	});
+}
+
+test('at 1024 with the pane open, headers fit and every cell carries its full label on hover', async ({ page }) => {
+	await page.setViewportSize({ width: 1024, height: 900 });
 	await openOn(page, '2026-12-09');
 	await expect(pane(page)).toBeVisible();
-	const headers = grid(page).getByRole('columnheader');
-	await expect(headers.filter({ hasText: /^Wed\s*Threshold$/ })).toHaveAttribute('title', 'Threshold intervals');
-	expect(await truncated(headers.locator('.trunc'))).toEqual([]);
+	expect(await truncated(grid(page).getByRole('columnheader').locator('.trunc'))).toEqual([]);
+	const labelled = await grid(page)
+		.locator('button.day:has(.trunc)')
+		.evaluateAll((cells) => cells.map((c) => ({ label: c.querySelector('.trunc')?.textContent ?? '', title: c.getAttribute('title') ?? '' })));
+	expect(labelled.length).toBeGreaterThan(20);
+	expect(labelled.filter(({ label, title }) => !title.startsWith(`${label}\n`))).toEqual([]);
 });
 
 test('a logged day shows the logged reps, the session RPE and the score in the pane', async ({ page }, testInfo) => {
@@ -188,11 +203,11 @@ test('a logged day shows the logged reps, the session RPE and the score in the p
 	await page.reload();
 	await cell(page, /^Mon Dec 7, .*, logged$/).click();
 	await expect(pane(page).getByText(/^\d+ min · Logged · RPE 8$/)).toBeVisible();
-	await pane(page).getByRole('button', { name: /^Couplet/ }).click();
+	await disclosure(pane(page), /^Couplet/).click();
 	await expect(pane(page).getByText('✓ 6:52')).toBeVisible();
-	await pane(page).getByRole('button', { name: /^Single-leg/ }).click();
+	await disclosure(pane(page), /^Single-leg/).click();
 	await expect(pane(page).getByText('✓ 10', { exact: true })).toBeVisible();
-	await pane(page).getByRole('button', { name: /^Back squat/ }).click();
+	await disclosure(pane(page), /^Back squat/).click();
 	const lines = pane(page).locator('.lines p');
 	await expect(lines.filter({ hasText: '140 × 5' }).first()).toHaveText(/^140 × 5\s*✓ 5$/);
 	await expect(lines.filter({ hasText: '185 × 5' })).toHaveText(/✓ 7$/);
@@ -200,7 +215,7 @@ test('a logged day shows the logged reps, the session RPE and the score in the p
 	await captureEvidence(page, testInfo, 'plan-pane-logged');
 
 	await cell(page, /^Thu Dec 10/).click();
-	await pane(page).getByRole('button', { name: /^Gymnastics|^Z1/ }).first().click();
+	await disclosure(pane(page), /^Gymnastics|^Z1/).first().click();
 	await expect(pane(page).getByText(/^\d+ min$/)).toBeVisible();
 	await expect(pane(page).getByText(/✓/)).toHaveCount(0);
 });
