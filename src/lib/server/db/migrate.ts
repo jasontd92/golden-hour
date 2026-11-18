@@ -12,7 +12,9 @@ interface Journal {
 	entries: { tag: string; when: number }[];
 }
 
+// Stryker disable next-line all: Vite resolves import.meta.glob at build time and rejects non-literal arguments
 const files = import.meta.glob<string>('/drizzle/*.sql', { query: '?raw', import: 'default', eager: true });
+// Stryker disable next-line all: Vite resolves import.meta.glob at build time and rejects non-literal arguments
 const [journal] = Object.values(import.meta.glob<Journal>('/drizzle/meta/_journal.json', { import: 'default', eager: true }));
 
 export const bundledMigrations: Migration[] = (journal?.entries ?? []).map(({ tag, when }) => {
