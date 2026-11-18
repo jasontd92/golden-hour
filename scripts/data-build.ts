@@ -47,6 +47,7 @@ interface CuratedResult {
 	score?: string | null;
 	date?: string | null;
 	prec?: string;
+	lifts?: Record<string, PyNumber>;
 	[key: string]: unknown;
 }
 
@@ -188,6 +189,7 @@ export function buildNormalized(root = dataDir): NormalizedFiles {
 		curatedWorkouts.map((workout) => [workout.id, { ...workout, sources: [...(workout.sources ?? [])] }])
 	);
 	const results: BuiltResult[] = [];
+	const curatedLifts: [lift: string, evidence: Json][] = [];
 
 	const rows = parseCsvRecords(readFileSync(path.join(root, sugarwodExport), 'utf8'));
 	rows.forEach((row, index) => {
@@ -273,6 +275,9 @@ export function buildNormalized(root = dataDir): NormalizedFiles {
 			conflict: field('conflict') as string | null,
 			source: curated.src
 		});
+		for (const [lift, load] of Object.entries(curated.lifts ?? {})) {
+			curatedLifts.push([lift, { date: curated.date ?? null, load, reps: 1, source: curated.src, note: workout.name }]);
+		}
 	});
 
 	for (const workout of workouts.values()) {
@@ -295,6 +300,7 @@ export function buildNormalized(root = dataDir): NormalizedFiles {
 			addLift(result.barbell_lift, { date: result.date, load: result.value, reps: null, source: result.source });
 		}
 	}
+	for (const [lift, evidence] of curatedLifts) addLift(lift, evidence);
 	const snapshot = readJson('curated/sugarwod_snapshot_2026-11-17.json') as Snapshot;
 	for (const max of snapshot.barbell_maxes_lb) {
 		for (const key of ['1RM', '2RM', '3RM', '5RM']) {

@@ -156,6 +156,13 @@
    "source": "sugarwod#row290"
   },
   {
+   "date": "2026-11-16",
+   "load": 335,
+   "reps": 1,
+   "source": "google-sheet/tests",
+   "note": "CrossFit Total"
+  },
+  {
    "date": null,
    "load": 365,
    "reps": 1,
@@ -226,6 +233,13 @@
    "load": 235.0,
    "reps": null,
    "source": "sugarwod#row287"
+  },
+  {
+   "date": "2026-11-16",
+   "load": 255,
+   "reps": 1,
+   "source": "google-sheet/tests",
+   "note": "CrossFit Total"
   },
   {
    "date": null,
@@ -400,6 +414,13 @@
    "load": 115.0,
    "reps": null,
    "source": "sugarwod#row249"
+  },
+  {
+   "date": "2026-11-16",
+   "load": 160,
+   "reps": 1,
+   "source": "google-sheet/tests",
+   "note": "CrossFit Total"
   },
   {
    "date": null,

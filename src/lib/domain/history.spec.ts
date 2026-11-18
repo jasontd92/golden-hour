@@ -24,7 +24,7 @@ describe('normalized data parses without loss', () => {
 
 	it('every lifts.json entry', () => {
 		expect(LiftsFile.parse(lifts)).toStrictEqual(lifts);
-		expect(Object.values(LiftsFile.parse(lifts)).flat()).toHaveLength(86);
+		expect(Object.values(LiftsFile.parse(lifts)).flat()).toHaveLength(89);
 	});
 });
 

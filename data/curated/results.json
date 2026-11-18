@@ -85,6 +85,6 @@
  {"w":"launchpad","date":"2025-08","prec":"month","score":"12:21","round":"2025-08","src":"google-sheet/tests"},
  {"w":"fran","date":"2025-08","prec":"month","score":"6:34","round":"2025-08","src":"google-sheet/tests"},
 
- {"w":"crossfit-total","date":"2026-11-16","score":"750","detail":"255 (juice left)/160/335","round":"2026-11","src":"google-sheet/tests"},
+ {"w":"crossfit-total","date":"2026-11-16","score":"750","detail":"255 (juice left)/160/335","lifts":{"back-squat":255,"shoulder-press":160,"deadlift":335},"round":"2026-11","src":"google-sheet/tests"},
  {"w":"strict-pullups-max","date":"2026-11-16","score":"13","round":"2026-11","src":"google-sheet/tests"}
 ]
