@@ -118,7 +118,7 @@ Explicitly cut, so don't reintroduce:
 - Drift from WS doc: `data/normalized/REPORT.md` (build.py output) added to the markdown allowlist. Runes need `.svelte.ts`, so the `$effect` home is `effects.svelte.ts`, not `effects.ts`. Acceptance criterion "curl preview, expect 200" cannot pass anonymously because of SSO: the preview loads for a logged-in browser, and production curls 200.
 - VERIFIER VERDICT: PASS WITH GAPS 8/9. The 9th is HUMAN: the CEO checks it on the phone (production URL). The e2e mutant claim was inspected, not reproduced; the logic holds.
 
-### WS2 — domain contract — MERGED
+### WS2 — domain contract — VERIFIED
 - Type: impl EM. Doc: ws-02-domain.md. Depends: WS1.
 - PR #3, squash-merged as `7156081`. Head `2f8be43`. Branch deleted.
 - CI: PR run 44215210775 green (typecheck, lint, unit 149 tests, policy, e2e, evidence); main run 44215462687 success; Vercel success on `7156081`, production 200.
@@ -148,7 +148,7 @@ Explicitly cut, so don't reintroduce:
   - Ajv runs with `validateFormats: false`; zod also emits `pattern`, so dates and uuids are still checked.
 - Drift from WS doc: the fixture keeps the mockup (squat TM 265, `225×5+`, AMRAP 12, hard on Mon/Thu/Sat). The plan has squat TM 215, week-1 Leader 5's PRO with no AMRAP set, and a Mon couplet of 2–10 min. Wed and Fri use the plan's TMs (press 135, DL 280) and 5's PRO. data/README lists `date_precision` as day|month|unknown and `format` as 7 values, but the data also has `approx`, `max_hold` and `other`, and one `score.better` is null; the schemas follow the data.
 
-### WS3 — data build port — MERGED
+### WS3 — data build port — VERIFIED (via WS3b)
 - Depends: WS2. Hold-the-line B. Doc: ws-03-data-port.md.
 - PR #4, squash-merged as `c8494f3`. Head `830e215`. Branch deleted.
 - CI: PR runs 44225400229 and 44226044061 green (typecheck, lint, unit 190 tests, policy incl. step "normalized data matches a fresh build", e2e, evidence). Main run 44226742954 success; Vercel success on `c8494f3`; production 200.
@@ -169,7 +169,7 @@ Explicitly cut, so don't reintroduce:
   - The build reads `data/` relative to the cwd.
 - Drift from brief: none found. Committed normalized output already matched a fresh build.py run. The score.spec describe names no longer mention build.py.
 
-### WS4 — shell, PWA, Today, Week — MERGED
+### WS4 — shell, PWA, Today, Week — VERIFIED (verifier PASS WITH GAPS 4/4 + HUMAN iPhone install; hard dots come from the fixture, Mon/Thu/Sat vs the plan's Mon/Wed/Fri; fixture notes repeat the structured sets, which is too wordy)
 - Type: impl EM. Doc: ws-04-shell-today-week.md. Depends: WS2.
 - PR #6, squash-merged as `bdc3b36`. Head `8ef1082`. Branch deleted.
 - CI: PR runs 44225689094, 44226008491, 44226923769, 44227206465 (one per rebase) and 44228438020 (final head) green: typecheck, lint, unit, policy, e2e (16/16: 8 tests × mobile-webkit and mobile-chromium), evidence. Main run 44228693700 success. Vercel production success on `bdc3b36`; production `/manifest.webmanifest` returns 200.
@@ -199,10 +199,10 @@ Explicitly cut, so don't reintroduce:
 - Drift from WS doc / brief: the mockup's "Week 1 of 16" renders as "of 17" (`planWeeks`, per WS2). The WS doc says `src/service-worker.ts`; Kit 3's sync expects `src/service-worker/` with its own tsconfig. Lighthouse isn't run; the manifest is asserted by a unit test (fields, icon PNG sizes) and an e2e test (linked, fetchable, icons 200). Progress isn't tappable yet.
 - HUMAN pending: CEO installs to the iPhone home screen and checks full screen and the status bar.
 
-### WS5 — logging + offline sync — NOT STARTED
+### WS5 — split into WS5a/WS5b (see below)
 - Depends: WS2 (data layer); WS4 (UI mount). Hold-the-line A. Doc: ws-05-logging-sync.md.
 
-### WS6 — progress — NOT STARTED
+### WS6 — progress — IN PROGRESS (ws6-impl, PR #8)
 - Depends: WS3. Doc: ws-06-progress.md.
 
 ### WS7 — agent-session scorer — VERIFIED
@@ -245,7 +245,7 @@ Explicitly cut, so don't reintroduce:
   - (2) Reject score strings with non-ASCII digits, BOM or control characters, failing loudly in the build.
   - (3) Accepted, and recorded here.
 
-### WS3b — data build hardening — MERGED
+### WS3b — data build hardening — VERIFIED (verifier PASS WITH GAPS 7/7; parity box ticked under the PM ruling)
 - PR #9, squash-merged as `87fed7d`. Head `a47c6ab`. Branch deleted.
 - CI: PR runs 44228279582 and 44228489769 (after rebase on `8d41ec2`) green (typecheck, lint, unit, policy, e2e, evidence). Main run 44228686106 success; Vercel production success on `87fed7d`; production 200.
 - `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws3b` at `a47c6ab` (227 tests). `pnpm data:build` gives zero diff in `data/normalized`. Logs are PR comments.
@@ -306,7 +306,16 @@ Explicitly cut, so don't reintroduce:
   - The brief's "e2e: log three sets offline…" criterion belongs to WS5b, which needs the UI.
   - The Vercel CLI isn't installed and Vercel API access was denied, so env presence came from the health endpoint.
 - Status: MERGED. Verifier pending.
-### WS5b — log UI — NOT STARTED (after WS4)
+### WS3c — residual data-build gaps — NOT STARTED (queued, low priority)
+- (1) A set_details value that is valid JSON but not an array is silently dropped; make it loud.
+- (2) The score_type lookup hits the prototype (`toString`); use an own-key lookup.
+- (3) Loud errors that don't name the source record should attach the origin.
+- Accepted: fail-open movement tagging, title/score_type whitespace variants (these surface in REPORT's unparsed/untagged lists).
+
+### Fixture cleanup (fold into the debate output)
+- week-01.json: hard days and Monday TM 265/AMRAP don't match the plan. The notes repeat the structured sets, so drop the duplicate notes. The real plan JSON from the debate replaces the fixture.
+
+### WS5b — log UI — IN PROGRESS (ws5b-impl)
 ### WS7b — scorer fixes — NOT STARTED
 ### WS8 — desktop planning view — NOT STARTED (needs CEO approval of Pass 3; after WS4, and WS5b/WS6 for review data)
 
