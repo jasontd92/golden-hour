@@ -846,6 +846,37 @@ Explicitly cut, so don't reintroduce:
 - Brief drift: none material. The brief said "import syncRoundLimit (or roundSlack)"; I used `syncRoundLimit`.
 - Status: MERGED. Verifier pending.
 
+### WS10 — prod canary + performance budgets — HELD (ceo-review)
+- Type: impl EM (ws10 impl). CEO 2026-11-18: "Runtime canary is fine to implement. I definitely agree with performance budgets." It's a HOLD chunk (PM directive): every gate run, not merged, and the CEO merges.
+- PR #27, label `ceo-review`. Head `8f74e42` over `7dc0ef6`. 3 pushes: the initial one, the final budgets, and a rebase over #26.
+- CI: PR run 44400153074 (`ce1c009`) was green. The `sync-budget` job was re-run 4× to sample wall time. Run 44402194739 (`5b42dcb`) was green. Final run 44404432645 (`8f74e42`) green on every job (sync-budget 5,900 ms / 45,245 ms). Vercel preview: success.
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws10` at `8f74e42` over `7dc0ef6` (469 tests). Logs are PR comments. Reviews: none, 0 threads.
+- Canary proven against production before merge:
+  - run 44400166287 (`workflow_dispatch` from the PR branch) passed: `ok GET /api/sync -> 200 keys: database, token`, `ok GET / -> 200`
+  - runs 44400153464 and 44402194771 (the path-filtered `pull_request` trigger) passed
+- Public API:
+  - `scripts/canary.ts`: `isProductionDeploy(event)`, `judgeSync(status, body)`, `describeProbe`, `withRetries(attempt, delaysMs, sleep)`, `retryDelaysMs` [2s, 5s, 10s]. Run with `node scripts/canary.ts`.
+  - `scripts/budgets.ts`: `budgets`, `precacheFiles(output)`, `firstLoadScripts(output)`, `measureBundle`, `overBudget(measured, limits)`, `timed`. CLI: `node scripts/budgets.ts bundle|sync`.
+  - CI jobs `bundle-budget` (build + sizes) and `sync-budget` (property spec + `pnpm proof:sync`, which now runs in CI on every PR). Workflow `canary.yml`: `status`, hourly `:23`, `workflow_dispatch`, and `pull_request` on canary paths.
+- Baselines (CI) → budgets:
+  - first-load JS of `/`, gzip: 83,222 B → 90,000
+  - precache raw: 41,480,412 B → 44,000,000
+  - precache gzip: 5,432,543 B → 5,800,000
+  - property suite (sum of sync.spec.ts durations): median 7,262 ms of 5 → 15,000
+  - proof:sync wall time: median 54,711 ms of 5 → 110,000
+- Decisions:
+  - Trigger on `status`, not `deployment_status`. `GET /deployments` is `[]`: Vercel posts commit statuses (context `Vercel`), not GitHub Deployments, on this repo. Production means a Vercel success status on a commit that `event.branches` lists under `main`; the YAML `if:` pre-filters only on context and state.
+  - A small script instead of size-limit: no new deps, so the lockfile and package.json are untouched. The precache list is checked equal to the built SW's 541 `path:` entries.
+  - Lighthouse skipped (optional; noise and time).
+  - No write/read-back probe; it needs SYNC_TOKEN as a GitHub secret, which only the CEO can add.
+- Gotchas:
+  - Under load (load average 85–140 from parallel agents), the 1000-run property hit vitest's 30s timeout, and the scripted positive control then failed `[server]` in the same file, presumably from the timed-out property's leftover async work. It was clean when re-run at normal load, and CI is unaffected. Worth a verifier look at isolation between the tests in sync.spec.ts.
+  - Failed-run email goes to the user who last edited the cron line, via their GitHub Actions notification settings. `status`-triggered runs are attributed to the status creator (Vercel's bot), so a red post-deploy run may email no one; the hourly run (at most an hour later) does.
+  - `workflow_dispatch` worked from the PR branch even though the workflow isn't on main yet.
+- Preview env guard: STOPPED as instructed. An anonymous preview `/api/sync` returns 302 to vercel.com/sso-api. No bypass token was created and no Vercel setting was changed.
+- Brief errors: Vercel doesn't post `deployment_status` here. Precache gzip is ~7.6× smaller than raw, not ~12× (brotli ~10×, a whole-tarball gzip ~8×). The property's CI time is ~6–7s now, not 2.4–3.2s. "Hold-the-line C … after your merge's deploy" can't be done for a HOLD chunk, so dispatch from the PR was used instead.
+- Status: HELD. The CEO merges. After the merge, confirm one `status`-triggered canary run on the merge commit passes.
+
 ### CLOSE — Stage 5′ — DONE (awaiting CEO HUMAN checks)
 - 2026-11-18 PM close: every chunk is merged and has a verifier verdict, with no FAIL (flake-diag verdict c7063e1).
 - main is green: run 44366280301 on f53140e passed e2e 70/70 and 442 unit tests.
