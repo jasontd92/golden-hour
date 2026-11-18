@@ -92,6 +92,7 @@ describe('attempts', () => {
 	it('finds when a benchmark or lift is next tested', () => {
 		expect(attemptDates(plan, 'benchmark', 'fran').map((s) => s.week)).toEqual([8, 17]);
 		expect(nextAttempt(plan, 'benchmark', 'fran', '2027-01-26')).toBe(17);
+		expect(attemptDates(plan, 'benchmark', 'max-l-sit').map((s) => s.week)).toEqual([4, 8, 12, 16]);
 		expect(nextAttempt(plan, 'lift', 'back-squat', '2026-11-18')).toBe(16);
 		expect(nextAttempt(plan, 'benchmark', 'turkey-trot-triple', '2026-11-18')).toBeUndefined();
 	});

@@ -87,9 +87,18 @@
 		"date": "2026-12-08",
 		"week": 1,
 		"title": "Press + Z1 run",
-		"why": "Press and gymnastics skill, then an easy Z1 run between two hard days.",
+		"why": "Monthly body comp, fasted, on the same weekday as November’s. Press and gymnastics skill, then an easy Z1 run between two hard days.",
 		"location": "home",
 		"blocks": [
+			{
+				"name": "Body comp",
+				"kind": "warmup",
+				"minutes": 1,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Fasted, before eating: weight · tape" }
+				]
+			},
 			{
 				"name": "Warm-up",
 				"kind": "warmup",
@@ -189,7 +198,7 @@
 						]
 					}
 				],
-				"notes": "8:49–8:54/mi · HR 85–90% max ceiling"
+				"notes": "8:49–8:53/mi · HR 85–90% max ceiling"
 			},
 			{
 				"name": "Pull-ups",
@@ -313,7 +322,7 @@
 						]
 					}
 				],
-				"notes": "Each ≥0.39 mi"
+				"notes": "Each ≥0.40 mi"
 			},
 			{
 				"name": "Cool-down",

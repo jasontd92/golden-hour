@@ -63,7 +63,7 @@ describe('the generated plan', () => {
 			'Mon Squat + intervals', 'Tue Press + Z1 run', 'Wed Z1 run + gymnastics', 'Thu Deadlift + bike', 'Sat Long run'
 		]);
 		expect(week(4).map((s) => `${weekdayShort(s.date)} ${s.title}`)).toEqual([
-			'Mon Squat + Grace', 'Tue Press + submax test', 'Wed Z1 bike + gymnastics', 'Thu Mile TT + deadlift', 'Sat Long run'
+			'Mon Squat + Grace', 'Tue Press + checkpoint tests', 'Wed Z1 bike + gymnastics', 'Thu Mile TT + deadlift', 'Sat Long run'
 		]);
 		expect(on('2026-12-25')).toBeUndefined();
 		expect(on('2027-01-01')).toBeUndefined();
@@ -116,6 +116,40 @@ describe('the generated plan', () => {
 		expect(blockOf(on('2026-12-10'), 'Pull-up max')?.prescriptions).toEqual([{ kind: 'fixedSets', movement: 'pull_up', sets: 1, reps: 13 }]);
 	});
 
+	it('measures body comp first thing on Tuesday of weeks 1/5/9/13 only, as a 1-min non-hard block', () => {
+		const measured = plan.flat().filter((s) => s.blocks.some((b) => b.name === 'Body comp'));
+		expect(measured.map((s) => `${s.week} ${weekdayShort(s.date)}`)).toEqual(['1 Tue', '5 Tue', '9 Tue', '13 Tue']);
+		for (const session of measured) {
+			expect(session.blocks[0]).toEqual({
+				name: 'Body comp', kind: 'warmup', minutes: 1, hard: false,
+				prescriptions: [{ kind: 'freeText', text: 'Fasted, before eating: weight · tape' }]
+			});
+		}
+	});
+
+	it('runs the §G checkpoint on Tuesday of weeks 4/8/12: submax, then max L-sit, ring dips and push-ups, none hard', () => {
+		const tested = plan.flat().filter((s) => s.blocks.some((b) => b.name === 'Gymnastics maxes'));
+		expect(tested.map((s) => `${s.week} ${weekdayShort(s.date)} ${s.title}`)).toEqual([
+			'4 Tue Press + checkpoint tests', '8 Tue Press + checkpoint tests', '12 Tue Press + checkpoint tests'
+		]);
+		for (const session of tested) {
+			expect(session.blocks.map((b) => b.name)).toEqual(['Warm-up', 'Shoulder press', 'Submax run', 'Gymnastics maxes']);
+			const maxes = blockOf(session, 'Gymnastics maxes');
+			expect(maxes?.hard).toBe(false);
+			expect(maxes?.prescriptions.flatMap((p) => ('movements' in p ? p.movements.map((m) => m.movement) : p.kind === 'fixedSets' ? [p.movement] : []))).toEqual(['l_sit', 'push_up']);
+			expect(maxes?.notes).toMatch(/max L-sit.*ring dips.*max push-ups/);
+		}
+	});
+
+	it('keeps the pull-up sets every training week; in the holiday weeks they follow Wednesday’s max set', () => {
+		const pullUpWeeks = plan.slice(0, 15).map((sessions) => sessions.filter((s) => blockOf(s, 'Pull-ups')).map((s) => weekdayShort(s.date)).join());
+		expect(pullUpWeeks).toEqual(Array(15).fill('Wed'));
+		for (const n of [3, 4]) {
+			const names = week(n).find((s) => blockOf(s, 'Pull-ups'))?.blocks.map((b) => b.name);
+			expect(names?.slice(-2)).toEqual(['Pull-up max', 'Pull-ups']);
+		}
+	});
+
 	it('uses freeText only in warm-ups and cool-downs, and keeps notes free of the sets', () => {
 		expect(freeTextInWorkBlocks(plan.flat())).toEqual([]);
 		const notes = plan.flat().flatMap((s) => s.blocks.flatMap((b) => (b.notes ? [b.notes] : [])));
@@ -126,7 +160,7 @@ describe('the generated plan', () => {
 describe('missing and provisional inputs', () => {
 	it('writes paces from a missing mile or HR max as relative text, and as numbers once logged', () => {
 		const bombolini = (i: PlanInputs) => blockOf(generatePlan(i)[1]?.find((s) => s.title.startsWith('Bombolini')), 'Bombolini')?.notes;
-		expect(bombolini(inputs)).toContain('500 m midway between mile and 400 pace, 100 m 0:16');
+		expect(bombolini(inputs)).toContain('500 m midway between mile and 400 pace, 100 m 0:16.4');
 		const logged = PlanInputs.parse({
 			...inputs,
 			tests: {
@@ -136,9 +170,13 @@ describe('missing and provisional inputs', () => {
 				ringDips: { value: 12, date: '2026-11-17', provisional: false }
 			}
 		});
-		expect(bombolini(logged)).toContain('500 m 1:32, 100 m 0:16');
+		expect(bombolini(logged)).toContain('500 m 1:33, 100 m 0:16.4');
 		const tuesday = generatePlan(logged)[0]?.[1];
-		expect(blockOf(tuesday, 'Z1 run')?.notes).toBe('9:49/mi or slower · HR <143 · RPE ≤3');
+		expect(blockOf(tuesday, 'Z1 run')?.notes).toBe('9:49/mi or slower · HR <142 · RPE ≤3');
+		expect(blockOf(generatePlan(logged)[0]?.[2], '3 × 10 min')?.notes).toBe('8:49–8:53/mi · HR 162–171 ceiling');
+		const ladder = blockOf(generatePlan(logged)[5]?.find((s) => s.title.startsWith('Ladder')), 'Ladder')?.notes;
+		expect(ladder).toContain('no faster than 1:54/1:16/0:57.0/0:38.0');
+		expect(blockOf(on('2026-12-11'), 'Bike intervals')?.notes).toBe('Each ≥0.40 mi');
 		expect(blockOf(tuesday, 'Gymnastics')?.prescriptions[1]).toEqual({ kind: 'fixedSets', movement: 'dip', sets: 4, reps: 6 });
 	});
 

@@ -1,6 +1,8 @@
 import {
 	bikeFamily,
 	bikeSecondsPerMile,
+	bodyCompWeeks,
+	bound,
 	checkpointWeeks,
 	clock,
 	deloadWeeks,
@@ -17,6 +19,7 @@ import {
 	mondayFamily,
 	mondayGirl,
 	pullUpSetReps,
+	pushUpLadder,
 	qualityB,
 	scaleRounds,
 	secondsPerMile10k,
@@ -30,6 +33,7 @@ import {
 	type LiftWeek,
 	type MainLift,
 	type PlanInputs,
+	type Rounding,
 	type Slot
 } from '#lib/domain/evolution.ts';
 import type { MovementId } from '#lib/domain/movements.ts';
@@ -87,11 +91,11 @@ const descending = (reps: number[], a: MovementWork, b: MovementWork): MovementW
 const hr = (inputs: PlanInputs, low: number, high = low) => {
 	const max = inputs.tests.hrMax?.value;
 	if (max === undefined) return low === high ? `HR <${low * 100}% max` : `HR ${low * 100}–${high * 100}% max`;
-	return low === high ? `HR <${Math.round(low * max)}` : `HR ${Math.round(low * max)}–${Math.round(high * max)}`;
+	return low === high ? `HR <${bound(low * max, 'down')}` : `HR ${bound(low * max, 'up')}–${bound(high * max, 'down')}`;
 };
 const p10 = (inputs: PlanInputs) => secondsPerMile10k(inputs.tests.run10kSeconds.value);
-const pace = (secondsPerMile: number) => `${clock(secondsPerMile)}/mi`;
-const easyNote = (inputs: PlanInputs) => `${pace(p10(inputs) + 75)} or slower · ${hr(inputs, 0.75)} · RPE ≤3`;
+const pace = (secondsPerMile: number, direction: Rounding) => `${clock(secondsPerMile, direction)}/mi`;
+const easyNote = (inputs: PlanInputs) => `${pace(p10(inputs) + 75, 'up')} or slower · ${hr(inputs, 0.75)} · RPE ≤3`;
 
 const liftNames: Record<MainLift, string> = { back_squat: 'Back squat', shoulder_press: 'Shoulder press', deadlift: 'Deadlift' };
 const liftMinutes = (lift: LiftWeek, short: boolean) =>
@@ -252,25 +256,46 @@ function gymnasticsSkill(inputs: PlanInputs): Block {
 		: block('Gymnastics', 'skill', 8, [lSitWork], { notes: 'Then ring dips: 4 sets of half your max' });
 }
 
+function gymnasticsMaxes(inputs: PlanInputs, pushUps: boolean): Prescription[] {
+	const dips = inputs.tests.ringDips;
+	return [
+		intervals(1, 0, [{ movement: 'l_sit', seconds: inputs.tests.lSitSeconds.value }]),
+		...(dips ? [fixed('dip', 1, dips.value)] : []),
+		...(pushUps ? [fixed('push_up', 1, pushUpLadder[0])] : [])
+	];
+}
+
+const maxesNote = (inputs: PlanInputs, then: string) =>
+	`One max L-sit hold, then ${inputs.tests.ringDips ? 'one unbroken set of ring dips' : 'max unbroken ring dips'}${then}`;
+
+const checkpointMaxes = (inputs: PlanInputs) =>
+	block('Gymnastics maxes', 'skill', 8, gymnasticsMaxes(inputs, true), {
+		notes: maxesNote(inputs, `, then max push-ups · ladders: push-ups ${pushUpLadder.join('/')}, L-hold to 3:00`)
+	});
+
+const bodyComp = block('Body comp', 'warmup', 1, [text('Fasted, before eating: weight · tape')]);
+
 const submaxBlock = (inputs: PlanInputs, first?: string) =>
 	block('Submax run', 'conditioning', 30, [steady('run', 30)], {
-		notes: `${first ?? ''}Treadmill 1% · ${pace(inputs.submaxPaceSecondsPerMile)} fixed · log avg HR and RPE`
+		notes: `${first ?? ''}Treadmill 1% · ${pace(inputs.submaxPaceSecondsPerMile, 'up')} fixed · log avg HR and RPE`
 	});
 const z1Run = ({ inputs, z1Minutes }: Week) =>
 	block('Z1 run', 'conditioning', z1Minutes, [steady('run', z1Minutes)], { notes: easyNote(inputs) });
 
 function pressDay(ctx: Week): SessionBody {
 	const checkpoint = checkpointWeeks.has(ctx.week);
+	const measured = bodyCompWeeks.has(ctx.week);
+	const why = checkpoint
+		? 'Press, then the checkpoint: the submax at November’s pace (a lower HR means aerobic gain) and gymnastics maxes against the ladders.'
+		: 'Press and gymnastics skill, then an easy Z1 run between two hard days.';
 	return {
-		title: checkpoint ? 'Press + submax test' : 'Press + Z1 run',
-		why: checkpoint
-			? 'Press and gymnastics, then the submax checkpoint at November’s pace: a lower HR means aerobic gain.'
-			: 'Press and gymnastics skill, then an easy Z1 run between two hard days.',
+		title: checkpoint ? 'Press + checkpoint tests' : 'Press + Z1 run',
+		why: measured ? `Monthly body comp, fasted, on the same weekday as November’s. ${why}` : why,
 		blocks: [
+			...(measured ? [bodyComp] : []),
 			warmUp('General warm-up · 3 × 5 plyo push-ups', 6),
 			liftBlock(ctx, 'shoulder_press'),
-			gymnasticsSkill(ctx.inputs),
-			checkpoint ? submaxBlock(ctx.inputs) : z1Run(ctx)
+			...(checkpoint ? [submaxBlock(ctx.inputs), checkpointMaxes(ctx.inputs)] : [gymnasticsSkill(ctx.inputs), z1Run(ctx)])
 		]
 	};
 }
@@ -289,11 +314,11 @@ function qualityADay(ctx: Week): SessionBody {
 	const run = odd
 		? block('3 × 10 min', 'conditioning', 34, [intervals(3, 120, [{ movement: 'run', seconds: 600 }])], {
 				hard: true,
-				notes: `${clock(p + 15)}–${pace(p + 20)} · ${hr(ctx.inputs, 0.85, 0.9)} ceiling`
+				notes: `${clock(p + 15, 'up')}–${pace(p + 20, 'down')} · ${hr(ctx.inputs, 0.85, 0.9)} ceiling`
 			})
 		: block('4 × 8 min', 'conditioning', 38, [intervals(4, 120, [{ movement: 'run', seconds: 480 }])], {
 				hard: true,
-				notes: `${clock(p)}–${pace(p + 15)} · hold rep 1’s pace through rep 4 · ${hr(ctx.inputs, 0.9).replace('<', '~')}`
+				notes: `${clock(p, 'up')}–${pace(p + 15, 'down')} · hold rep 1’s pace through rep 4 · ${hr(ctx.inputs, 0.9).replace('<', '~')}`
 			});
 	return {
 		title: 'Threshold intervals',
@@ -314,7 +339,7 @@ function easyDay(ctx: Week): SessionBody {
 	return {
 		title: bikeWeek ? 'Z1 run + gymnastics' : 'Z1 bike + gymnastics',
 		why: holiday
-			? 'Thursday’s easy session, a day early for the holiday, so the day before the deadlift stays easy. Quality A is skipped this week, not doubled.'
+			? 'Thursday’s easy session, a day early for the holiday, so the day before the deadlift stays easy. Quality A is skipped, not doubled; its pull-up sets move here, after the max set.'
 			: `${reason} The max pull-up set resets next week’s sets.`,
 		blocks: [
 			bikeWeek
@@ -323,14 +348,15 @@ function easyDay(ctx: Week): SessionBody {
 			block('Gymnastics', 'skill', 10, [fixed('hspu', 3, 5)], { notes: 'Pike or box HSPU until strict wall HSPU is solid' }),
 			block('Pull-up max', 'skill', 3, [fixed('pull_up', 1, inputs.tests.strictPullUps.value)], {
 				notes: 'One unbroken strict set to failure'
-			})
+			}),
+			...(holiday ? [pullUpBlock(ctx)] : [])
 		]
 	};
 }
 
 function bikeIntervals({ week, inputs }: Week): Block {
 	const secondsPerMile = bikeSecondsPerMile(inputs.tests.bike2MileSeconds.value);
-	const miles = (seconds: number) => (seconds / secondsPerMile).toFixed(2);
+	const miles = (seconds: number) => bound(seconds / secondsPerMile, 'up', 0.01).toFixed(2);
 	if (bikeFamily(week) === 'phosphagen') {
 		const rounds = scaleRounds(10, week);
 		return block('Bike sprints', 'conditioning', Math.ceil(rounds) + 2, [intervals(rounds, 45, [{ movement: 'bike', seconds: 15 }])], {
@@ -355,14 +381,14 @@ function speedRun({ week, inputs }: Week): Block {
 				intervals(3, 300, [{ movement: 'run', meters: 500 }, { movement: 'run', meters: 200 }, { movement: 'run', meters: 100 }])
 			], {
 				hard: true,
-				notes: `200 m is a jog · no faster than: 500 m ${pMile === undefined ? 'midway between mile and 400 pace' : clock(250 * (pMile + p400))}, 100 m ${clock(100 * p400)}`
+				notes: `200 m is a jog · no faster than: 500 m ${pMile === undefined ? 'midway between mile and 400 pace' : clock(250 * (pMile + p400), 'up')}, 100 m ${clock(100 * p400, 'up')}`
 			});
 		case 'ladder':
 			return block('Ladder', 'conditioning', 38, [
 				intervals(3, 0, [600, 400, 300, 200].map((meters) => ({ movement: 'run' as const, meters })))
 			], {
 				hard: true,
-				notes: `Rest 2:00/1:30/1:00/0:30 · 800 m jog between rounds · no faster than ${pMile === undefined ? '0.925 × mile pace' : [600, 400, 300, 200].map((m) => clock(m * 0.925 * pMile)).join('/')}`
+				notes: `Rest 2:00/1:30/1:00/0:30 · 800 m jog between rounds · no faster than ${pMile === undefined ? '0.925 × mile pace' : [600, 400, 300, 200].map((m) => clock(m * 0.925 * pMile, 'up')).join('/')}`
 			});
 		default:
 			return block('Mile time trial', 'conditioning', 10, [forTime([{ movement: 'run', meters: 1609 }])], {
@@ -429,26 +455,15 @@ function retestDay(slot: Slot, inputs: PlanInputs): SessionBody {
 					coolDown()
 				]
 			};
-		case 'submaxAndGymnastics': {
-			const dips = inputs.tests.ringDips;
+		case 'submaxAndGymnastics':
 			return {
 				title: 'Submax + gymnastics tests',
 				why: 'Body comp and the submax run under November’s conditions, then the max L-sit and ring dips.',
 				blocks: [
 					submaxBlock(inputs, 'Body comp first: fasted weight, tape. '),
-					test(
-						'Gymnastics tests',
-						10,
-						[
-							intervals(1, 0, [{ movement: 'l_sit', seconds: inputs.tests.lSitSeconds.value }]),
-							...(dips ? [fixed('dip', 1, dips.value)] : [])
-						],
-						dips ? 'One max L-sit hold, then one unbroken set of ring dips' : 'One max L-sit hold, then max unbroken ring dips',
-						'skill'
-					)
+					test('Gymnastics tests', 10, gymnasticsMaxes(inputs, false), maxesNote(inputs, ''), 'skill')
 				]
 			};
-		}
 		case 'run400Grace':
 			return {
 				title: '400 m + Grace',

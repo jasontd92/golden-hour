@@ -210,6 +210,8 @@ export const conditioningScale = (week: number) => (scaledWeeks.has(week) ? 0.5 
 export const scaleRounds = (rounds: number, week: number) => Math.ceil(rounds * conditioningScale(week));
 
 export const checkpointWeeks: ReadonlySet<number> = new Set([4, 8, 12]);
+export const bodyCompWeeks: ReadonlySet<number> = new Set([1, 5, 9, 13]);
+export const pushUpLadder = [50, 75, 100] as const;
 export const deloadWeeks: ReadonlySet<number> = new Set([7, 15]);
 
 export const longRunCapMinutes = 90;
@@ -244,7 +246,19 @@ export function lSitAccumulation(maxSeconds: number): { rounds: number; seconds:
 export const secondsPerMile10k = (run10kSeconds: number) => run10kSeconds / 6.214;
 export const bikeSecondsPerMile = (bike2MileSeconds: number) => bike2MileSeconds / 2;
 
-export function clock(seconds: number): string {
-	const whole = Math.round(seconds);
+export type Rounding = 'up' | 'down';
+
+export function bound(value: number, direction: Rounding, step = 1): number {
+	const scaled = value / step;
+	// why: 16.4 / 0.1 is 163.99999999999997; snap float noise so a bound never moves a whole step.
+	const snapped = Math.abs(scaled - Math.round(scaled)) < 1e-9 ? Math.round(scaled) : scaled;
+	return (direction === 'up' ? Math.ceil(snapped) : Math.floor(snapped)) * step;
+}
+
+// why: every pace bound is a limit, so callers name the strict direction; sub-minute paces keep tenths, where a whole second is ~6%.
+export function clock(seconds: number, direction: Rounding): string {
+	const tenths = bound(seconds, direction, 0.1);
+	if (tenths < 60) return `0:${tenths.toFixed(1).padStart(4, '0')}`;
+	const whole = bound(seconds, direction);
 	return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}`;
 }

@@ -85,7 +85,7 @@ function sessionTest(session: PlanSession): Test | undefined {
 	if (retest) return retest;
 	const girl = mondayGirl(week);
 	if (slot === 'squat' && girl) return test(capitalize(girl), [girl]);
-	if (slot === 'press' && checkpointWeeks.has(week)) return test('Submax');
+	if (slot === 'press' && checkpointWeeks.has(week)) return test('Submax', ['max-l-sit']);
 	if (slot === 'friday' && qualityB(week) === 'mileTimeTrial') return test('Mile TT');
 	return undefined;
 }

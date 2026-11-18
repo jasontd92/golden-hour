@@ -85,3 +85,24 @@ test('phones default to Today, not the desktop Plan', async ({ page }) => {
 	await expect(page.locator('[data-view="desk"]')).toHaveCount(0);
 	await expect(page.getByRole('link', { name: 'Today' })).toHaveAttribute('aria-current', 'page');
 });
+
+test('week 4 Tuesday: the §G checkpoint, the submax then gymnastics maxes, with no hard block', async ({ page }, testInfo) => {
+	await openOn(page, '2026-12-29');
+	await expect(page.getByRole('heading', { level: 1, name: 'Press + checkpoint tests' })).toBeVisible();
+	await expect(page.getByRole('img', { name: 'Hard effort' })).toHaveCount(0);
+	await expect(page.getByRole('button', { name: /^Submax run/ })).toBeVisible();
+	await page.getByRole('button', { name: /^Gymnastics maxes/ }).click();
+	await expect(page.getByText('Push-ups 1 × 50')).toBeVisible();
+	await expect(page.getByText(/then max push-ups · ladders: push-ups 50\/75\/100/)).toBeVisible();
+	await captureEvidence(page, testInfo, 'today-week-4-checkpoint');
+});
+
+test('week 5 Tuesday: body comp comes first, fasted, as a 1-min non-hard block', async ({ page }, testInfo) => {
+	await openOn(page, '2027-01-05');
+	await expect(page.getByRole('heading', { level: 1, name: 'Press + Z1 run' })).toBeVisible();
+	const bodyComp = page.getByRole('button', { name: /^Body comp/ });
+	await expect(page.getByRole('img', { name: 'Hard effort' })).toHaveCount(0);
+	await bodyComp.click();
+	await expect(page.getByText('Fasted, before eating: weight · tape')).toBeVisible();
+	await captureEvidence(page, testInfo, 'today-week-5-body-comp');
+});
