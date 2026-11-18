@@ -35,3 +35,9 @@ export function dateRange(first: string, last: string): string {
 	const sameMonth = first.slice(0, 7) === last.slice(0, 7);
 	return `${monthDay(first)} – ${sameMonth ? utc(last).getUTCDate() : monthDay(last)}`;
 }
+
+const fixedHolidays: Readonly<Record<string, string>> = { '12-25': 'Christmas', '01-01': "New Year's" };
+
+export function holidayName(date: string): string | undefined {
+	return fixedHolidays[date.slice(5)];
+}

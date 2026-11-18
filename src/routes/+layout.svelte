@@ -6,12 +6,16 @@
 	import { keepSyncing } from '#lib/features/log/effects.svelte.ts';
 	import { trackToday } from '#lib/ui/clock.svelte.ts';
 	import { appUpdate, watchServiceWorker } from '#lib/ui/service-worker.svelte.ts';
+	import DeskNav from '#lib/ui/DeskNav.svelte';
 	import TabBar from '#lib/ui/TabBar.svelte';
+	import Viewport from '#lib/ui/Viewport.svelte';
+	import { trackHydration } from '#lib/ui/viewport.svelte.ts';
 	import UpdatePrompt from '#lib/ui/UpdatePrompt.svelte';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
 
+	trackHydration();
 	trackToday();
 	watchServiceWorker();
 	keepSyncing();
@@ -20,8 +24,9 @@
 </script>
 
 <div class="shell" class:mid-session={midSession}>
+	{#if !midSession}<Viewport only="desk"><DeskNav /></Viewport>{/if}
 	{@render children()}
-	{#if !midSession}<TabBar />{/if}
+	{#if !midSession}<Viewport only="phone"><TabBar /></Viewport>{/if}
 	{#if appUpdate.ready && !midSession}<UpdatePrompt />{/if}
 </div>
 
@@ -45,6 +50,25 @@
 	@media (min-width: 768px) {
 		.shell {
 			--shell-width: 430px;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.shell:has(:global([data-desk-page])) {
+			--shell-width: none;
+			height: 100dvh;
+			min-height: 0;
+			padding-bottom: 0;
+		}
+
+		.shell :global([data-view='phone']) {
+			display: none;
+		}
+	}
+
+	@media (width < 1024px) {
+		.shell :global([data-view='desk']) {
+			display: none;
 		}
 	}
 </style>

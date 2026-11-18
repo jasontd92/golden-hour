@@ -1,4 +1,5 @@
 import { untrack } from 'svelte';
+import { loggedDates } from '#lib/domain/plan-grid.ts';
 import { saveSyncToken, syncToken } from './device.ts';
 import { startSyncLoop, type SyncLoop } from './effects.ts';
 import type { LogFlow } from './flow.svelte.ts';
@@ -11,6 +12,35 @@ let pending = $state(0);
 let hasToken = $state(false);
 let rejected = $state(false);
 let loop: SyncLoop | undefined;
+let logged = $state<ReadonlySet<string>>(loggedDates([]));
+
+export const loggedSessions = {
+	get dates() {
+		return logged;
+	}
+};
+
+export function trackLoggedSessions(): void {
+	$effect(() => {
+		let stopped = false;
+		const refresh = () => {
+			void localLog()
+				.then(async (store) => [...(await store.entries()), ...(await store.sessions())])
+				.then((records) => {
+					if (!stopped) logged = loggedDates(records);
+				})
+				.catch(() => undefined);
+		};
+		refresh();
+		document.addEventListener('visibilitychange', refresh);
+		window.addEventListener('focus', refresh);
+		return () => {
+			stopped = true;
+			document.removeEventListener('visibilitychange', refresh);
+			window.removeEventListener('focus', refresh);
+		};
+	});
+}
 
 export const logSync = {
 	get online() {

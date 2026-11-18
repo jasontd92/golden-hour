@@ -77,3 +77,11 @@ test("today's date picks the session, and a day without one is rest", async ({ p
 	await openOn(page, '2026-12-13');
 	await expect(page.getByRole('heading', { level: 1, name: 'Rest' })).toBeVisible();
 });
+
+test('phones default to Today, not the desktop Plan', async ({ page }) => {
+	await openOn(page, '2026-12-09');
+	await expect(page.getByRole('heading', { level: 1, name: 'Threshold intervals' })).toBeVisible();
+	await expect(page.getByRole('grid', { name: 'Weeks and days' })).toHaveCount(0);
+	await expect(page.locator('[data-view="desk"]')).toHaveCount(0);
+	await expect(page.getByRole('link', { name: 'Today' })).toHaveAttribute('aria-current', 'page');
+});
