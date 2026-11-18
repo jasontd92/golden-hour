@@ -42,14 +42,14 @@ SvelteKit app at the repo root, plus every check that later chunks rely on. This
 - Vercel is connected. Confirm the preview deploy appears on the PR.
 
 ## Acceptance criteria
-- [ ] `pnpm check` exits 0 on a clean clone (mechanical).
-- [ ] CI runs on the PR, and every job name appears in the run trace (mechanical: list job names).
-- [ ] The boundary rule fires on a deliberate violation (mechanical: add a temporary file in the verifier's worktree importing `features` from `domain`; lint fails with the named message).
-- [ ] `$effect` in a feature file fails lint (mechanical, same method).
-- [ ] A new `foo.md` at the root fails `check-md` (mechanical).
-- [ ] A route without a `features.yaml` entry fails `check-features` (mechanical).
-- [ ] The Vercel preview URL loads `/` (empirical: curl it, expect 200).
-- [ ] An e2e screenshot of `/` exists for both mobile projects (empirical: artifact list).
+- [x] `pnpm check` exits 0 on a clean clone (mechanical). Verifier: fresh clone at d003a28, frozen install, EXIT 0, 53 tests.
+- [x] CI runs on the PR, and every job name appears in the run trace (mechanical: list job names). Verifier: run 44209459070 typecheck, lint, unit, policy, e2e, evidence all success; main run 44210814289 success.
+- [x] The boundary rule fires on a deliberate violation (mechanical: add a temporary file in the verifier's worktree importing `features` from `domain`; lint fails with the named message). Verifier: golden-hour/layer-boundaries fired for domain to features, feature to feature, and server from a feature.
+- [x] `$effect` in a feature file fails lint (mechanical, same method). Verifier: fires in features/today; silent in src/lib/ui and features/*/effects.svelte.ts.
+- [x] A new `foo.md` at the root fails `check-md` (mechanical). Verifier: exit 1 with the policy message.
+- [x] A route without a `features.yaml` entry fails `check-features` (mechanical). Verifier: /week exit 1.
+- [x] The Vercel preview URL loads `/` (empirical: curl it, expect 200). Verifier: preview returns 302 because of SSO (scope ruling); the Vercel preview check succeeded and production returns 200 with theme-color #06090b and viewport-fit=cover.
+- [x] An e2e screenshot of `/` exists for both mobile projects (empirical: artifact list). Verifier: artifact e2e-screenshots has 2 files; both PNGs are inline on ci-evidence and show real renders.
 - [ ] HUMAN: CEO opens the preview on their phone. Tokens look right and there's no tap flash.
 
 ## Callsite map
