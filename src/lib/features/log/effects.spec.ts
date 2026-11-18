@@ -1,9 +1,10 @@
 import 'fake-indexeddb/auto';
+import { v7 } from 'uuid';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { LogEntry } from '#lib/domain/log.ts';
+import { syncBatchLimit, type LogEntry } from '#lib/domain/log.ts';
 import { retryDelayMs, startSyncLoop } from './effects.ts';
 import { openLogStore } from './store.ts';
-import type { SyncOutcome, Transport } from './sync.ts';
+import { syncRoundLimit, type SyncOutcome, type Transport } from './sync.ts';
 
 const entry: LogEntry = {
 	id: '019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e5f',
@@ -49,6 +50,30 @@ describe('startSyncLoop', () => {
 		expect(await store.pendingCount()).toBe(0);
 		loop.stop();
 		expect(vi.getTimerCount()).toBe(0);
+	});
+
+	it('backs off after an unfinished sync and retries until it succeeds', async () => {
+		vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+		const store = await openLogStore('effects-spec-unfinished');
+		await store.save(entry);
+		let busy = true;
+		let logged = 0;
+		const send = vi.fn<Transport>(async ({ records }) => {
+			if (busy) await store.save({ ...entry, id: v7(), setIndex: ++logged });
+			return Response.json({ accepted: records.map((record) => record.id) });
+		});
+		const outcomes: SyncOutcome[] = [];
+		const loop = startSyncLoop(store, () => send, (outcome) => outcomes.push(outcome), new EventTarget());
+		await vi.waitFor(() => expect(outcomes).toEqual([{ kind: 'unfinished', count: syncRoundLimit(1, syncBatchLimit) }]));
+		expect(vi.getTimerCount()).toBe(1);
+		busy = false;
+		await vi.advanceTimersByTimeAsync(retryDelayMs(0) - 1);
+		expect(outcomes).toHaveLength(1);
+		await vi.advanceTimersByTimeAsync(1);
+		await vi.waitFor(() => expect(outcomes.at(-1)).toEqual({ kind: 'synced', count: 1 }));
+		expect(await store.pendingCount()).toBe(0);
+		expect(vi.getTimerCount()).toBe(0);
+		loop.stop();
 	});
 
 	it('stops retrying on a wrong token and waits without one', async () => {
