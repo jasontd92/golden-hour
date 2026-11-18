@@ -29,6 +29,8 @@
 - Single user, phone-first PWA, web-enabled. No auth, not a product; multi-user is a future refactor.
 - Design v0 approved (after the vuca.dev theming): README § Design. Simple and elegant, progressive disclosure, nothing verbose on screen.
 
+- Desktop vs phone (CEO, 2026-11-17): on desktop the user is planning and reviewing, so a calendar-style planning view is the default there. On the phone the default stays Today: today's workout and logging, with the week secondary. A desktop design pass (Pass 3) goes to the CEO for approval before any desktop chunk is built. WS4 ships the phone design in a centred column on wide screens, with a layout-level breakpoint seam. The desktop chunk will need one desktop Chromium e2e project: a deliberate, narrow exception to the "no desktop matrix" cut.
+
 ### Prose and docs policy
 - Durable intent only. Semi-permanent design decisions, the why and the focus. Mostly the methodology side (`team/`, `profiles/`, `prompts/`).
 - No planning artifacts or prescriptive agent instructions that need upkeep. Code documents itself through function names, variable names and directories.
@@ -189,6 +191,7 @@ Explicitly cut, so don't reintroduce:
 ### WS5a — logging data layer + sync — NOT STARTED
 ### WS5b — log UI — NOT STARTED (after WS4)
 ### WS7b — scorer fixes — NOT STARTED
+### WS8 — desktop planning view — NOT STARTED (needs CEO approval of Pass 3; after WS4, and WS5b/WS6 for review data)
 
 ### CLOSE — Stage 5′ — NOT STARTED
 - Runner: the full mobile e2e suite on the final `main` tip.
