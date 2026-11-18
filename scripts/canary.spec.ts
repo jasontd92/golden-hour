@@ -17,10 +17,11 @@ describe('canary', () => {
 		expect(isProductionDeploy({ context: 'ci', state: 'success', branches: [{ name: 'main' }] })).toBe(false);
 	});
 
-	it('passes sync only on 200 with exactly token true, database ready and a commit sha', () => {
+	it('passes sync only on 200 with exactly token true, database ready and, if present, a commit sha', () => {
 		expect(judgeSync(200, ready)).toBe(true);
 		expect(judgeSync(200, { commit: sha, database: 'ready', token: true })).toBe(true);
-		expect(judgeSync(200, { token: true, database: 'ready' })).toBe(false);
+		expect(judgeSync(200, { token: true, database: 'ready' })).toBe(true);
+		expect(judgeSync(200, { token: true, database: 'ready', commit: undefined })).toBe(false);
 		expect(judgeSync(200, { ...ready, commit: 'fa1eade' })).toBe(false);
 		expect(judgeSync(200, { ...ready, commit: sha.toUpperCase() })).toBe(false);
 		expect(judgeSync(200, { ...ready, commit: 1 })).toBe(false);
@@ -37,6 +38,10 @@ describe('canary', () => {
 	it('passes a deploy run only once production serves the deployed commit', () => {
 		expect(judgeSync(200, ready, sha)).toBe(true);
 		expect(judgeSync(200, { ...ready, commit: older }, sha)).toBe(false);
+		expect(judgeSync(200, { token: true, database: 'ready' }, sha)).toBe(false);
+		expect(judgeSync(200, { ...ready, reason: 'x' }, sha)).toBe(false);
+		expect(judgeSync(503, ready, sha)).toBe(false);
+		expect(judgeSync(200, { ...ready, token: false }, sha)).toBe(false);
 	});
 
 	it('reads only a full lowercase sha as the commit', () => {

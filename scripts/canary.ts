@@ -33,17 +33,14 @@ export const commitOf = (body: unknown) => {
 	return typeof commit === 'string' && sha.test(commit) ? commit : undefined;
 };
 
+// why: only a deploy run knows which commit must be live; other runs also pass a build that predates the commit field
 export function judgeSync(status: number, body: unknown, expectedCommit?: string): boolean {
 	if (status !== 200 || typeof body !== 'object' || body === null || Array.isArray(body)) return false;
 	const fields = body as Record<string, unknown>;
-	const commit = commitOf(body);
-	return (
-		Object.keys(fields).sort().join() === 'commit,database,token' &&
-		fields.token === true &&
-		fields.database === 'ready' &&
-		commit !== undefined &&
-		(expectedCommit === undefined || commit === expectedCommit)
-	);
+	const keys = Object.keys(fields).sort().join();
+	const healthy = fields.token === true && fields.database === 'ready';
+	if (expectedCommit !== undefined) return healthy && keys === 'commit,database,token' && commitOf(body) === expectedCommit;
+	return healthy && (keys === 'database,token' || (keys === 'commit,database,token' && commitOf(body) !== undefined));
 }
 
 export const describeProbe = ({ path, status, keys, commit, ok }: Probe) =>
