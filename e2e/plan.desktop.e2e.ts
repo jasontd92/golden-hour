@@ -6,9 +6,9 @@ const pane = (page: Page) => page.getByRole('complementary', { name: 'Selected' 
 const grid = (page: Page) => page.getByRole('grid', { name: 'Weeks and days' });
 const cell = (page: Page, name: RegExp) => grid(page).getByRole('button', { name });
 
-async function seedLoggedSet(page: Page, sessionDate: string): Promise<void> {
+async function seedLog(page: Page, records: { id: string; sessionDate: string; kind?: 'session' }[]): Promise<void> {
 	await page.evaluate(
-		(date) =>
+		(seeded) =>
 			new Promise<void>((done, fail) => {
 				const open = indexedDB.open('golden-hour-log', 1);
 				open.onupgradeneeded = () => {
@@ -17,21 +17,23 @@ async function seedLoggedSet(page: Page, sessionDate: string): Promise<void> {
 				open.onerror = () => fail(open.error);
 				open.onsuccess = () => {
 					const tx = open.result.transaction('records', 'readwrite');
-					const id = '01938a5e-0000-7000-8000-000000000001';
-					tx.objectStore('records').put({ id, pending: 1, record: { id, sessionDate: date, revision: 1 } });
+					for (const record of seeded) tx.objectStore('records').put({ id: record.id, pending: 1, record: { ...record, revision: 1 } });
 					tx.oncomplete = () => {
 						open.result.close();
 						done();
 					};
 				};
 			}),
-		sessionDate
+		records
 	);
 }
 
 test('the default view at desktop width is Plan, with today open in the pane', async ({ page }, testInfo) => {
 	await openOn(page, '2026-12-09');
-	await seedLoggedSet(page, '2026-12-07');
+	await seedLog(page, [
+		{ id: '01938a5e-0000-7000-8000-000000000001', sessionDate: '2026-12-07' },
+		{ id: '01938a5e-0000-7000-8000-000000000002', sessionDate: '2026-12-08', kind: 'session' }
+	]);
 	await page.reload();
 	await expect(page.getByRole('heading', { level: 1, name: 'Week 1 of 17' })).toBeVisible();
 	await expect(page.getByText('Evolution 5 · Dec 7 – Apr 4')).toBeVisible();
@@ -44,7 +46,8 @@ test('the default view at desktop width is Plan, with today open in the pane', a
 	await expect(today).toHaveAttribute('aria-pressed', 'true');
 	await expect(today).toHaveCSS('box-shadow', /rgb\(47, 216, 198\)/);
 	await expect(cell(page, /^Mon Dec 7, .*, logged$/)).toHaveCSS('background-color', 'rgba(255, 255, 255, 0.05)');
-	await expect(cell(page, /^Tue Dec 8, .*, not logged$/)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+	await expect(cell(page, /^Tue Dec 8, .*, logged$/)).toHaveCSS('background-color', 'rgba(255, 255, 255, 0.05)');
+	await expect(cell(page, /^Thu Dec 10, /)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
 	await expect(cell(page, /^Mon Dec 28, Squat \+ Grace/)).toHaveText('Grace');
 	await expect(cell(page, /^Fri Dec 25, Christmas$/)).toHaveText('Christmas');
 	await expect(pane(page).getByRole('heading', { level: 2, name: 'Threshold intervals' })).toBeVisible();

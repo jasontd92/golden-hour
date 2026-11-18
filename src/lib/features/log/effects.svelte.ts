@@ -25,7 +25,7 @@ export function trackLoggedSessions(): void {
 		let stopped = false;
 		const refresh = () => {
 			void localLog()
-				.then((store) => store.entries())
+				.then(async (store) => [...(await store.entries()), ...(await store.sessions())])
 				.then((records) => {
 					if (!stopped) logged = loggedDates(records);
 				})
