@@ -9,7 +9,7 @@
 - Shape: INDEPENDENT PRs to `main`. All work is additive; a half-shipped state is survivable.
 - Ground truth: GitHub PR state (`gh pr view --json state,mergeStateStatus,statusCheckRollup`) plus GraphQL review-thread counts.
 - Repo: github.com/jasontd92/golden-hour (private). Base `origin/main`; re-query the tip with `git rev-parse origin/main`.
-- Base health: green (main run 44211177511 on 36d5f7e).
+- Base health: HALT. GitHub CI is green, but Vercel production deploys have failed since 4fd9a0b (WS5a's build-time migration). ws5a-impl is fixing forward; ws4 and ws6 must not merge until the PM clears it.
 - Vercel: connected. Turso: DB created, credentials in Vercel env (CEO, 2026-11-17).
 - Codex review: CEO enabling async. Not a blocker.
 - Open PRs: see gh. Live subagents: ws3-impl, ws4-impl, ws5a-impl (worktrees ../golden-hour-wt/<ws>).
