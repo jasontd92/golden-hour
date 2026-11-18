@@ -48,9 +48,9 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    permissions:
-      contents: read
-      pull-requests: write
+    outputs:
+      artifact-id: ${{ steps.screenshots.outputs.artifact-id }}
+      artifact-url: ${{ steps.screenshots.outputs.artifact-url }}
     container:
       image: mcr.microsoft.com/playwright:v1.65.1-noble
       options: --ipc=host
@@ -67,20 +67,69 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: e2e-screenshots
-          path: test-results/**/*.png
+          path: test-results/screenshots/*.png
           if-no-files-found: error
           retention-days: 14
-      - if: always() && github.event_name == 'pull_request' && steps.screenshots.outputs.artifact-url
-        uses: actions/github-script@v9
-        env:
-          ARTIFACT_URL: ${{ steps.screenshots.outputs.artifact-url }}
+
+  evidence:
+    needs: e2e
+    if: always() && github.event_name == 'pull_request' && needs.e2e.outputs.artifact-id != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR: ${{ github.event.pull_request.number }}
+      SHA: ${{ github.event.pull_request.head.sha }}
+      ARTIFACT_URL: ${{ needs.e2e.outputs.artifact-url }}
+      E2E_RESULT: ${{ needs.e2e.result }}
+    steps:
+      - uses: actions/download-artifact@v8
         with:
-          script: |
-            const marker = '<!-- e2e-screenshots -->';
-            const body = `${marker}\nE2E screenshots for ${context.payload.pull_request.head.sha.slice(0, 7)}: ${process.env.ARTIFACT_URL}`;
-            const { owner, repo } = context.repo;
-            const issue_number = context.issue.number;
-            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
-            const existing = comments.find((c) => c.body?.startsWith(marker));
-            if (existing) await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
-            else await github.rest.issues.createComment({ owner, repo, issue_number, body });
+          name: e2e-screenshots
+          path: shots
+      - name: Publish screenshots to ci-evidence
+        run: |
+          dir="$PR/$SHA"
+          git init -q evidence && cd evidence
+          git remote add origin "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.git"
+          if git fetch -q origin ci-evidence; then
+            git checkout -q -b ci-evidence FETCH_HEAD
+          else
+            git checkout -q --orphan ci-evidence
+            echo '{"git":{"deploymentEnabled":false}}' > vercel.json
+          fi
+          mkdir -p "$dir"
+          cp ../shots/*.png "$dir"/
+          git add -A .
+          git -c user.name=github-actions -c user.email=41898282+github-actions[bot]@users.noreply.github.com \
+            commit -qm "ci: e2e evidence for #$PR at ${SHA:0:7}"
+          for attempt in 1 2 3; do
+            git push -q origin HEAD:ci-evidence && exit 0
+            git fetch -q origin ci-evidence && git rebase -q FETCH_HEAD
+          done
+          exit 1
+      - name: Comment with inline screenshots
+        run: |
+          base="https://github.com/$GITHUB_REPOSITORY/blob/ci-evidence/$PR/$SHA"
+          {
+            echo "<!-- e2e-screenshots -->"
+            echo "**E2E evidence** for \`${SHA:0:7}\` (e2e: $E2E_RESULT). [Zip]($ARTIFACT_URL)"
+            echo
+            for file in shots/*.png; do
+              name=$(basename "$file" .png)
+              echo "**$name**"
+              echo
+              echo "<img src=\"$base/$name.png?raw=true\" width=\"320\" alt=\"$name\">"
+              echo
+            done
+          } > body.md
+          id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate \
+            --jq '[.[] | select(.body | startswith("<!-- e2e-screenshots -->"))][0].id // empty')
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -F body=@body.md >/dev/null
+          else
+            gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -F body=@body.md >/dev/null
+          fi
