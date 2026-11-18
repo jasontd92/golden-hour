@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './test.ts';
 import { openOn } from './clock.ts';
 import { captureEvidence } from './evidence.ts';
 
@@ -67,6 +67,16 @@ test('"Why this session" discloses the reason and hides it again', async ({ page
 	await expect(why).toBeVisible();
 	await page.getByRole('button', { name: 'Hide why' }).click();
 	await expect(why).toHaveCount(0);
+});
+
+test('a tap right after opening, while the app is still starting, is not lost', async ({ page }) => {
+	await page.route('**/_app/immutable/entry/app.*.js', async (route) => {
+		await new Promise((resolve) => setTimeout(resolve, 1500));
+		await route.continue();
+	});
+	await openOn(page, '2026-12-07');
+	await page.getByRole('button', { name: 'Why this session' }).click();
+	await expect(page.getByText('Leader block: 5s at every step')).toBeVisible();
 });
 
 test("today's date picks the session, and a day without one is rest", async ({ page }) => {

@@ -108,7 +108,7 @@ jobs:
           mkdir -p "$dir"
           cp ../shots/*.png "$dir"/
           git add -A .
-          git -c user.name=github-actions -c user.email=41898282+github-actions[bot]@users.noreply.github.com \
+          git diff --cached --quiet || git -c user.name=github-actions -c user.email=41898282+github-actions[bot]@users.noreply.github.com \
             commit -qm "ci: e2e evidence for #$PR at ${SHA:0:7}"
           for attempt in 1 2 3; do
             git push -q origin HEAD:ci-evidence && exit 0

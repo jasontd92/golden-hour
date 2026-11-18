@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './test.ts';
 import { openOn } from './clock.ts';
 import { captureEvidence } from './evidence.ts';
 

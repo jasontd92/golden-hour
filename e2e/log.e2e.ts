@@ -1,9 +1,13 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
+import { expect, test } from './test.ts';
 import { estimatedOneRm } from '../src/lib/domain/strength.ts';
 import { openOn } from './clock.ts';
 import { captureEvidence } from './evidence.ts';
 import { serverRows } from './server-db.ts';
 import { e2eSyncToken } from './sync-env.ts';
+
+// why: offline specs need the service worker; elsewhere its precache contends with the navigation under test
+test.use({ serviceWorkers: 'allow' });
 
 interface StoredRecord {
 	id: string;

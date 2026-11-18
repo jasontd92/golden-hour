@@ -1,4 +1,5 @@
-import { expect, test, type Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { expect, test } from './test.ts';
 import { captureEvidence } from './evidence.ts';
 
 const tab = (page: Page) => page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Progress' });
