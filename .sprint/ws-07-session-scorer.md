@@ -13,9 +13,9 @@ Per session:
 Output: stdout table plus `--json`. No persistent report files (docs policy). The PM reads the output at program close and turns each repeated inefficiency into a lint rule, a directory or naming fix, or a policy-check change.
 
 ## Acceptance criteria
-- [ ] Runs over at least one real transcript of this repo and prints all columns (mechanical).
-- [ ] Unit tests over a small synthetic transcript fixture (committed and sanitized: no personal content) give known values for each metric (mechanical).
-- [ ] Never reads transcripts outside golden-hour sessions (mechanical: a fixture with a foreign cwd is skipped).
+- [x] Runs over at least one real transcript of this repo and prints all columns (mechanical). Verified: 11 real sessions, 16 columns plus totals; `--json` has every field.
+- [x] Unit tests over a small synthetic transcript fixture (committed and sanitized: no personal content) give known values for each metric (mechanical). Verified: 15 tests, 68 total; the fixture is synthetic.
+- [x] Never reads transcripts outside golden-hour sessions (mechanical: a fixture with a foreign cwd is skipped). Verified: all kept cwds are under golden-hour; 38 foreign files had 1 record parsed; removing any of the 3 guards fails the tests.
 - [ ] HUMAN: CEO judges whether the metrics are the useful ones.
 
 ## Risks
