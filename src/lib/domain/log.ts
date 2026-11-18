@@ -21,3 +21,17 @@ export const LogEntry = z.strictObject({
 	deviceId: z.string().min(1).max(64)
 });
 export type LogEntry = z.infer<typeof LogEntry>;
+
+export const LogRecord = LogEntry.extend({
+	revision: z.int().positive(),
+	deletedAt: z.iso.datetime({ offset: true }).optional()
+});
+export type LogRecord = z.infer<typeof LogRecord>;
+
+export const syncBatchLimit = 100;
+
+export const SyncRequest = z.strictObject({ records: z.array(LogRecord).min(1).max(syncBatchLimit) });
+export type SyncRequest = z.infer<typeof SyncRequest>;
+
+export const SyncResponse = z.strictObject({ accepted: z.array(LogEntryId) });
+export type SyncResponse = z.infer<typeof SyncResponse>;
