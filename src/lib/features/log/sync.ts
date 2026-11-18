@@ -5,6 +5,7 @@ export type Transport = (request: SyncRequest) => Promise<Response>;
 
 export type SyncOutcome =
 	| { kind: 'synced'; count: number }
+	| { kind: 'unfinished'; count: number }
 	| { kind: 'offline' }
 	| { kind: 'unauthorized' }
 	| { kind: 'failed'; status: number };
@@ -18,11 +19,17 @@ export function httpTransport(token: string, fetcher: typeof fetch = fetch, url 
 		});
 }
 
+export const roundSlack = 2;
+
+export const syncRoundLimit = (outboxSize: number, batchSize: number) => Math.ceil(outboxSize / batchSize) + roundSlack;
+
 export async function syncOutbox(store: LogStore, send: Transport, batchSize = syncBatchLimit): Promise<SyncOutcome> {
+	const rounds = syncRoundLimit(await store.pendingCount(), batchSize);
 	let count = 0;
-	for (;;) {
+	for (let round = 0; ; round++) {
 		const records = await store.pending(batchSize);
 		if (records.length === 0) return { kind: 'synced', count };
+		if (round === rounds) return { kind: 'unfinished', count };
 		let response: Response;
 		try {
 			response = await send({ records });

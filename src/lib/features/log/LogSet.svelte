@@ -71,7 +71,7 @@
 						<button type="button" class="step" aria-label="Easier" disabled={flow.sessionRpe <= minRpe} onclick={() => flow.easier()}>−</button>
 						<div class="count">
 							<span class="num" aria-live="polite">{flow.sessionRpe}</span>
-							<span class="count-label">session RPE</span>
+							<span class="count-label">RPE</span>
 						</div>
 						<button type="button" class="step" aria-label="Harder" disabled={flow.sessionRpe >= maxRpe} onclick={() => flow.harder()}>+</button>
 					</div>
@@ -154,7 +154,7 @@
 		{#if noteOpen && !flow.saved}
 			<div class="swap note" id="note" data-testid="note">
 				<label>
-					<span>Effort (RPE)</span>
+					<span>RPE</span>
 					<select bind:value={flow.rpe}>
 						<option value={undefined}>—</option>
 						{#each rpeChoices as choice (choice)}<option value={choice}>{choice}</option>{/each}
@@ -413,10 +413,18 @@
 		appearance: none;
 		-webkit-appearance: none;
 		min-height: 44px;
-		min-width: 64px;
-		padding: 0 12px;
+		min-width: 72px;
+		padding: 0 26px 0 12px;
 		text-align: center;
 		text-align-last: center;
+		background-image:
+			linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+			linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+		background-position:
+			calc(100% - 17px) 50%,
+			calc(100% - 12px) 50%;
+		background-size: 5px 5px;
+		background-repeat: no-repeat;
 	}
 
 	.note textarea {
