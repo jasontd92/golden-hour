@@ -3,8 +3,8 @@ import fc from 'fast-check';
 import { v7 } from 'uuid';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import type { LogEntry, LogRecord, SyncRequest } from '#lib/domain/log.ts';
-import { openLogStore } from '#lib/features/log/store.ts';
-import { syncOutbox, type Transport } from '#lib/features/log/sync.ts';
+import { openLogStore, type LogStore } from '#lib/features/log/store.ts';
+import { syncOutbox, type SyncOutcome, type Transport } from '#lib/features/log/sync.ts';
 import type { Db } from '#lib/server/db/client.ts';
 import { allLogRecords } from '#lib/server/db/log-entries.ts';
 import { logEntries } from '#lib/server/db/schema.ts';
@@ -30,17 +30,35 @@ const post = (body: string, token = 'test-token') =>
 		})
 	} as Parameters<typeof POST>[0]) as Promise<Response>;
 
+interface PartialServer {
+	commit: boolean[];
+	ack: boolean[];
+}
+
+const chosen = (mask: boolean[], index: number) => mask[index % mask.length]!;
+
 class Network {
 	online = true;
 	loseNextResponse = false;
+	partial: PartialServer | undefined;
 	inFlight: (() => Promise<void>) | undefined;
 	readonly sent: string[] = [];
 
 	readonly transport: Transport = async (request: SyncRequest) => {
 		if (!this.online) throw new TypeError('Failed to fetch');
-		const body = JSON.stringify(request);
-		this.sent.push(body);
-		const response = await post(body);
+		const partial = this.partial;
+		const records = partial ? request.records.filter((_, i) => chosen(partial.commit, i)) : request.records;
+		let response = Response.json({ accepted: [] });
+		if (records.length > 0) {
+			const body = JSON.stringify({ records });
+			this.sent.push(body);
+			response = await post(body);
+		}
+		if (partial && response.ok) {
+			const { accepted } = (await response.json()) as { accepted: string[] };
+			const position = new Map(request.records.map((record, i) => [record.id, i]));
+			response = Response.json({ accepted: accepted.filter((id) => chosen(partial.ack, position.get(id)!)) });
+		}
 		const during = this.inFlight;
 		this.inFlight = undefined;
 		await during?.();
@@ -57,36 +75,65 @@ const setFields = fc.record({
 	reps: fc.integer({ min: 0, max: 20 }),
 	load: fc.option(fc.integer({ min: 9, max: 80 }).map((plates) => plates * 5), { nil: undefined })
 });
+const tab = fc.integer({ min: 0, max: 1 });
+const mask = fc.array(fc.boolean(), { minLength: 1, maxLength: 4 });
 
 const command = fc.oneof(
-	{ weight: 4, arbitrary: setFields.map((set) => ({ kind: 'log' as const, set })) },
-	{ weight: 2, arbitrary: fc.nat().map((pick) => ({ kind: 'undo' as const, pick })) },
-	{ weight: 1, arbitrary: fc.tuple(fc.nat(), fc.integer({ min: 2, max: 20 })).map(([pick, rpe]) => ({ kind: 'amend' as const, pick, rpe: rpe / 2 })) },
+	{ weight: 4, arbitrary: fc.record({ kind: fc.constant('log' as const), tab, set: setFields }) },
+	{ weight: 2, arbitrary: fc.record({ kind: fc.constant('undo' as const), tab, pick: fc.nat() }) },
+	{ weight: 1, arbitrary: fc.record({ kind: fc.constant('amend' as const), tab, pick: fc.nat(), rpe: fc.integer({ min: 2, max: 20 }).map((half) => half / 2) }) },
 	{ weight: 1, arbitrary: fc.constant({ kind: 'offline' as const }) },
 	{ weight: 1, arbitrary: fc.constant({ kind: 'online' as const }) },
-	{ weight: 2, arbitrary: fc.constant({ kind: 'sync' as const }) },
-	{ weight: 2, arbitrary: fc.constant({ kind: 'interruptedSync' as const }) },
-	{ weight: 1, arbitrary: fc.nat().map((pick) => ({ kind: 'undoDuringSync' as const, pick })) },
-	{ weight: 2, arbitrary: fc.nat().map((pick) => ({ kind: 'replaySync' as const, pick })) }
+	{ weight: 2, arbitrary: fc.record({ kind: fc.constant('sync' as const), tab }) },
+	{ weight: 2, arbitrary: fc.record({ kind: fc.constant('interruptedSync' as const), tab }) },
+	{ weight: 2, arbitrary: fc.record({ kind: fc.constant('partialSync' as const), tab, commit: mask, ack: mask }) },
+	{ weight: 1, arbitrary: fc.record({ kind: fc.constant('undoDuringSync' as const), tab, pick: fc.nat() }) },
+	{ weight: 2, arbitrary: fc.record({ kind: fc.constant('replaySync' as const), pick: fc.nat() }) },
+	{ weight: 1, arbitrary: fc.record({ kind: fc.constant('reload' as const), tab }) },
+	{ weight: 1, arbitrary: fc.record({ kind: fc.constant('reloadDuringSync' as const), tab }) },
+	{ weight: 1, arbitrary: fc.constant({ kind: 'concurrentSync' as const }) }
 );
 type Command = typeof command extends fc.Arbitrary<infer C> ? C : never;
 
 const byId = (a: { id: string }, b: { id: string }) => a.id.localeCompare(b.id);
 const content = ({ revision, deletedAt, ...entry }: LogRecord): LogEntry => entry;
+const performedSet = ({ deviceId, loggedAt, sessionDate, blockIndex, prescriptionIndex, setIndex, movement }: LogRecord) =>
+	JSON.stringify([deviceId, loggedAt, sessionDate, blockIndex, prescriptionIndex, setIndex, movement]);
+
+class PageReloaded extends Error {}
+
+async function onThePhone(change: string, applied: Promise<void>) {
+	try {
+		await applied;
+	} catch (error) {
+		expect.fail(`[client] the phone can still ${change}: ${String(error)}`);
+	}
+}
 
 let run = 0;
 
 async function play(commands: Command[]) {
 	await db.delete(logEntries);
-	const store = await openLogStore(`property-${run++}`);
+	const name = `property-${run++}`;
+	const tabs: LogStore[] = [await openLogStore(name), await openLogStore(name)];
 	const network = new Network();
 	const live = new Map<string, LogEntry>();
+	const undone = new Set<string>();
 	const pickLive = (pick: number) => [...live.keys()][pick % live.size];
-	const undo = async (id: string) => {
-		await store.undo(id, new Date(Date.UTC(2026, 11, 7, 18)));
+	const undo = async (store: LogStore, id: string) => {
+		await onThePhone(`undo ${id}`, store.undo(id, new Date(Date.UTC(2026, 11, 7, 18))));
 		live.delete(id);
+		undone.add(id);
 	};
-	const sync = () => syncOutbox(store, network.transport, 3);
+	const reload = async (index: number) => {
+		tabs[index]!.close();
+		tabs[index] = await openLogStore(name);
+	};
+	const sync = (index: number) => syncOutbox(tabs[index]!, network.transport, 3);
+	const expectDrained = async (outcomes: SyncOutcome[]) => {
+		if (!network.online) return;
+		expect(await tabs[0]!.pendingCount(), `[drain] one clean online sync leaves nothing pending (${JSON.stringify(outcomes)})`).toBe(0);
+	};
 	let clock = Date.UTC(2026, 11, 7, 17);
 
 	for (const step of commands) {
@@ -103,80 +150,131 @@ async function play(commands: Command[]) {
 				deviceId: 'phone-1'
 			};
 			if (entry.load === undefined) delete entry.load;
-			await store.save(entry);
+			await tabs[step.tab]!.save(entry);
 			live.set(entry.id, entry);
 		} else if (step.kind === 'undo' && live.size > 0) {
-			await undo(pickLive(step.pick)!);
+			await undo(tabs[step.tab]!, pickLive(step.pick)!);
 		} else if (step.kind === 'amend' && live.size > 0) {
 			const id = pickLive(step.pick)!;
-			await store.amend(id, { rpe: step.rpe });
+			await onThePhone(`amend ${id}`, tabs[step.tab]!.amend(id, { rpe: step.rpe }));
 			live.set(id, { ...live.get(id)!, rpe: step.rpe });
 		} else if (step.kind === 'offline') {
 			network.online = false;
 		} else if (step.kind === 'online') {
 			network.online = true;
 		} else if (step.kind === 'sync') {
-			await sync();
+			await expectDrained([await sync(step.tab)]);
 		} else if (step.kind === 'interruptedSync') {
 			network.loseNextResponse = true;
-			await sync();
+			await sync(step.tab);
 			network.loseNextResponse = false;
+		} else if (step.kind === 'partialSync') {
+			network.partial = step;
+			await sync(step.tab);
+			network.partial = undefined;
 		} else if (step.kind === 'undoDuringSync' && live.size > 0) {
 			const id = pickLive(step.pick)!;
-			network.inFlight = () => undo(id);
-			await sync();
+			network.inFlight = () => undo(tabs[step.pick % 2]!, id);
+			await sync(step.tab);
 			if (network.inFlight) await network.inFlight();
+			network.inFlight = undefined;
 		} else if (step.kind === 'replaySync' && network.sent.length > 0) {
 			await post(network.sent[step.pick % network.sent.length]!);
+		} else if (step.kind === 'reload') {
+			await reload(step.tab);
+		} else if (step.kind === 'reloadDuringSync') {
+			const reloadPage = async () => {
+				await reload(step.tab);
+				throw new PageReloaded();
+			};
+			network.inFlight = reloadPage;
+			await sync(step.tab);
+			if (network.inFlight === reloadPage) await reload(step.tab);
+			network.inFlight = undefined;
+		} else if (step.kind === 'concurrentSync') {
+			await expectDrained(await Promise.all([sync(0), sync(1)]));
 		}
 	}
 
 	network.online = true;
-	for (let attempt = 0; attempt < 3 && (await store.pendingCount()) > 0; attempt++) await sync();
+	await expectDrained([await sync(0)]);
 
 	const server = await allLogRecords(db);
-	const result = {
+	const client = (await tabs[0]!.entries()).sort(byId);
+	for (const store of tabs) store.close();
+	return {
 		expected: [...live.values()].sort(byId),
-		client: (await store.entries()).map(content).sort(byId),
-		server: server.filter((record) => !record.deletedAt).map(content).sort(byId),
-		serverIds: server.length,
-		distinctServerIds: new Set(server.map((record) => record.id)).size,
-		pending: await store.pendingCount()
+		client,
+		server,
+		serverLive: server.filter((record) => !record.deletedAt).sort(byId),
+		serverUndone: server.filter((record) => record.deletedAt).map((record) => record.id).sort(),
+		undone: [...undone].sort()
 	};
-	store.close();
-	return result;
+}
+
+function expectConverged(result: Awaited<ReturnType<typeof play>>) {
+	const copies = new Map<string, number>();
+	for (const record of result.server) copies.set(performedSet(record), (copies.get(performedSet(record)) ?? 0) + 1);
+	expect(result.client.map(content), '[client] the phone keeps exactly the non-undone entries').toStrictEqual(result.expected);
+	expect([...copies.values()].filter((count) => count > 1), '[duplicate] each performed set is stored once on the server').toStrictEqual([]);
+	expect(result.serverLive, '[server] the server holds the phone\'s entries, revision for revision').toStrictEqual(result.client);
+	expect(result.serverUndone, '[tombstone] every undo reached the server and none was resurrected').toStrictEqual(result.undone);
 }
 
 describe('hold-the-line A: no log entry is ever lost', () => {
 	it('the server ends with exactly the client\'s non-undone entries, whatever the network does', async () => {
 		await fc.assert(
-			fc.asyncProperty(fc.array(command, { maxLength: 40 }), async (commands) => {
-				const { expected, client, server, serverIds, distinctServerIds, pending } = await play(commands);
-				expect(client).toStrictEqual(expected);
-				expect(server).toStrictEqual(expected);
-				expect(serverIds).toBe(distinctServerIds);
-				expect(pending).toBe(0);
-			}),
-			{ numRuns: 2000 }
+			fc.asyncProperty(fc.array(command, { maxLength: 40 }), async (commands) => expectConverged(await play(commands))),
+			{ numRuns: 2000, includeErrorInReport: true }
 		);
 	}, 120_000);
 
-	it('positive control: a scripted interrupted, raced and replayed history converges', async () => {
+	it('positive control: a scripted interrupted, partial, raced, replayed and reloaded history converges', async () => {
 		const set = { movement: 'back_squat' as const, reps: 5, load: 225 };
 		const result = await play([
-			{ kind: 'log', set },
-			{ kind: 'interruptedSync' },
-			{ kind: 'log', set },
-			{ kind: 'undoDuringSync', pick: 0 },
+			{ kind: 'log', tab: 0, set },
+			{ kind: 'interruptedSync', tab: 0 },
+			{ kind: 'log', tab: 1, set },
+			{ kind: 'log', tab: 0, set },
+			{ kind: 'partialSync', tab: 1, commit: [true, false], ack: [false, true] },
+			{ kind: 'undoDuringSync', tab: 0, pick: 0 },
 			{ kind: 'replaySync', pick: 0 },
+			{ kind: 'reloadDuringSync', tab: 0 },
 			{ kind: 'offline' },
-			{ kind: 'log', set },
-			{ kind: 'amend', pick: 1, rpe: 8 },
-			{ kind: 'sync' }
+			{ kind: 'log', tab: 1, set },
+			{ kind: 'reload', tab: 1 },
+			{ kind: 'amend', tab: 0, pick: 1, rpe: 8 },
+			{ kind: 'online' },
+			{ kind: 'concurrentSync' }
 		]);
-		expect(result.expected).toHaveLength(2);
-		expect(result.server).toStrictEqual(result.expected);
-		expect(result.pending).toBe(0);
+		expect(result.expected).toHaveLength(3);
+		expect(result.undone).toHaveLength(1);
+		expectConverged(result);
+	});
+
+	it('one clean sync drains an outbox larger than the batch limit', async () => {
+		await db.delete(logEntries);
+		const store = await openLogStore(`drain-${run++}`);
+		const network = new Network();
+		const start = Date.UTC(2026, 11, 7, 17);
+		for (let i = 0; i < 250; i++) {
+			await store.save({
+				id: v7({ msecs: start + i, seq: 0 }),
+				sessionDate: '2026-12-07',
+				blockIndex: 1,
+				prescriptionIndex: 0,
+				setIndex: i,
+				movement: 'pull_up',
+				reps: 5,
+				loggedAt: new Date(start + i).toISOString(),
+				deviceId: 'phone-1'
+			});
+		}
+		expect(await syncOutbox(store, network.transport), '[drain] the sync reports every record').toEqual({ kind: 'synced', count: 250 });
+		expect(await store.pendingCount(), '[drain] nothing is left pending').toBe(0);
+		expect(network.sent, '[drain] it took three batches').toHaveLength(3);
+		expect(await allLogRecords(db), '[server] the server holds all 250').toHaveLength(250);
+		store.close();
 	});
 });
 
