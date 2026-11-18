@@ -152,7 +152,18 @@ async function play(commands: Command[]) {
 		tabs[index]!.close();
 		tabs[index] = await openLogStore(name);
 	};
-	const sync = (index: number) => syncOutbox(tabs[index]!, network.transport, 3);
+	const sync = async (index: number) => {
+		const store = tabs[index]!;
+		const rounds = Math.ceil((await store.pendingCount()) / 3) + 2;
+		const batches: string[] = [];
+		const outcome = await syncOutbox(store, (request) => {
+			batches.push(JSON.stringify(request.records.map((record) => [record.id, record.revision])));
+			return network.transport(request);
+		}, 3);
+		expect(batches.length, `[terminates] a sync sends at most ${rounds} batches for its outbox (${JSON.stringify(outcome)})`).toBeLessThanOrEqual(rounds);
+		expect(batches.filter((batch, i) => batch === batches[i - 1]), '[terminates] a sync never resends the batch it just sent').toStrictEqual([]);
+		return outcome;
+	};
 	const expectHonest = async (outcomes: SyncOutcome[]) => {
 		if (!outcomes.some((outcome) => outcome.kind === 'synced')) return;
 		expect(await tabs[0]!.pendingCount(), `[outcome] a sync that reports success leaves nothing pending (${JSON.stringify(outcomes)})`).toBe(0);
@@ -276,7 +287,7 @@ describe('hold-the-line A: no log entry is ever lost', () => {
 			fc.asyncProperty(fc.array(command, { maxLength: 40, size: 'max' }), async (commands) => expectConverged(await play(commands))),
 			{ numRuns: 1000, includeErrorInReport: true }
 		);
-	}, 120_000);
+	}, 30_000);
 
 	it('positive control: a scripted interrupted, partial, raced, replayed and reloaded history converges', async () => {
 		const set = { movement: 'back_squat' as const, reps: 5, load: 225 };

@@ -13,7 +13,7 @@ export interface Mutant {
 
 export const propertySpec = 'src/routes/api/sync/sync.spec.ts';
 
-export const assertionTags = ['client', 'duplicate', 'server', 'tombstone', 'drain', 'outcome'] as const;
+export const assertionTags = ['client', 'duplicate', 'server', 'tombstone', 'drain', 'outcome', 'terminates'] as const;
 
 export const mutants: Mutant[] = [
 	{
@@ -84,6 +84,20 @@ export const mutants: Mutant[] = [
 		file: 'src/lib/features/log/store.ts',
 		search: ' && s.record.revision === sent[i]!.revision',
 		replace: '',
+		changedLines: 2
+	},
+	{
+		name: 'still-pending check treats session records as never pending',
+		file: 'src/lib/features/log/store.ts',
+		search: 'return stored.filter((s, i) => s?.pending && s.record',
+		replace: 'return stored.filter((s, i) => s?.pending && !isSessionRecord(s.record) && s.record',
+		changedLines: 2
+	},
+	{
+		name: 'the round limit has no slack for records revised during a sync',
+		file: 'src/lib/features/log/sync.ts',
+		search: 'roundSlack = 2',
+		replace: 'roundSlack = 0',
 		changedLines: 2
 	},
 	{

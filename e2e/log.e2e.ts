@@ -97,7 +97,9 @@ test('three sets logged offline survive a reload and reach the API once online',
 	await expect(page.getByText('Back squat · 3 of 3')).toBeVisible();
 	await expect(page.getByText('lb · 5 or more reps')).toBeVisible();
 	await page.getByRole('button', { name: 'Add a note' }).click();
-	await page.getByRole('combobox', { name: 'Effort (RPE)' }).selectOption('8');
+	const rpeSelect = page.getByRole('combobox', { name: 'RPE' });
+	await expect(rpeSelect).toHaveCSS('background-image', /linear-gradient/);
+	await rpeSelect.selectOption('8');
 	await page.getByRole('textbox', { name: 'Note' }).fill('Moved well');
 	await settled(page.getByTestId('note'));
 	await captureEvidence(page, testInfo, 'note-open');
@@ -138,7 +140,7 @@ test('three sets logged offline survive a reload and reach the API once online',
 
 const planWeekDays = Array.from({ length: 6 }, (_, i) => new Date(Date.parse(`${logDate}T00:00:00Z`) + i * 86_400_000).toISOString().slice(0, 10));
 const stepTitle = (page: Page) => page.locator('header .title');
-const sessionRpe = (page: Page) => page.getByText('session RPE').locator('xpath=preceding-sibling::span');
+const sessionRpe = (page: Page) => page.getByText('RPE', { exact: true }).locator('xpath=preceding-sibling::span');
 const scoreBox = (page: Page) => page.getByRole('textbox', { name: /^(Time|Rounds \+ reps)$/ });
 
 async function logDays(page: Page): Promise<{ date: string; sets: boolean }[]> {
