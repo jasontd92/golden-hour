@@ -9,7 +9,8 @@
 - Shape: INDEPENDENT PRs to `main`. All work is additive; a half-shipped state is survivable.
 - Ground truth: GitHub PR state (`gh pr view --json state,mergeStateStatus,statusCheckRollup`) plus GraphQL review-thread counts.
 - Repo: github.com/jasontd92/golden-hour (private). Base `origin/main`; re-query the tip with `git rev-parse origin/main`.
-- Base health: production deploy green again on 35c8e2e (WS5a fix PR #7); halt lifted. Known defect: GET /api/sync returns 500, ws5a-impl fixing forward. Merge order: #6 WS4 → #8 WS6 → #9 WS3b (#9 may go first; it's independent).
+- Base health: green, and production deploys. Sync is blocked on CEO env: SYNC_TOKEN is unset; TURSO_DATABASE_URL has an unsupported scheme (it must start with libsql:// or https://). Health: GET /api/sync, where done is 200 {token:true, database:ready}.
+- PM rulings for WS5b: unlinked /sync route for token entry; header slot shows 'Offline' or 'Not synced' only; never 'synced'; fixed 1:30 rest; Start shows pre-plan, entries record performed-at time.
 - Vercel: connected. Turso: DB created, credentials in Vercel env (CEO, 2026-11-17).
 - Codex review: CEO enabling async. Not a blocker.
 - Open PRs: see gh. Live subagents: ws3-impl, ws4-impl, ws5a-impl (worktrees ../golden-hour-wt/<ws>).
