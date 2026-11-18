@@ -1,4 +1,5 @@
-import { SYNC_TOKEN } from '$app/env/private';
+import { SYNC_TOKEN, TURSO_DATABASE_URL } from '$app/env/private';
+import { urlScheme } from '#lib/server/db/url.ts';
 import { failureReason } from '#lib/server/failure.ts';
 import type { RequestHandler } from './$types';
 
@@ -22,6 +23,6 @@ export const GET: RequestHandler = async () => {
 	try {
 		return await (await server()).health();
 	} catch (error) {
-		return unavailable(error, { token: Boolean(SYNC_TOKEN), database: 'error' });
+		return unavailable(error, { token: Boolean(SYNC_TOKEN), database: 'error', urlScheme: urlScheme(TURSO_DATABASE_URL) });
 	}
 };
