@@ -894,6 +894,28 @@ notes: lint/config.spec.ts `$effect placement > fails in a feature component` to
 - Brief errors: Vercel doesn't post `deployment_status` here. Precache gzip is ~7.6× smaller than raw, not ~12× (brotli ~10×, a whole-tarball gzip ~8×). The property's CI time is ~6–7s now, not 2.4–3.2s. "Hold-the-line C … after your merge's deploy" can't be done for a HOLD chunk, so dispatch from the PR was used instead.
 - Status: HELD. The CEO merges. After the merge, confirm one `status`-triggered canary run on the merge commit passes.
 
+```
+VERIFIER: WS10 — PASS WITH GAPS (PR #27 head 8f74e42, not merged)
+criteria met:   6/7 (+1 HUMAN)
+  - canary judge → read canary.ts; spec 5/5; added {extra:1}, database:'Ready', 201, string body → all rejected (reverted). Non-JSON 200 via local server → judge false. redirect:'manual', 15s timeout, retries [2,5,10]s, prints status + sorted key names only. Reproduced.
+  - trigger → GET /deployments = []; main commits 981ab0e/7dc0ef6/51c9f04 carry only context `Vercel` statuses from vercel[bot]. GitHub docs: status `branches` = "branches containing the SHA… maximum of 10". Status-triggered workflows run only from the default-branch file. Logic holds; gaps below.
+  - production run 44400166287 (ce1c009; canary.ts/canary.yml unchanged to 8f74e42) → only `ok GET /api/sync -> 200 keys: database, token` and `ok GET / -> 200`; no values, no token. PR run 44404432670 on 8f74e42 has the same lines.
+  - budgets → CI 44404432645: 83,222/90,000; 41,480,884/44M; 5,432,893/5.8M; 5,900 ms/15,000; 45,245 ms/110,000. Earlier sync-budget jobs read 7,349/55,834 and 6,232/55,911 (per-attempt logs partly unreachable: GitHub log egress limit). The 5-sample medians are consistent with these, but not every sample was re-read. Local build: 83,134 / 41,480,412 / 5,431,565. Lowering each size budget below the measured value → EXIT 1 ×3; unchanged → EXIT 0 (reverted).
+  - precache list → precacheFiles() = 541 files; built SW has 541 unique `path:` entries; after mapping (client/ → /, pages/*.html → route, index.html → "") the diff is empty. Checked manually only: no CI test keeps them equal.
+  - isolation (item 5) → CONCRETE MECHANISM, reproduced (see gaps).
+  - gates → CI all 8 jobs green on 8f74e42; 0 threads, 0 reviews; `pnpm check` EXIT 0 in a clone at 8f74e42 (50 files / 469 tests); body has what it is / what's in it / worth exploring; no AI attribution; label ceo-review, OPEN.
+criteria FAILED:      none
+criteria DESCOPED:    write/read-back probe (needs SYNC_TOKEN secret, CEO); Lighthouse (EM decision)
+criteria HUMAN:       wall-time headroom ~2× (15 s vs 5.9–7.3 s; 110 s vs 45–56 s): it catches a doubling and lets smaller drift through. That fits the noise of shared runners. CEO's call.
+UNVERIFIABLE:         the status trigger end to end (it fires only once canary.yml is on main; check one run after the merge)
+claims that did NOT hold: none outright. Precision note: "checked equal to the SW's 541 entries" is a one-off manual check, not an enforced one.
+GAPS:
+  1. sync.spec.ts isolation (hold-the-line A diagnostics). Every test shares one module-level in-memory server `db`, and play() starts by deleting both tables. A vitest timeout does not cancel fc.assert, so the timed-out property's runs keep calling play() in the background. Those runs wipe and upsert the shared tables. play() also mints ids with v7({msecs: clock}) from the same clock base on every run, so background upserts collide with and overwrite the next test's rows by id. Client state is isolated (unique IndexedDB name per run), which is why only `[server]` fails. Reproduced by lowering the property timeout to 1.5 s: positive control fails `[server] … revision for revision`, and the drain test fails `[server] holds all 250 … got 2`. Effect: false failures and misleading tags after a timeout, not a false pass (the suite is already red). Fix options: fast-check `interruptAfterTimeLimit` below the vitest timeout, or a fresh server db per play().
+  2. Canary does not check which build it probed. Vercel posts `success` even for "Canceled by Ignored Build Step" (seen on 981ab0e, 7dc0ef6), so tracker-only main commits trigger a probe of the old deploy. That is harmless, but a pass after a real deploy doesn't prove the new commit is serving. A version or sha check would close this.
+  3. False negative edge: `branches` caps at 10, so a merge commit already contained by more than 10 branches could omit main and skip. Unlikely; the hourly run backstops. False positive: with squash merges, PR-preview SHAs aren't on main. A branch pushed at main's head is on main, but then it is the production commit, so the probe is still correct.
+  4. Notifications. Docs: you're notified of runs "you've triggered"; scheduled-run mail goes to the workflow creator, or to whoever last changed the cron. A `status` run is triggered by vercel[bot], so a red post-deploy canary emails no human; the next hourly run (≤1 h) does. The PR body's "Who hears about a failure" mentions only the hourly path.
+```
+
 ### CLOSE — Stage 5′ — DONE (awaiting CEO HUMAN checks)
 - 2026-11-18 PM close: every chunk is merged and has a verifier verdict, with no FAIL (flake-diag verdict c7063e1).
 - main is green: run 44366280301 on f53140e passed e2e 70/70 and 442 unit tests.
