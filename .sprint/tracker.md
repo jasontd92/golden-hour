@@ -9,15 +9,16 @@
 - Shape: INDEPENDENT PRs to `main`. All work is additive; a half-shipped state is survivable.
 - Ground truth: GitHub PR state (`gh pr view --json state,mergeStateStatus,statusCheckRollup`) plus GraphQL review-thread counts.
 - Repo: github.com/jasontd92/golden-hour (private). Base `origin/main`; re-query the tip with `git rev-parse origin/main`.
-- Base health: no CI yet (WS1 creates it).
+- Base health: green (main run 44211177511 on 36d5f7e).
 - Vercel: connected. Turso: DB created, credentials in Vercel env (CEO, 2026-11-17).
 - Codex review: CEO enabling async. Not a blocker.
-- Open PRs: none. Live worktrees: none. Live subagents: ws1-impl (impl EM, main checkout branch).
-- Merged + verified: none.
+- Open PRs: see gh. Live subagents: ws1-verify (verifier), ws2-impl (worktree ../golden-hour-wt/ws2), ws7-impl (worktree ../golden-hour-wt/ws7).
+- Merged: WS1 → d003a28 (verifier pending).
+- Production URL: https://golden-hour-iota-three.vercel.app/ (previews are behind Vercel SSO).
 - Parallel track (not an EM chunk): Evolution 5 coaches debate, PM-moderated with the CEO. Starts after WS2 merges, since its output is `PlanSession` JSON. First agenda items:
   1. Does the 2–3 hard-sessions cap apply to running quality only, or to metcons too? PM recommendation: running only.
   2. What replaces Kong is King (lost) in the test battery?
-- Next chunk: WS1.
+- Next chunks: WS2 and WS7 in parallel (WS7 depends only on WS1). Then WS3, WS4, WS5 after WS2.
 
 ## §2 CEO directives (durable — read every iteration)
 
