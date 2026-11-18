@@ -1,8 +1,9 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
-import { SyncRequest, type SyncResponse } from '#lib/domain/log.ts';
+import { isSessionRecord, SyncRequest, type LogRecord, type SyncResponse } from '#lib/domain/log.ts';
 import type { Database } from './db/ready.ts';
 import type { UrlScheme } from './db/url.ts';
 import { logEntriesReadable, upsertLogRecords } from './db/log-entries.ts';
+import { sessionLogsReadable, upsertSessionRecords } from './db/session-logs.ts';
 
 export interface SyncDeps {
 	token: string | undefined;
@@ -39,14 +40,17 @@ export async function handleSync(request: Request, deps: SyncDeps): Promise<Resp
 	}
 	const parsed = SyncRequest.safeParse(body);
 	if (!parsed.success) return failure(400, parsed.error.message);
-	await upsertLogRecords(database.db, parsed.data.records, new Date().toISOString());
+	const receivedAt = new Date().toISOString();
+	const { records } = parsed.data;
+	await upsertLogRecords(database.db, records.filter((record): record is LogRecord => !isSessionRecord(record)), receivedAt);
+	await upsertSessionRecords(database.db, records.filter(isSessionRecord), receivedAt);
 	const response: SyncResponse = { accepted: parsed.data.records.map((record) => record.id) };
 	return Response.json(response);
 }
 
 export async function syncHealth(deps: SyncDeps): Promise<Response> {
 	const database = await deps.database();
-	const readable = database.status !== 'ready' || (await logEntriesReadable(database.db));
+	const readable = database.status !== 'ready' || ((await logEntriesReadable(database.db)) && (await sessionLogsReadable(database.db)));
 	const status = readable ? database.status : 'unmigrated';
 	const token = Boolean(deps.token);
 	const reason = database.status === 'unmigrated' ? { reason: database.reason } : {};

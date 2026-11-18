@@ -13,7 +13,7 @@ export interface Mutant {
 
 export const propertySpec = 'src/routes/api/sync/sync.spec.ts';
 
-export const assertionTags = ['client', 'duplicate', 'server', 'tombstone', 'drain'] as const;
+export const assertionTags = ['client', 'duplicate', 'server', 'tombstone', 'drain', 'outcome'] as const;
 
 export const mutants: Mutant[] = [
 	{
@@ -71,6 +71,41 @@ export const mutants: Mutant[] = [
 		search: '\t\t.values(records.map((record) => toRow(record, receivedAt)))',
 		replace: "\t\t.values(records.map((record) => toRow({ ...record, id: crypto.randomUUID().replace(/^(.{14})./, '$17') }, receivedAt)))",
 		changedLines: 2
+	},
+	{
+		name: 'an ack that marks nothing is a failure, even when the records are on the server',
+		file: 'src/lib/features/log/sync.ts',
+		search: ' && (await store.stillPending(records)) > 0',
+		replace: '',
+		changedLines: 2
+	},
+	{
+		name: 'still-pending check ignores the revision that was sent',
+		file: 'src/lib/features/log/store.ts',
+		search: ' && s.record.revision === sent[i]!.revision',
+		replace: '',
+		changedLines: 2
+	},
+	{
+		name: 'server never stores session records',
+		file: 'src/lib/server/sync.ts',
+		search: '\n\tawait upsertSessionRecords(database.db, records.filter(isSessionRecord), receivedAt);',
+		replace: '',
+		changedLines: 1
+	},
+	{
+		name: 'plain insert instead of upsert-by-id for session records',
+		file: 'src/lib/server/db/session-logs.ts',
+		search: /\n\t\t\.onConflictDoUpdate\(\{[\s\S]*?\n\t\t\}\);/,
+		replace: ';',
+		changedLines: 7
+	},
+	{
+		name: 'server overwrites newer session revisions',
+		file: 'src/lib/server/db/session-logs.ts',
+		search: ',\n\t\t\tsetWhere: sql`excluded.revision > ${sessionLogs.revision}`',
+		replace: '',
+		changedLines: 3
 	}
 ];
 

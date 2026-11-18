@@ -33,7 +33,7 @@ export async function syncOutbox(store: LogStore, send: Transport, batchSize = s
 		const body = response.ok ? SyncResponse.safeParse(await response.json().catch(() => undefined)) : undefined;
 		if (!body?.success) return { kind: 'failed', status: response.status };
 		const marked = await store.acknowledge(records, body.data.accepted);
-		if (marked === 0) return { kind: 'failed', status: response.status };
+		if (marked === 0 && (await store.stillPending(records)) > 0) return { kind: 'failed', status: response.status };
 		count += marked;
 	}
 }

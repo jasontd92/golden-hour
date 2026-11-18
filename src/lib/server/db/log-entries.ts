@@ -31,6 +31,7 @@ export function toRecord(row: LogEntryRow): LogRecord {
 }
 
 export async function upsertLogRecords(db: Db, records: LogRecord[], receivedAt: string): Promise<void> {
+	if (records.length === 0) return;
 	await db
 		.insert(logEntries)
 		.values(records.map((record) => toRow(record, receivedAt)))
