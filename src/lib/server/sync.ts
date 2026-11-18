@@ -44,7 +44,9 @@ export async function handleSync(request: Request, deps: SyncDeps): Promise<Resp
 
 export async function syncHealth(deps: SyncDeps): Promise<Response> {
 	const database = await deps.database();
-	const status = database.status === 'ready' && !(await logEntriesReadable(database.db)) ? 'unmigrated' : database.status;
+	const readable = database.status !== 'ready' || (await logEntriesReadable(database.db));
+	const status = readable ? database.status : 'unmigrated';
 	const token = Boolean(deps.token);
-	return Response.json({ token, database: status }, { status: token && status === 'ready' ? 200 : 503 });
+	const reason = database.status === 'unmigrated' ? { reason: database.reason } : {};
+	return Response.json({ token, database: status, ...reason }, { status: token && status === 'ready' ? 200 : 503 });
 }
