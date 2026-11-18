@@ -2,6 +2,8 @@ import type { Rule } from 'eslint';
 import { isServerOnlyFile, layerOf, resolveSpecifier } from '../layers.ts';
 
 const frameworkPackages = /^(svelte|@sveltejs\/kit|[$#]app)(\/|$)/;
+const domainPackages = /^zod(\/|$)/;
+const specFile = /\.spec\.ts$/;
 
 export const layerBoundaries: Rule.RuleModule = {
 	meta: {
@@ -12,6 +14,10 @@ export const layerBoundaries: Rule.RuleModule = {
 				'src/lib/domain is pure TS and must not import from src/lib/{{target}}. Move the shared logic into src/lib/domain, or have {{target}} import domain instead.',
 			domainFramework:
 				"src/lib/domain must not depend on '{{specifier}}'. Keep domain framework-free; do this in a feature or src/lib/ui.",
+			domainPackage:
+				"src/lib/domain may import only src/lib/domain and zod, not '{{specifier}}'. Keep domain pure: take the value as an argument, or do the I/O in a feature, script or src/lib/server.",
+			domainOutside:
+				"src/lib/domain may import only src/lib/domain and zod; '{{specifier}}' resolves outside it. Pass the data in as an argument, or move the code into src/lib/domain.",
 			crossFeature:
 				"Feature '{{from}}' must not import feature '{{to}}'. Move what both need into src/lib/domain or src/lib/ui, or compose them in a route.",
 			serverFromClient:
@@ -23,6 +29,7 @@ export const layerBoundaries: Rule.RuleModule = {
 		const file = context.filename;
 		const from = layerOf(root, file);
 		const serverOnly = isServerOnlyFile(root, file);
+		const pureDomain = from.kind === 'domain' && !specFile.test(file);
 
 		function check(node: Rule.Node, specifier: unknown) {
 			if (typeof specifier !== 'string') return;
@@ -31,11 +38,20 @@ export const layerBoundaries: Rule.RuleModule = {
 				return;
 			}
 			const resolved = resolveSpecifier(root, file, specifier);
-			if (!resolved) return;
+			if (!resolved) {
+				if (pureDomain && !domainPackages.test(specifier)) {
+					context.report({ node, messageId: 'domainPackage', data: { specifier } });
+				}
+				return;
+			}
 			const to = layerOf(root, resolved);
 			if (from.kind === 'domain' && to.kind !== 'domain' && to.kind !== 'other') {
 				const target = to.kind === 'feature' ? 'features' : to.kind;
 				context.report({ node, messageId: 'domainImport', data: { target } });
+				return;
+			}
+			if (pureDomain && to.kind === 'other') {
+				context.report({ node, messageId: 'domainOutside', data: { specifier } });
 				return;
 			}
 			if (from.kind === 'feature' && to.kind === 'feature' && from.name !== to.name) {
