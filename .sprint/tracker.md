@@ -1,45 +1,110 @@
-# Golden Hour app v1 — sprint tracker
+# Golden Hour app v1 — execution tracker
 
-> Working memory for the PM across compactions. Append-mostly. Verify §1 against reality each iteration.
-> Pattern: boilerplate-skills/skills/sprint (Independent shape). This folder is deleted at program close; durable decisions become schemas, lint rules or tests.
+> Single source of truth for the multi-session PM/EM rotation. Append-mostly. Every iteration checks §1 against reality first (git, gh, worktrees).
+> Pattern: `/sprint` (boilerplate-skills/skills/sprint), INDEPENDENT shape. Definition and design: `.sprint/README.md`. Workstreams: `.sprint/ws-NN-*.md`.
+> **PM resuming after a compaction:** load the `sprint` skill, then read this file §1–§3, then README.md. Don't re-ask the CEO anything recorded here.
 
 ## §1 Active state
-- Stage: 0 — design front-loaded (mockups → v0 sign-off) before engineering
-- Shape: INDEPENDENT PRs to main (all work is additive)
-- Repo: github.com/jasontd92/golden-hour (private), main @ 338fba7
-- Vercel: connected (CEO, 2026-11-17)
-- Codex review: CEO enabling async; NOT a blocker. Until present, merge gate = CI green + 0 unresolved threads.
-- Open PRs / worktrees / subagents: none
-- Mockups: https://claude.ai/artifact/VAMdGRd2S13J3HBGDoPCDs (A: dark gym-floor, 4 screens; B: light notebook/timeline, 2 screens). Session content is PLACEHOLDER until the debate.
-- Design pass 2 (page 'Pass 2: quiet' on the same canvas): Emil Kowalski skills applied (emil-design-eng, mobile-native, apple-design). Interactive Today (tap to expand) + Log (Done → saved + rest).
-- Next: CEO feedback on pass 2 → v0 direction → WS1
+- Stage: 1 complete (tracker bootstrapped). Next: Stage 3, dispatch WS1.
+- Shape: INDEPENDENT PRs to `main`. All work is additive; a half-shipped state is survivable.
+- Ground truth: GitHub PR state (`gh pr view --json state,mergeStateStatus,statusCheckRollup`) plus GraphQL review-thread counts.
+- Repo: github.com/jasontd92/golden-hour (private). Base `origin/main`; re-query the tip with `git rev-parse origin/main`.
+- Base health: no CI yet (WS1 creates it).
+- Vercel: connected. Turso: CEO to create the DB and env vars before WS5 deploys (not a blocker for code).
+- Codex review: CEO enabling async. Not a blocker.
+- Open PRs: none. Live worktrees: none. Live subagents: none.
+- Merged + verified: none.
+- Parallel track (not an EM chunk): Evolution 5 coaches debate, PM-moderated with the CEO. Starts after WS2 merges, since its output is `PlanSession` JSON. First agenda items:
+  1. Does the 2–3 hard-sessions cap apply to running quality only, or to metcons too? PM recommendation: running only.
+  2. What replaces Kong is King (lost) in the test battery?
+- Next chunk: WS1.
 
-## §2 CEO directives (durable)
-- Docs policy: only durable intent belongs in prose (semi-permanent design decisions, the why and the focus; mostly on the methodology side). No planning artifacts or prescriptive agent instructions that need upkeep. Code documents itself via names and directories. This .sprint/ folder is deleted at program close.
-- Design taste: simple and elegant; surface only what matters now, the rest one tap away (progressive disclosure). LLM failure mode to avoid: too much detail and verbosity on screen.
-- Later scoping (not v1): ongoing methodology generation after Evolution 5 and the benchmarks.
-- Stack: SvelteKit + TypeScript, installable PWA (no Apple dev license). Web-enabled, phone-first. Single user; no auth; don't productize.
-- Data: logs offline-first on phone, synced to hosted DB. PM recommends Turso (SQLite) + Drizzle; CEO has no DB preference.
-- Merge: auto-merge when green. Gate = CI green + Codex review present on latest SHA + 0 unresolved threads (Codex posts comments, not a check → EM enforces, not GitHub auto-merge).
-- AI review is the first backstop, not the goal: every finding asks "could a type/lint/test have caught this?" → ship that check. Findings/PR is a tracked metric.
-- Pattern source: Lauren Tan "All Code Is Slop (Except Mine)": lint > prose, ~no comments, minimal agent-facing markdown, feature map, runtime verification with screenshots.
-- Front-load design: mockups before v0, then PM runs with it.
-- Docker is available if useful.
-- Working memory: this tracker (repo-local, git-tracked) so EMs in worktrees can read it; Obsidian vault at ~/Documents/Obsidian Vault not used for sprint state.
-- DB: Turso (CEO confirmed). Review bot: Codex (CEO has plan; Cubic quota reserved for Unstale).
-- Programming debate (Evolution 5) runs in parallel, moderated by PM; it writes into the WS2 PlanSession format.
-- Commits: conventional, NEVER an AI co-author trailer, `git add <paths>` never -A.
+## §2 CEO directives (durable — read every iteration)
+
+### Product
+- Single user, phone-first PWA, web-enabled. No auth, not a product; multi-user is a future refactor.
+- Design v0 approved (after the vuca.dev theming): README § Design. Simple and elegant, progressive disclosure, nothing verbose on screen.
+
+### Prose and docs policy
+- Durable intent only. Semi-permanent design decisions, the why and the focus. Mostly the methodology side (`team/`, `profiles/`, `prompts/`).
+- No planning artifacts or prescriptive agent instructions that need upkeep. Code documents itself through function names, variable names and directories.
+- ~No comments (`// why:` only, rare). Markdown allowlist enforced by CI. `.sprint/` is deleted at program close.
+- Every recurring review finding becomes a type, lint rule or test (lint first, clean old examples, then verification), not a sentence in a doc.
+
+### Workflow
+- One EM owns one chunk end-to-end: worktree → implement → PR → review loop → merge → §3 handoff → teardown → exit.
+- EMs: `subagent_type: general-purpose` with a `name:` (gotcha 19). Run in the background. A fresh read-only verifier per chunk after merge, and it is the only actor that ticks boxes.
+- PM never reads code or debugs. Stuck → dispatch a fresh diagnostic agent.
+
+### Pre-merge gates (EM enforces; GitHub auto-merge OFF)
+- `pnpm check` exits 0, naming the tree it ran on, with the log attached to the PR.
+- All CI jobs green on the head SHA, re-queried at the moment of merge.
+- Codex review present on the head SHA, once Codex is enabled on the repo (check whether a Codex review or comment exists on any PR; if none ever, skip).
+- 0 unresolved review threads (GraphQL). Codex never auto-resolves: reply with the fix SHA or dismissal rationale, then `resolveReviewThread`.
+- `main` green between merges. If red, HALT the queue (same-SHA re-run first to rule out a flake, A13).
+- Merge: `gh pr merge <N> --squash --delete-branch`.
 
 ### Verification posture
-Blast radius: one user's broken page. Default ship-and-observe. Hold the line on: (A) no log entry ever lost (interrupted+replayed sync test), (B) TS data port output identical to build.py, (C) main green + deploys.
-Explicitly cut: TLA+/Lean, auth/multi-user, browsers beyond mobile Safari + mobile Chromium.
+Blast radius: one user's broken page. Default is ship and observe. Hold the line on exactly three things, each proven, not asserted:
+- (A) No log entry is ever lost: WS5 property test plus mutation proof.
+- (B) The TS data port reproduces build.py exactly: WS3 parity diff.
+- (C) `main` stays green and deploys to Vercel.
 
-## §3 Workstreams (draft, pending CEO sign-off after design)
-- WS1 scaffold + guardrails (first, serial)
-- WS2 data contract: Workout, Result, PlanSession, LogEntry schemas
-- WS3 port build.py → TS with parity test
-- WS4 Today screen + PWA shell
-- WS5 offline logging + sync (Turso)
-- WS6 history: benchmarks, lift maxes, trends
-- WS7 agent-session scorer (any time)
-- Close: full mobile browser suite on main + morning report
+Explicitly cut, so don't reintroduce:
+- TLA+ and Lean
+- auth and multi-user
+- desktop-browser e2e matrices (only mobile WebKit and mobile Chromium)
+- visual-regression pixel diffing (screenshots are evidence, not gates)
+- Storybook
+
+### Who ticks acceptance criteria
+- The implementing EM never ticks its own boxes. It lists criterion → evidence in its exit summary.
+- The verifier ticks mechanical and empirical criteria in the WS doc.
+- HUMAN criteria go to the morning report for the CEO.
+
+### Concurrency (binding constraint: shared root files, not RAM)
+- WS1 runs alone; it touches package.json, the lockfile, eslint config and CI.
+- After WS2: at most 3 impl EMs at once, each in its own git worktree under `../golden-hour-wt/<ws>`.
+  - A chunk that must change root config (package.json deps, eslint, CI) rebases right before merge.
+  - Lockfile conflicts: resolve by re-running `pnpm install`, never by hand-editing.
+- e2e runs in CI (Playwright Docker image). Local Docker e2e is optional, one run at a time program-wide.
+- No devcontainers, so sprint gotchas 5–11 (container teardown, shared Postgres) don't apply.
+
+### Commits and git
+- Conventional Commits. NEVER an AI co-author trailer (CLAUDE.md, all repos).
+- `git add <paths>`, never `-A`. Never `git stash`.
+
+### HALT — escalate to the CEO, don't decide
+- Spending money or creating accounts (Turso plan, a paid Vercel feature, domains).
+- Installing global tools beyond pnpm.
+- Anything that sends personal training data to a new external service.
+- Changing `data/raw/` (immutable) or curated facts.
+- Changing the design tokens or screen structure beyond README § Design.
+
+## §3 Per-chunk handoff log (dispatch order)
+
+### WS1 — scaffold + guardrails + CI — NOT STARTED
+- Type: impl EM, serial. Doc: ws-01-scaffold.md.
+
+### WS2 — domain contract — NOT STARTED
+- Depends: WS1. Doc: ws-02-domain.md.
+
+### WS3 — data build port — NOT STARTED
+- Depends: WS2. Hold-the-line B. Doc: ws-03-data-port.md.
+
+### WS4 — shell, PWA, Today, Week — NOT STARTED
+- Depends: WS2. Doc: ws-04-shell-today-week.md.
+
+### WS5 — logging + offline sync — NOT STARTED
+- Depends: WS2 (data layer); WS4 (UI mount). Hold-the-line A. Doc: ws-05-logging-sync.md.
+
+### WS6 — progress — NOT STARTED
+- Depends: WS3. Doc: ws-06-progress.md.
+
+### WS7 — agent-session scorer — NOT STARTED
+- Depends: WS1. Doc: ws-07-session-scorer.md.
+
+### CLOSE — Stage 5′ — NOT STARTED
+- Runner: the full mobile e2e suite on the final `main` tip.
+- `pnpm sessions:score` over all sprint sessions → turn the findings into checks.
+- Delete `.sprint/`, then write the morning report.
