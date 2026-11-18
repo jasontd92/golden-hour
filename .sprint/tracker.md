@@ -772,7 +772,13 @@ Explicitly cut, so don't reintroduce:
     - (b) Lost cold-start taps on a real phone remain a product gap. No test covers them.
     - (c) There are still no traces kept on failure.
 
-### CLOSE — Stage 5′ — NOT STARTED
+### CLOSE — Stage 5′ — DONE (awaiting CEO HUMAN checks)
+- 2026-11-18 PM close: every chunk is merged and has a verifier verdict, with no FAIL (flake-diag verdict c7063e1).
+- main is green: run 44366280301 on f53140e passed e2e 70/70 and 442 unit tests.
+- Production serves f53140e, and `/api/sync` returns {token:true, database:ready}. Vercel's ignoreCommand skipped the docs-only build for 428f325.
+- `pnpm sessions:score` covered 44 sessions, about 53 hours, about 2.2k tool calls, 54 failed and 20 retried.
+- The morning report is at https://claude.ai/artifact/QMkA4UihUVjfW9ESuPXaDa and covers decisions 1–14, the follow-ups and the verification ladder.
+- `.sprint/` is kept until the CEO finishes the HUMAN phone checks; then delete it, per the docs policy.
 - Runner: the full mobile e2e suite on the final `main` tip.
 - `pnpm sessions:score` over all sprint sessions → turn the findings into checks.
 - Delete `.sprint/`, then write the morning report.
