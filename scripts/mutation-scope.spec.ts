@@ -2,27 +2,16 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { parse } from 'yaml';
+import { mutatedFiles } from './mutation-scope.ts';
 import { listRepoFiles } from './repo-files.ts';
 
 const root = path.resolve(import.meta.dirname, '..');
-const { mutate } = JSON.parse(readFileSync(path.join(root, 'stryker.config.json'), 'utf8')) as { mutate: string[] };
 const workflow = parse(readFileSync(path.join(root, '.github/workflows/mutation.yml'), 'utf8')) as {
 	on: { pull_request: { paths: string[] }; push: { paths: string[] } };
 };
 
 const matchesAny = (file: string, globs: string[]) => globs.some((glob) => path.posix.matchesGlob(file, glob));
-
-const mutated = listRepoFiles().filter(
-	(file) =>
-		matchesAny(
-			file,
-			mutate.filter((glob) => !glob.startsWith('!'))
-		) &&
-		!matchesAny(
-			file,
-			mutate.filter((glob) => glob.startsWith('!')).map((glob) => glob.slice(1))
-		)
-);
+const mutated = mutatedFiles(listRepoFiles());
 
 describe('mutation workflow scope', () => {
 	it('mutates something', () => {
@@ -35,6 +24,13 @@ describe('mutation workflow scope', () => {
 			.flatMap((file) => [file, file.replace(/\.ts$/, '.spec.ts')])
 			.filter((file) => !matchesAny(file, paths));
 		expect(uncovered).toEqual([]);
+	});
+
+	it('picks the mutated files out of a changed-file list', () => {
+		expect(mutatedFiles(['src/lib/domain/score.ts', 'src/lib/domain/score.spec.ts', 'src/routes/+page.svelte', 'scripts/csv.ts'])).toEqual([
+			'src/lib/domain/score.ts',
+			'scripts/csv.ts'
+		]);
 	});
 
 	it('refreshes the main-branch incremental cache on the same paths', () => {

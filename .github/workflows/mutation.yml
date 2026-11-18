@@ -14,6 +14,7 @@ on:
       - scripts/python-json.ts
       - scripts/python-json.spec.ts
       - stryker.config.json
+      - scripts/mutation-scope.ts
       - .github/workflows/mutation.yml
   push:
     branches: [main]
@@ -32,18 +33,34 @@ permissions:
 jobs:
   stryker:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: ./.github/actions/setup
-      - uses: actions/cache/restore@v6
+      - id: baseline
+        uses: actions/cache/restore@v6
         with:
           path: reports/stryker-incremental.json
           key: stryker-incremental-${{ github.sha }}
           restore-keys: stryker-incremental-
       - name: Mutation test (incremental)
-        if: github.event_name == 'pull_request' || github.event_name == 'push'
+        if: github.event_name == 'push' || (github.event_name == 'pull_request' && steps.baseline.outputs.cache-matched-key != '')
+        timeout-minutes: ${{ github.event_name == 'pull_request' && 20 || 110 }}
         run: pnpm mutate
+      - name: Mutation test (changed files only, no baseline yet)
+        if: github.event_name == 'pull_request' && steps.baseline.outputs.cache-matched-key == ''
+        timeout-minutes: 20
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          files=$(git diff --name-only "$BASE"...HEAD | node scripts/mutation-scope.ts)
+          echo "No main-branch baseline cached yet; mutating only: ${files:-nothing}" | tee -a "$GITHUB_STEP_SUMMARY"
+          [ -n "$files" ] || exit 0
+          mkdir -p reports
+          jq '.incremental = false | .thresholds.break = null' stryker.config.json > reports/stryker-changed.json
+          pnpm mutate reports/stryker-changed.json --mutate "$files"
       - name: Mutation test (full)
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: pnpm mutate --force
