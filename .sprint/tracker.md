@@ -12,13 +12,16 @@
 - Base health: green (main run 44211177511 on 36d5f7e).
 - Vercel: connected. Turso: DB created, credentials in Vercel env (CEO, 2026-11-17).
 - Codex review: CEO enabling async. Not a blocker.
-- Open PRs: see gh. Live subagents: ws2-impl (worktree ../golden-hour-wt/ws2), ws7-impl (worktree ../golden-hour-wt/ws7).
-- Merged + verified: WS1 → d003a28 → PASS WITH GAPS 8/9 (HUMAN phone check pending).
+- Open PRs: see gh. Live subagents: ws2-verify; ws3-impl, ws4-impl, ws5a-impl (worktrees ../golden-hour-wt/<ws>).
+- Merged + verified: WS1 → d003a28 → PASS WITH GAPS 8/9 (HUMAN phone check pending). WS7 → c1d1bba → PASS WITH GAPS 3/3 + HUMAN. WS2 → 7156081 (verifier pending).
 - Production URL: https://golden-hour-iota-three.vercel.app/ (previews are behind Vercel SSO).
 - Parallel track (not an EM chunk): Evolution 5 coaches debate, PM-moderated with the CEO. Starts after WS2 merges, since its output is `PlanSession` JSON. First agenda items:
   1. Does the 2–3 hard-sessions cap apply to running quality only, or to metcons too? PM recommendation: running only.
   2. What replaces Kong is King (lost) in the test battery?
-- Next chunks: WS2 and WS7 in parallel (WS7 depends only on WS1). Then WS3, WS4, WS5 after WS2.
+- Next chunks: WS3, WS4, WS5a running. Then WS5b (log UI, after WS4), WS6 (after WS3), WS7b (scorer fixes).
+- WS5 split (PM, 2026-11-17): WS5a is the data layer (IndexedDB outbox, /api/sync, Drizzle/Turso, property test + mutation proof). WS5b is the log UI on top of WS4's shell. This avoids one EM idling until WS4 merges.
+- WS7b queued: (1) the scorer opens subagent files from every ancestor-path project folder (e.g. -Users-jason/*, i.e. other projects) and reads a 64 KB buffer before rejecting; it should read one line and limit which parent folders it scans. (2) The commits metric is always empty because agents use `git commit -q`; derive commits from git log instead. (3) Exclude in-progress sessions, or label them.
+- Methodology facts surfaced by WS2 (the plan wins over the sprint docs): TM = floor(0.85×1RM, 5); week 1 is 5's PRO (no AMRAP); Evo 5 runs 17 weeks (retest in 16–17). The fixture's Monday keeps the mockup values as a placeholder.
 
 ## §2 CEO directives (durable — read every iteration)
 
@@ -154,7 +157,7 @@ Explicitly cut, so don't reintroduce:
 ### WS6 — progress — NOT STARTED
 - Depends: WS3. Doc: ws-06-progress.md.
 
-### WS7 — agent-session scorer — MERGED
+### WS7 — agent-session scorer — VERIFIED
 - Type: impl EM. Doc: ws-07-session-scorer.md.
 - PR #2, squash-merged as `c1d1bba`. Head `cde061d`. Branch deleted.
 - CI: PR run 44214496538 green (typecheck, lint, unit, policy, e2e, evidence); main run 44214711979 green (evidence skipped on push).
@@ -174,6 +177,13 @@ Explicitly cut, so don't reintroduce:
   - `gitBranch` on subagent records is the PM checkout's branch (`main`), not the EM's worktree branch, so the branch can't come from the transcript; it comes from `gh pr view`.
   - `gh api graphql -F owner={owner} -F repo={repo}` placeholders work.
 - Brief errors: EM transcripts are not under the `-…-golden-hour*` project dirs. They live under the PM session's dir (`-Users-jason-Documents/<pm-session>/subagents/`), next to non-repo subagents, which is why discovery filters by cwd.
+
+### WS7 verdict
+- VERIFIER: PASS WITH GAPS 3/3 mechanical, HUMAN pending. Privacy of the scored set is proven by mutation. Gaps go to WS7b.
+
+### WS5a — logging data layer + sync — NOT STARTED
+### WS5b — log UI — NOT STARTED (after WS4)
+### WS7b — scorer fixes — NOT STARTED
 
 ### CLOSE — Stage 5′ — NOT STARTED
 - Runner: the full mobile e2e suite on the final `main` tip.
