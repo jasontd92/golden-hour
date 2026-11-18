@@ -11,7 +11,7 @@ Per README § Design and `.sprint/design/P2Progress.dc.html`.
 - Data is bundled at build time from `data/normalized` (read-only). Logged sets from WS5 are merged later and are out of scope here.
 
 ## Acceptance criteria
-- [ ] Unit tests: the best Fran is 4:43, the best back squat 1RM is 295, and the best CrossFit Total respects the recorded conflict handling (mechanical; verify the expected values against the data files, not this doc).
-- [ ] e2e: Progress renders both lists; tapping Fran shows its result history (mechanical, with screenshots).
-- [ ] Results with unknown-precision dates render as their `date_text` (mechanical).
+- [x] Unit tests: the best Fran is 4:43, the best back squat 1RM is 295, and the best CrossFit Total respects the recorded conflict handling (mechanical; verify the expected values against the data files, not this doc).
+- [x] e2e: Progress renders both lists; tapping Fran shows its result history (mechanical, with screenshots).
+- [x] Results with unknown-precision dates render as their `date_text` (mechanical).
 - [ ] HUMAN: CEO checks the numbers look right.
