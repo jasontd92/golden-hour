@@ -20,7 +20,7 @@ test('the manifest is linked and installable as a standalone dark app', async ({
 
 test('after the first load, Today and Week render offline', async ({ page, context }) => {
 	await openOn(page, '2026-11-17');
-	await expect(page.getByRole('heading', { level: 1, name: 'Squat + short sprint' })).toBeVisible();
+	await expect(page.getByRole('heading', { level: 1, name: 'Squat + couplet' })).toBeVisible();
 	await page.evaluate(async () => {
 		await navigator.serviceWorker.ready;
 		if (navigator.serviceWorker.controller) return;
@@ -29,9 +29,9 @@ test('after the first load, Today and Week render offline', async ({ page, conte
 
 	await context.setOffline(true);
 	await page.reload();
-	await expect(page.getByRole('heading', { level: 1, name: 'Squat + short sprint' })).toBeVisible();
+	await expect(page.getByRole('heading', { level: 1, name: 'Squat + couplet' })).toBeVisible();
 	await page.getByRole('link', { name: 'Week' }).click();
 	await expect(page.getByRole('heading', { level: 1, name: 'Week 1 of 17' })).toBeVisible();
-	await page.getByRole('link', { name: /Long chipper/ }).click();
-	await expect(page.getByRole('heading', { level: 1, name: 'Long chipper' })).toBeVisible();
+	await page.getByRole('link', { name: /Long run/ }).click();
+	await expect(page.getByRole('heading', { level: 1, name: 'Long run' })).toBeVisible();
 });

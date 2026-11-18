@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import { describe, expect, it } from 'vitest';
@@ -13,10 +13,12 @@ describe('schemas/*.json', () => {
 		expect(readFileSync(path.join(schemasDir, `${name}.json`), 'utf8')).toBe(renderSchema(name, schema));
 	});
 
-	it('validate the plan fixture without TypeScript', () => {
+	it('validate every plan week without TypeScript', () => {
 		const validate = validator('plan-week');
-		expect(validate(readJson('fixtures/plan/week-01.json')), JSON.stringify(validate.errors)).toBe(true);
-		const [monday] = readJson('fixtures/plan/week-01.json') as unknown[];
+		for (const file of readdirSync('plan').filter((name) => name.startsWith('week-'))) {
+			expect(validate(readJson(path.join('plan', file))), `${file} ${JSON.stringify(validate.errors)}`).toBe(true);
+		}
+		const [monday] = readJson('plan/week-01.json') as unknown[];
 		expect(validator('plan-session')(monday)).toBe(true);
 		expect(validator('plan-session')({ ...(monday as object), week: 18 })).toBe(false);
 		expect(validator('plan-session')({ ...(monday as object), blocks: [{ kind: 'metcon' }] })).toBe(false);

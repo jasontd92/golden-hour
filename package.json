@@ -24,6 +24,7 @@
 		"sessions:score": "node scripts/score-sessions.ts",
 		"schema:emit": "node scripts/schema-emit.ts",
 		"plan:check": "node scripts/plan-check.ts",
+		"plan:generate": "node scripts/plan-generate.ts",
 		"data:build": "node scripts/data-build.ts",
 		"db:generate": "drizzle-kit generate",
 		"proof:sync": "node scripts/sync-mutants.ts"

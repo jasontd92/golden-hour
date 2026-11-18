@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { PlanWeek, type PlanSession } from './plan.ts';
 import { focusDate, pickToday, planSessions, weekView } from './schedule.ts';
 
-const week1 = PlanWeek.parse(JSON.parse(readFileSync('fixtures/plan/week-01.json', 'utf8')));
+const week1 = PlanWeek.parse(JSON.parse(readFileSync('plan/week-01.json', 'utf8')));
 const plan = planSessions([week1]);
 const titleOn = (date: string) => {
 	const pick = pickToday(plan, date);
@@ -18,8 +18,8 @@ describe('pickToday', () => {
 	});
 
 	it("picks the day's session, and rest on a day without one", () => {
-		expect(titleOn('2026-12-07')).toBe('Squat + short sprint');
-		expect(titleOn('2026-12-10')).toBe('Track intervals');
+		expect(titleOn('2026-12-07')).toBe('Squat + couplet');
+		expect(titleOn('2026-12-10')).toBe('Z1 run + gymnastics');
 		expect(titleOn('2026-12-13')).toBe('Rest');
 		expect(titleOn('2027-06-01')).toBe('Rest');
 		expect(focusDate(pickToday(plan, '2026-12-13'))).toBe('2026-12-13');

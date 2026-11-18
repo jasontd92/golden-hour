@@ -10,7 +10,7 @@ test('Week lists seven days with today highlighted and Sunday as rest', async ({
 	await expect(rows).toHaveCount(7);
 	await expect(rows.last()).toHaveText(/Sun\s*Rest/);
 	const today = page.locator('[aria-current="date"]');
-	await expect(today).toHaveText(/Wed\s*Press \+ gymnastics/);
+	await expect(today).toHaveText(/Wed\s*Threshold intervals/);
 	await expect(today.getByText('Wed')).toHaveCSS('color', 'rgb(47, 216, 198)');
 	await expect(page.getByRole('img', { name: 'Hard effort' })).toHaveCount(3);
 	await expect(page.getByRole('link', { name: 'Week' })).toHaveAttribute('aria-current', 'page');
@@ -25,7 +25,7 @@ test("tapping a day opens that day's session, and today's row opens Today", asyn
 	await expect(page.getByText('Friday, Dec 11')).toBeVisible();
 
 	await page.getByRole('link', { name: 'Week' }).click();
-	await page.getByRole('link', { name: /Press \+ gymnastics/ }).click();
+	await page.getByRole('link', { name: /Threshold intervals/ }).click();
 	await expect(page).toHaveURL(/\/$/);
-	await expect(page.getByRole('heading', { level: 1, name: 'Press + gymnastics' })).toBeVisible();
+	await expect(page.getByRole('heading', { level: 1, name: 'Threshold intervals' })).toBeVisible();
 });

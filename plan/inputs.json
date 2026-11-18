@@ -1,0 +1,16 @@
+{
+	"firstMonday": "2026-12-07",
+	"trainingMaxes": { "back_squat": 215, "shoulder_press": 135, "deadlift": 280 },
+	"trainingMaxChanges": [],
+	"submaxPaceSecondsPerMile": 589,
+	"tests": {
+		"run10kSeconds": { "value": 3193, "date": "2025-08", "provisional": true },
+		"mileSeconds": null,
+		"run400Seconds": { "value": 65.42, "date": "2024-02", "provisional": true },
+		"bike2MileSeconds": { "value": 306, "date": "2025-08", "provisional": true },
+		"strictPullUps": { "value": 13, "date": "2026-11-16", "provisional": false },
+		"lSitSeconds": { "value": 25, "date": "2025-08", "provisional": true },
+		"ringDips": null,
+		"hrMax": null
+	}
+}

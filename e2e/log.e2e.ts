@@ -10,7 +10,7 @@ interface StoredRecord {
 	record: { reps: number; load?: number; rpe?: number; note?: string; deletedAt?: string; setIndex: number };
 }
 
-const logDate = '2026-12-07';
+const logDate = '2027-01-25';
 
 const bySet = (a: StoredRecord, b: StoredRecord) => a.record.setIndex - b.record.setIndex;
 
@@ -63,7 +63,7 @@ test('three sets logged offline survive a reload and reach the API once online',
 	await page.getByRole('link', { name: 'Start' }).click();
 	await expect(page).toHaveURL(`/log/${logDate}`);
 	await expect(page.getByText('Back squat · 1 of 3')).toBeVisible();
-	await expect(page.getByText('170', { exact: true })).toBeVisible();
+	await expect(page.getByText('155', { exact: true })).toBeVisible();
 	await expect(page.getByText('lb · 5 reps')).toBeVisible();
 	await expect(page.getByText('5', { exact: true })).toBeVisible();
 	await expect(page.getByRole('navigation', { name: 'Main' })).toHaveCount(0);
@@ -79,7 +79,7 @@ test('three sets logged offline survive a reload and reach the API once online',
 	await page.getByRole('button', { name: 'Done' }).click();
 	const saved = page.getByTestId('saved');
 	await expect(saved.getByText('6 reps saved')).toBeVisible();
-	await expect(saved.getByText(`Estimated max ${estimatedOneRm(170, 6)} lb`)).toBeVisible();
+	await expect(saved.getByText(`Estimated max ${estimatedOneRm(155, 6)} lb`)).toBeVisible();
 	await expect(page.getByRole('timer')).toHaveText('1:30');
 	const swapMs = await saved.evaluate((el) => Math.max(...getComputedStyle(el).transitionDuration.split(',').map((d) => parseFloat(d) * 1000)));
 	expect(swapMs).toBeGreaterThan(0);
@@ -87,12 +87,12 @@ test('three sets logged offline survive a reload and reach the API once online',
 	await settled(saved);
 	await captureEvidence(page, testInfo, 'saved-rest');
 
-	await page.getByRole('button', { name: 'Next: 200 × 5' }).click();
+	await page.getByRole('button', { name: 'Next: 175 × 5' }).click();
 	await expect(page.getByText('Back squat · 2 of 3')).toBeVisible();
 	await page.getByRole('button', { name: 'Done' }).click();
-	await expect(saved.getByText(`Estimated max ${estimatedOneRm(200, 5)} lb`)).toBeVisible();
+	await expect(saved.getByText(`Estimated max ${estimatedOneRm(175, 5)} lb`)).toBeVisible();
 
-	await page.getByRole('button', { name: 'Next: 225 × 5+' }).click();
+	await page.getByRole('button', { name: 'Next: 200 × 5+' }).click();
 	await expect(page.getByText('Back squat · 3 of 3')).toBeVisible();
 	await expect(page.getByText('lb · 5 or more reps')).toBeVisible();
 	await page.getByRole('button', { name: 'Add a note' }).click();
@@ -101,8 +101,8 @@ test('three sets logged offline survive a reload and reach the API once online',
 	await settled(page.getByTestId('note'));
 	await captureEvidence(page, testInfo, 'note-open');
 	await page.getByRole('button', { name: 'Done' }).click();
-	await expect(saved.getByText(`Estimated max ${estimatedOneRm(225, 5)} lb`)).toBeVisible();
-	await expect(page.getByRole('button', { name: 'Next: 5 × 5 at 170' })).toBeVisible();
+	await expect(saved.getByText(`Estimated max ${estimatedOneRm(200, 5)} lb`)).toBeVisible();
+	await expect(page.getByRole('button', { name: 'Next: 3 × 5 at 155' })).toBeVisible();
 
 	const logged = await localRecords(page);
 	expect(logged.map((r) => [r.record.setIndex, r.record.reps, r.pending])).toEqual([

@@ -1,0 +1,357 @@
+[
+	{
+		"date": "2027-03-08",
+		"week": 14,
+		"title": "Squat + sprints",
+		"why": "Anchor block: the last set is a PR set. All-out efforts with long rest train the phosphagen pathway.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 10,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "General warm-up · 3 × 5 box jumps" }
+				]
+			},
+			{
+				"name": "Back squat",
+				"kind": "strength",
+				"minutes": 15,
+				"hard": false,
+				"prescriptions": [
+					{
+						"kind": "percentSets",
+						"lift": "back_squat",
+						"trainingMax": 245,
+						"sets": [
+							{ "pct": 0.75, "reps": 5, "amrap": false },
+							{ "pct": 0.85, "reps": 3, "amrap": false },
+							{ "pct": 0.95, "reps": 1, "amrap": true }
+						]
+					},
+					{
+						"kind": "percentSets",
+						"lift": "back_squat",
+						"trainingMax": 245,
+						"sets": [
+							{ "pct": 0.75, "reps": 5, "amrap": false },
+							{ "pct": 0.75, "reps": 5, "amrap": false },
+							{ "pct": 0.75, "reps": 5, "amrap": false }
+						]
+					}
+				],
+				"notes": "PR set. Optional joker: +5–10% for 1–3 reps"
+			},
+			{
+				"name": "Sprint intervals",
+				"kind": "metcon",
+				"minutes": 10,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "intervals",
+						"rounds": 8,
+						"restSeconds": 45,
+						"movements": [
+							{ "movement": "bike", "seconds": 15 }
+						]
+					}
+				],
+				"notes": "All out every round"
+			},
+			{
+				"name": "Single-leg",
+				"kind": "strength",
+				"minutes": 8,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "fixedSets", "movement": "lunge", "sets": 3, "reps": 10 }
+				],
+				"notes": "Reps per leg"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Easy walk · stretch" }
+				]
+			}
+		]
+	},
+	{
+		"date": "2027-03-09",
+		"week": 14,
+		"title": "Press + Z1 run",
+		"why": "Press and gymnastics skill, then an easy Z1 run between two hard days.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 6,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "General warm-up · 3 × 5 plyo push-ups" }
+				]
+			},
+			{
+				"name": "Shoulder press",
+				"kind": "strength",
+				"minutes": 15,
+				"hard": false,
+				"prescriptions": [
+					{
+						"kind": "percentSets",
+						"lift": "shoulder_press",
+						"trainingMax": 150,
+						"sets": [
+							{ "pct": 0.75, "reps": 5, "amrap": false },
+							{ "pct": 0.85, "reps": 3, "amrap": false },
+							{ "pct": 0.95, "reps": 1, "amrap": true }
+						]
+					},
+					{
+						"kind": "percentSets",
+						"lift": "shoulder_press",
+						"trainingMax": 150,
+						"sets": [
+							{ "pct": 0.75, "reps": 5, "amrap": false },
+							{ "pct": 0.75, "reps": 5, "amrap": false },
+							{ "pct": 0.75, "reps": 5, "amrap": false }
+						]
+					}
+				],
+				"notes": "PR set. Optional joker: +5–10% for 1–3 reps"
+			},
+			{
+				"name": "Gymnastics",
+				"kind": "skill",
+				"minutes": 8,
+				"hard": false,
+				"prescriptions": [
+					{
+						"kind": "intervals",
+						"rounds": 5,
+						"restSeconds": 30,
+						"movements": [
+							{ "movement": "l_sit", "seconds": 15 }
+						]
+					}
+				],
+				"notes": "Then ring dips: 4 sets of half your max"
+			},
+			{
+				"name": "Z1 run",
+				"kind": "conditioning",
+				"minutes": 35,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "steady", "movement": "run", "minutes": 35 }
+				],
+				"notes": "9:49/mi or slower · HR <75% max · RPE ≤3"
+			}
+		]
+	},
+	{
+		"date": "2027-03-10",
+		"week": 14,
+		"title": "Threshold intervals",
+		"why": "Longer threshold reps: hold rep 1’s pace through rep 4. Pull-up sets at half your max build toward 20.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 8,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "5 min easy jog · drills · 4 strides" }
+				]
+			},
+			{
+				"name": "4 × 8 min",
+				"kind": "conditioning",
+				"minutes": 38,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "intervals",
+						"rounds": 4,
+						"restSeconds": 120,
+						"movements": [
+							{ "movement": "run", "seconds": 480 }
+						]
+					}
+				],
+				"notes": "8:34–8:49/mi · hold rep 1’s pace through rep 4 · HR ~90% max"
+			},
+			{
+				"name": "Pull-ups",
+				"kind": "strength",
+				"minutes": 14,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "fixedSets", "movement": "pull_up", "sets": 8, "reps": 6 },
+					{ "kind": "fixedSets", "movement": "ring_row", "sets": 3, "reps": 10 }
+				],
+				"notes": "Strict, from a dead hang"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Easy walk · stretch" }
+				]
+			}
+		]
+	},
+	{
+		"date": "2027-03-11",
+		"week": 14,
+		"title": "Z1 bike + gymnastics",
+		"why": "Easy Z1 flow before the long session. The max pull-up set resets next week’s sets.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Z1 bike",
+				"kind": "conditioning",
+				"minutes": 25,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "steady", "movement": "bike", "minutes": 25 }
+				],
+				"notes": "RPE ≤4 · HR <75% max"
+			},
+			{
+				"name": "Gymnastics",
+				"kind": "skill",
+				"minutes": 10,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "fixedSets", "movement": "hspu", "sets": 3, "reps": 5 }
+				],
+				"notes": "Pike or box HSPU until strict wall HSPU is solid"
+			},
+			{
+				"name": "Pull-up max",
+				"kind": "skill",
+				"minutes": 3,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "fixedSets", "movement": "pull_up", "sets": 1, "reps": 13 }
+				],
+				"notes": "One unbroken strict set to failure"
+			}
+		]
+	},
+	{
+		"date": "2027-03-12",
+		"week": 14,
+		"title": "Ladder + deadlift",
+		"why": "Speed first while fresh, then deadlift with lighter supplemental work. Paces are ceilings: never faster.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Warm-up",
+				"kind": "warmup",
+				"minutes": 10,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "5 min easy jog · drills · 4 strides" }
+				]
+			},
+			{
+				"name": "Ladder",
+				"kind": "conditioning",
+				"minutes": 38,
+				"hard": true,
+				"prescriptions": [
+					{
+						"kind": "intervals",
+						"rounds": 3,
+						"restSeconds": 0,
+						"movements": [
+							{ "movement": "run", "meters": 600 },
+							{ "movement": "run", "meters": 400 },
+							{ "movement": "run", "meters": 300 },
+							{ "movement": "run", "meters": 200 }
+						]
+					}
+				],
+				"notes": "Rest 2:00/1:30/1:00/0:30 · 800 m jog between rounds · no faster than 0.925 × mile pace"
+			},
+			{
+				"name": "Deadlift",
+				"kind": "strength",
+				"minutes": 15,
+				"hard": false,
+				"prescriptions": [
+					{
+						"kind": "percentSets",
+						"lift": "deadlift",
+						"trainingMax": 310,
+						"sets": [
+							{ "pct": 0.75, "reps": 5, "amrap": false },
+							{ "pct": 0.85, "reps": 3, "amrap": false },
+							{ "pct": 0.95, "reps": 1, "amrap": true }
+						]
+					},
+					{
+						"kind": "percentSets",
+						"lift": "deadlift",
+						"trainingMax": 310,
+						"sets": [
+							{ "pct": 0.75, "reps": 5, "amrap": false },
+							{ "pct": 0.75, "reps": 5, "amrap": false },
+							{ "pct": 0.75, "reps": 5, "amrap": false }
+						]
+					}
+				],
+				"notes": "Broad jumps 3 × 5 first. PR set. Optional joker: +5–10% for 1–3 reps"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Easy walk · stretch" }
+				]
+			}
+		]
+	},
+	{
+		"date": "2027-03-13",
+		"week": 14,
+		"title": "Long run",
+		"why": "The long Z1 run builds the aerobic base. Easy means easy: slower is fine.",
+		"location": "home",
+		"blocks": [
+			{
+				"name": "Long run",
+				"kind": "conditioning",
+				"minutes": 90,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "steady", "movement": "run", "minutes": 90 }
+				],
+				"notes": "9:49/mi or slower · HR <75% max · RPE ≤3"
+			},
+			{
+				"name": "Cool-down",
+				"kind": "cooldown",
+				"minutes": 5,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "freeText", "text": "Walk · calf and hip stretch" }
+				]
+			}
+		]
+	}
+]

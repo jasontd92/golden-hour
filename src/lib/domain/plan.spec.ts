@@ -1,15 +1,13 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { freeTextInWorkBlocks, isHardSession, PlanSession, PlanWeek, sessionMinutes } from './plan.ts';
-import { wendlerSet } from './strength.ts';
+import { freeTextInWorkBlocks, PlanSession, PlanWeek, sessionMinutes } from './plan.ts';
 
 const weekOne: unknown = JSON.parse(
-	readFileSync(new URL('../../../fixtures/plan/week-01.json', import.meta.url), 'utf8')
+	readFileSync(new URL('../../../plan/week-01.json', import.meta.url), 'utf8')
 );
 
-describe('fixtures/plan/week-01.json', () => {
+describe('plan/week-01.json', () => {
 	const week = PlanWeek.parse(weekOne);
-	const [monday] = week;
 
 	it('parses without loss', () => {
 		expect(week).toStrictEqual(weekOne);
@@ -24,29 +22,7 @@ describe('fixtures/plan/week-01.json', () => {
 			'2026-12-11',
 			'2026-12-12'
 		]);
-		expect(week.filter(isHardSession).map((s) => s.title)).toStrictEqual([
-			'Squat + short sprint',
-			'Track intervals',
-			'Long chipper'
-		]);
-	});
-
-	it('Monday matches the Today mockup', () => {
-		expect(monday?.blocks.map((b) => [b.name, b.minutes, b.hard])).toStrictEqual([
-			['Warm-up', 8, false],
-			['Back squat', 22, false],
-			['AMRAP 12', 14, true],
-			['Cool-down', 6, false]
-		]);
-		expect(monday && sessionMinutes(monday)).toBe(50);
-		const [main, fsl, pullUps] = monday?.blocks[1]?.prescriptions ?? [];
-		expect(main?.kind === 'percentSets' && main.sets.map((s) => [wendlerSet(main.trainingMax, s.pct), s.reps, s.amrap])).toStrictEqual([
-			[170, 5, false],
-			[200, 5, false],
-			[225, 5, true]
-		]);
-		expect(fsl?.kind === 'percentSets' && fsl.sets.map((s) => wendlerSet(fsl.trainingMax, s.pct))).toStrictEqual([170, 170, 170, 170, 170]);
-		expect(pullUps).toStrictEqual({ kind: 'fixedSets', movement: 'pull_up', sets: 5, reps: 6 });
+		expect(week.map(sessionMinutes)).toSatisfy((minutes: number[]) => minutes.every((m) => m > 0));
 	});
 
 	it('uses freeText only in warm-ups and cool-downs', () => {

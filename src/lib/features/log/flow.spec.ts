@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto';
 import { describe, expect, it } from 'vitest';
-import week from '../../../../fixtures/plan/week-01.json' with { type: 'json' };
+import week from '../../../../plan/week-08.json' with { type: 'json' };
 import { PlanWeek } from '#lib/domain/plan.ts';
 import { LogFlow } from './flow.svelte.ts';
 import type { Rest } from './rest.ts';
@@ -9,7 +9,7 @@ import { openLogStore, type LogStore } from './store.ts';
 
 const [monday] = PlanWeek.parse(week);
 const steps = logSteps(monday!);
-const t0 = Date.parse('2026-12-07T09:00:00Z');
+const t0 = Date.parse('2027-01-25T09:00:00Z');
 let dbCount = 0;
 
 function harness() {
@@ -57,21 +57,21 @@ describe('LogFlow', () => {
 
 		const [saved] = await (await h.store).pending(10);
 		expect(saved).toMatchObject({
-			sessionDate: '2026-12-07',
+			sessionDate: '2027-01-25',
 			blockIndex: 1,
 			prescriptionIndex: 0,
 			setIndex: 0,
 			movement: 'back_squat',
-			load: 170,
+			load: 155,
 			reps: 6,
 			rpe: 7.5,
 			note: 'felt fast',
-			loggedAt: '2026-12-07T09:00:00.000Z',
+			loggedAt: '2027-01-25T09:00:00.000Z',
 			deviceId: 'device-1'
 		});
 		expect(flow.saved?.id).toBe(saved?.id);
 		expect(flow.restEndsAt).toBe(t0 + 90_000);
-		expect(h.rest()).toEqual({ sessionDate: '2026-12-07', entryId: saved?.id, endsAt: t0 + 90_000 });
+		expect(h.rest()).toEqual({ sessionDate: '2027-01-25', entryId: saved?.id, endsAt: t0 + 90_000 });
 		expect(h.syncRequests()).toBe(1);
 	});
 
@@ -86,7 +86,7 @@ describe('LogFlow', () => {
 
 		const store = await h.store;
 		expect(await store.entries()).toEqual([]);
-		expect(await store.pending(10)).toEqual([expect.objectContaining({ id, deletedAt: '2026-12-07T09:00:05.000Z', revision: 2 })]);
+		expect(await store.pending(10)).toEqual([expect.objectContaining({ id, deletedAt: '2027-01-25T09:00:05.000Z', revision: 2 })]);
 		expect(flow.saved).toBeUndefined();
 		expect(flow.index).toBe(0);
 		expect(h.rest()).toBeUndefined();
@@ -100,7 +100,7 @@ describe('LogFlow', () => {
 		await flow.resume();
 		flow.less();
 		await flow.done();
-		expect(flow.next).toBe('200 × 5');
+		expect(flow.next).toBe('175 × 5');
 		flow.advance();
 		expect(flow.index).toBe(1);
 		expect(flow.saved).toBeUndefined();
