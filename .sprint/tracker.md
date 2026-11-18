@@ -716,6 +716,36 @@ Explicitly cut, so don't reintroduce:
 - Status: MERGED. Verifier pending.
 - VERIFIER: WS8b — PASS WITH GAPS. criteria met 5/6 (1 DESCOPED) + 1 HUMAN. Fresh clone at 31fb8cc. (1) An independent label dump over plan/week-*.json gives: wk3 Wed "Gymnastics", Thu "Deadlift", Fri "Christmas"; wk4 Thu "Mile TT · DL", Wed "Gymnastics"; wk8 and wk12 Fri "Mile TT". Weeks 16 and 17 are identical to 31fb8cc^. Locally, desktop e2e ran 8/8 against chromium_headless_shell-1243 at 1440, and its no-`.trunc`-overflow assert passed over the whole grid with the pane open. (2) e2e checks "Logged · RPE 8", "✓ 6:52" on the scored line, "✓ 5" per set and "✓ 5/5/5/5/5" on the collapsed line, and that an unlogged day shows no ✓. CI evidence plan-pane-logged.png shows the same. Only `/` (the desk pane) passes `log`; Today.svelte and /day don't. Mobile e2e is green in main run 44318667295 (58 passed). (3) Read the built output: prerendered progress.html has "Evolution 5 · starts Dec 7". Also checked a live preview after hydration with an ad-hoc Playwright probe (since removed): "Evolution 5 · starts Dec 7". (4) The header reads "Threshold", with title="Threshold intervals" asserted in e2e. tokens.css is not in the diff. The only added font-size (14px, on .logged) was already used in BlockRow.svelte at 31fb8cc^. (5) Adding `@media (min-width: 900px)` to Plan.svelte makes layout-breakpoint.spec fail and name the query; reverted. Mutations, all caught and reverted: label = test ?? moved ?? holiday → unit "cell labels" plus e2e holiday test; headerChars 30 → unit columnHeader; the header renders {name} → e2e headers + holiday truncation; reps.at(-1) instead of join('/') → unit loggedText plus e2e "✓ 5/5/5/5/5"; scored = true → unit score test. Unit 439/439. PR run 44317849791 green on ee0be77; main 44318667295 all jobs green (evidence skipped on main). 0 review threads, no AI trailers. DESCOPED: (6) pane pop-in, by PM ruling (it races hydration; see WS8b follow-ups). HUMAN: (4) the weekday now stacks above the column name, which deviates from the P3Plan mockup. Known gap, not a failure: cells and headers still truncate at 1024–1280 with the pane open. Claims that did NOT hold: none.
 
+### Flake-diag — "Why this session" mobile-webkit failure on d3b5ef2 — MERGED
+- Type: diag EM (flake-diag). Branch `fix-fixed-overlap`.
+- PR #24, squash-merged as `f53140e`. Final head `a032f6d`. Branch deleted.
+- CI:
+  - PR run 44362736701 (head `95ca93e`): e2e passed 70/70 on attempts 1, 2 and 3. Evidence was red on attempts 2 and 3 (a same-SHA re-run bug, fixed in this PR).
+  - PR run 44364798225 (head `a032f6d`): all green on attempts 1 and 2, e2e 70/70 each.
+  - Main run 44366280301 on `f53140e`: success, e2e 70/70.
+  - Vercel: rate-limited (PM: don't wait).
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/flake`, rebased onto `65a33d2`, a tree identical to `a032f6d` (442 tests). Logs are PR comments.
+- Reviews: none, 0 threads.
+- Root cause: a tap on prerendered HTML before hydration.
+  - Evidence: run 44313587826 logged `expect(getByText('Leader block…')).toBeVisible()` → "element(s) not found" after a click that succeeded. There was no interception and no /log navigation. CI had no trace (traces are off and only screenshots are uploaded).
+  - Local Playwright Docker (v1.65.1), 40 repeats on mobile-webkit: 2 failed. In both, `[data-view="desk"]` was still in the DOM at click time, so the page wasn't hydrated yet.
+  - The fixed-overlap hypothesis is false. Start is in normal flow, not fixed. The shell's padding (tab bar + 12px) plus the body's `safe-bottom` padding clears the bar, which is 52px + max(safe-bottom, 8px) tall. The week-4 "overlap" is the known full-page screenshot artifact (WS4 gotcha).
+- Changes:
+  - `viewport.svelte.ts` `trackHydration` sets `<html data-hydrated>`. `e2e/test.ts` exports a `test` whose `page.goto`/`page.reload` wait for it (on an ok or null response). eslint `no-restricted-imports` bans importing `test` from `@playwright/test` in `e2e/**`.
+  - Playwright `use.serviceWorkers: 'block'`. `log.e2e.ts` and `pwa.e2e.ts` opt back in with `test.use({ serviceWorkers: 'allow' })`.
+  - Regression tests:
+    - today.e2e "a tap right after opening, while the app is still starting, is not lost" delays `entry/app.*.js` by 1.5s. Against the old harness it failed 2/2 (webkit and chromium).
+    - `e2e/fixed-ui.e2e.ts`: for `/`, `/week`, `/day/2026-12-08`, `/progress` and a lift history, the page is scrolled to the end, and its bottom-most visible element must be hit at its centre and end above the tab bar. Mutant (shell padding → 12px): 6/10 failed (Start, All lifts, SugarWOD profile). /week and /day are shorter than the viewport, so the mutant doesn't reach them.
+  - `vercel.json` `ignoreCommand`: `git diff --quiet HEAD^ HEAD -- . ':(exclude).sprint' ':(exclude)team' ':(exclude)profiles' ':(exclude)prompts'`. Vercel's docs say exit 0 skips and exit 1 builds. `scripts/vercel-ignore.spec.ts` runs it in a temp repo: a docs-only commit skips, a code+docs commit builds, a root-file commit builds. Against the real history, 7856664→1ece847 (tracker-only) exits 0. The `ci-evidence` branch's own vercel.json is untouched.
+  - ci.yml evidence: `git diff --cached --quiet || git commit`, so a same-SHA re-run with identical screenshots no longer fails on "nothing to commit".
+- Gotchas:
+  - Waiting for hydration exposed a second hidden race. Progress taps ("All benchmarks", "Back squat", "All lifts") used to pass only as native navigations before hydration. After hydration, the client navigation's `__data.json` stayed pending more than 5s on WebKit while the SW's first install precached 472 prerendered files (~40 MB) through the HTTP/1.1 preview server. Blocking SWs outside the offline specs removes that contention from tests that don't test the SW.
+  - Corepack is gone in Node 26. For local Docker e2e, run `npm i -g pnpm@12.21.0` inside the container.
+  - Force-push is denied by the auto-mode classifier, so the pre-merge rebase was pushed as a merge of origin/main (same tree as the rebased branch, verified by an empty diff).
+- Brief errors: the worktree didn't exist (I created it). Start isn't fixed. No Playwright trace artifacts exist for the failing run. /log has no fixed bottom UI (the tab bar is hidden there), so it isn't in the fixed-UI check.
+- Follow-ups for the PM: (1) The SW precache is ~40 MB on first visit, because every prerendered page and its `__data.json` embed the plan. That's costly on cellular and slows first-visit navigation. (2) Real taps before hydration are lost on a cold start. Native `<details>` for the disclosures would make them work before hydration. (3) The e2e has no trace on failure. `trace: 'retain-on-failure'` plus uploading test-results would make the next diagnosis faster.
+- Status: MERGED. Verifier pending.
+
 ### CLOSE — Stage 5′ — NOT STARTED
 - Runner: the full mobile e2e suite on the final `main` tip.
 - `pnpm sessions:score` over all sprint sessions → turn the findings into checks.
