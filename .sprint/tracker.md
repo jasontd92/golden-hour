@@ -388,6 +388,7 @@ Explicitly cut, so don't reintroduce:
 - Tests: mutation proof in the PR body, 9/9 guards killed.
 - Brief errors: none. The coordinator's resume note said WS3c wasn't implemented yet; it already was, with PR #13 open.
 - Status: MERGED. Verifier pending.
+- VERIFIER: WS3c — PASS 4/4. Raw-text fixtures: non-array/non-object set_details (8 shapes), malformed JSON, NaN, 1e999, unsafe ints (snapshot and set_details), numeric curated score and bad dates all throw naming the origin, and the CLI exits 1. toString/constructor/__proto__/hasOwnProperty fall back to `text`. Nit: snapshot/curated parse errors name the file, not the record inside it. `data:build` byte-identical. `pnpm check` EXIT 0 on a fresh clone (b846aaf, 344 tests). Runs 44261330700 and 44262119910 green, Vercel success on both SHAs, no trailers, no `data/` change in either merge.
 - (1) A set_details value that is valid JSON but not an array is silently dropped; make it loud.
 - (2) The score_type lookup hits the prototype (`toString`); use an own-key lookup.
 - (3) Loud errors that don't name the source record should attach the origin.
@@ -466,6 +467,7 @@ Explicitly cut, so don't reintroduce:
 - Tests: mutation proof in the PR body, 11/11 guards killed.
 - Brief errors: none.
 - Status: MERGED. Verifier pending.
+- VERIFIER: WS7b — PASS 5/5. Instrumented fs on the real projects dir: only the projects root, `-Users-jason-Documents` and `-Users-jason-Documents-golden-hour` touched (no `-Users-jason`, `-Users-jason-Documents-Developer` etc.); a fixture tree confirms `-wt-*` read, `-other`/`hourwt-` lookalikes and `-Users-jason` never statted or opened, parent top-level sessions never opened. 10 rejected files: max 8192 B, at most 3190 B past the first cwd record. gh: 13/13 PR sessions have commits; no gh: 0. Running sessions labelled and excluded (totals = finished-only sum). Mutants ancestor scope, bounded read, totals exclusion, commits-from-PR reproduced, all killed.
 ### WS8 — desktop planning view — NOT STARTED (needs CEO approval of Pass 3; after WS4, and WS5b/WS6 for review data)
 
 ### CLOSE — Stage 5′ — NOT STARTED
