@@ -32,4 +32,11 @@ describe('check-features', () => {
 		expect(parseFeatures('name: today').problems).toHaveLength(1);
 		expect(parseFeatures('- name: today\n  route: /\n  e2e: e2e/today.e2e.ts\n').features).toEqual([today]);
 	});
+	it('accepts boolean flags and rejects anything else', () => {
+		const entry = '- name: today\n  route: /\n  e2e: e2e/today.e2e.ts\n  flags:\n';
+		expect(parseFeatures(`${entry}    start: false\n`).features).toEqual([{ ...today, flags: { start: false } }]);
+		expect(parseFeatures(`${entry}    start: 'no'\n`).problems).toEqual([
+			"features.yaml: 'today' flags must map flag names to true or false."
+		]);
+	});
 });

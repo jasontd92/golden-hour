@@ -1,3 +1,11 @@
 - name: today
   route: /
   e2e: e2e/today.e2e.ts
+  flags:
+    start: false
+- name: week
+  route: /week
+  e2e: e2e/week.e2e.ts
+- name: day
+  route: /day/[date]
+  e2e: e2e/week.e2e.ts

@@ -6,7 +6,11 @@ export interface Feature {
 	name: string;
 	route: string;
 	e2e: string;
+	flags?: Record<string, boolean>;
 }
+
+const isFlagMap = (flags: unknown) =>
+	typeof flags === 'object' && flags !== null && !Array.isArray(flags) && Object.values(flags).every((v) => typeof v === 'boolean');
 
 const pageFile = /^src\/routes\/(.*?)\/?\+page(\.server)?\.(svelte|ts|js)$/;
 
@@ -25,11 +29,13 @@ export function parseFeatures(text: string): { features: Feature[]; problems: st
 	const features: Feature[] = [];
 	const problems: string[] = [];
 	data.forEach((entry: unknown, index) => {
-		const { name, route, e2e } = (entry ?? {}) as Record<string, unknown>;
-		if (typeof name === 'string' && typeof route === 'string' && typeof e2e === 'string') {
-			features.push({ name, route, e2e });
-		} else {
+		const { name, route, e2e, flags } = (entry ?? {}) as Record<string, unknown>;
+		if (typeof name !== 'string' || typeof route !== 'string' || typeof e2e !== 'string') {
 			problems.push(`features.yaml entry ${index + 1} needs string fields name, route and e2e.`);
+		} else if (flags !== undefined && !isFlagMap(flags)) {
+			problems.push(`features.yaml: '${name}' flags must map flag names to true or false.`);
+		} else {
+			features.push(flags === undefined ? { name, route, e2e } : { name, route, e2e, flags: flags as Record<string, boolean> });
 		}
 	});
 	return { features, problems };

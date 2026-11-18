@@ -16,7 +16,7 @@
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "pnpm typecheck && pnpm lint && pnpm policy && pnpm test:unit",
-		"typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --fail-on-warnings",
+		"typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --fail-on-warnings && tsc -p src/service-worker",
 		"lint": "eslint . --max-warnings 0",
 		"policy": "node scripts/check-md.ts && node scripts/check-features.ts && node scripts/plan-check.ts",
 		"test:unit": "vitest --run",
