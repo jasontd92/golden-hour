@@ -13,7 +13,10 @@
 - PM rulings for WS5b: unlinked /sync route for token entry; header slot shows 'Offline' or 'Not synced' only; never 'synced'; fixed 1:30 rest; Start shows pre-plan, entries record performed-at time.
 - Vercel: connected. Turso: DB created, credentials in Vercel env (CEO, 2026-11-17).
 - Codex review: CEO enabling async. Not a blocker.
-- Open PRs: see gh. Live subagents: ws3-impl, ws4-impl, ws5a-impl (worktrees ../golden-hour-wt/<ws>).
+- Open PRs: see gh. Live subagents (2026-11-18 overnight): ws5c-impl, ws6b-impl, ws9-impl (Evo 5 plan generator); verifiers ws5b-verify, ws7b-3c-verify.
+- Merged overnight: WS7b 6c9a0fe, WS3c 03dceaf, sync-diag c398a9e, WS5b 2d3f61f, Evo 5 plan revision PR #16 e775774 (team/ docs; PM-merged; pending athlete review).
+- Production sync is BLOCKED on the CEO: health shows urlScheme 'other'. TURSO_DATABASE_URL must be exactly libsql://<db>-<org>.<region>.turso.io, with no prefix. Then redeploy.
+- Queue: WS5d session-level record (approved); WS8 desktop planning view (approved); CLOSE; then the verification stretch write-up.
 - Merged + verified: WS1 → d003a28 → PASS WITH GAPS 8/9 (HUMAN phone check pending). WS7 → c1d1bba → PASS WITH GAPS 3/3 + HUMAN. WS2 → 7156081 → PASS WITH GAPS 5/5 (one criterion superseded by the plan's 85% TM).
 - Production URL: https://golden-hour-iota-three.vercel.app/ (previews are behind Vercel SSO).
 - Parallel track (not an EM chunk): Evolution 5 coaches debate, PM-moderated with the CEO. Starts after WS2 merges, since its output is `PlanSession` JSON. First agenda items:
