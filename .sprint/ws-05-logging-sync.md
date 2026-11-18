@@ -27,11 +27,11 @@
 The CEO creates the Turso database and adds the env vars to Vercel. That's a HALT item if missing at deploy; the code and tests don't need it.
 
 ## Acceptance criteria (hold-the-line A: no log entry is ever lost)
-- [ ] Property test (fast-check): for any sequence of log, undo, go offline, come online, interrupted sync (network failure after the server committed but before the client got the response) and replayed sync, the server ends with exactly the client's set of non-undone entries, with no duplicates and none missing (mechanical).
-- [ ] Mutation proof: remove the upsert-by-id (plain insert) and the property test fails; remove mark-synced-on-ack and it fails. Record both runs in the PR (mechanical; sprint hazard A10/A11).
-- [ ] e2e: log three sets offline, reload, the entries persist locally; go online, the entries reach the API (mechanical; the test server uses `:memory:` libSQL).
-- [ ] The saved state shows an estimated 1RM equal to `estimatedOneRm` (mechanical).
-- [ ] HUMAN: CEO logs a real set on the phone in the gym with airplane mode on, then syncs.
+- [x] Property test (fast-check): for any sequence of log, undo, go offline, come online, interrupted sync (network failure after the server committed but before the client got the response) and replayed sync, the server ends with exactly the client's set of non-undone entries, with no duplicates and none missing (mechanical). — VERIFIED ws5a-verify on main e0c59b9: 2000 runs pass locally and in CI; gaps: no reload/restart command, no partial-accept server, no-duplicates check is vacuous (PK).
+- [x] Mutation proof: remove the upsert-by-id (plain insert) and the property test fails; remove mark-synced-on-ack and it fails. Record both runs in the PR (mechanical; sprint hazard A10/A11). — VERIFIED ws5a-verify: `pnpm proof:sync` 3/3 runs EXIT 0, control passes, 4/4 mutants killed with changed-line counts; recorded on PR #5.
+- [ ] WS5b: e2e: log three sets offline, reload, the entries persist locally; go online, the entries reach the API (mechanical; the test server uses `:memory:` libSQL).
+- [ ] WS5b: The saved state shows an estimated 1RM equal to `estimatedOneRm` (mechanical).
+- [ ] HUMAN (WS5b): CEO logs a real set on the phone in the gym with airplane mode on, then syncs.
 
 ## Risks
 Undo after sync: model it as a tombstone (`deletedAt`) that syncs, never as a local delete.
