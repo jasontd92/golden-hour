@@ -9,3 +9,12 @@
 - name: day
   route: /day/[date]
   e2e: e2e/week.e2e.ts
+- name: progress
+  route: /progress
+  e2e: e2e/progress.e2e.ts
+- name: benchmark-history
+  route: /progress/benchmarks/[id]
+  e2e: e2e/progress.e2e.ts
+- name: lift-history
+  route: /progress/lifts/[id]
+  e2e: e2e/progress.e2e.ts
