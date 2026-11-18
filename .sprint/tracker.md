@@ -846,6 +846,23 @@ Explicitly cut, so don't reintroduce:
 - Brief drift: none material. The brief said "import syncRoundLimit (or roundSlack)"; I used `syncRoundLimit`.
 - Status: MERGED. Verifier pending.
 
+```
+VERIFIER: WS11a — PASS
+criteria met:   6/6
+  - e2e traces → config has trace 'retain-on-failure', outputDir test-results; CI step `if: failure()`, path test-results/, name e2e-traces, 7 days. Reproduced in the CI image: a deliberate failing spec wrote test-results/<test>/trace.zip at the repo root, which is the workspace path in the container job. Live: run 44403795614 attempt 1 (ws12-stryker, e2e failed) uploaded e2e-traces (14.2 MB, trace.zip inside, expires in 7 days); on green main 44403376469 the step was skipped.
+  - pnpm e2e:local → EXIT 0, 72 passed (1.7m), "mcr.microsoft.com/playwright:v1.65.1-noble, pnpm@12.21.0" read from ci.yml/package.json; 0 host node_modules files modified; with a fake failing docker on PATH it exits 1 with one line from the script. Version tie: ci.yml set to v1.65.0 → spec fails; installed @playwright/test set to 1.66.0 → spec fails; both reverted, 3/3 pass.
+  - Vercel ignoreCommand → spec 7/7 pass; 177 chars. Own repo checks: code then docs builds; docs-only multi-commit skips; unknown sha, garbage base, missing HEAD^, unrelated history all build; src/team/* and .sprint2/ build. Excluded dirs hold only md/html/txt, and no code reads them. Live: 7dc0ef6 "Canceled by Ignored Build Step"; 51c9f04 "Deployment has completed".
+  - effects unfinished retry → mutation (unfinished counted as done) fails the new test only; reverted.
+  - sync property bound → imports syncRoundLimit, no hardcoded ceil/+2; proof:sync EXIT 0, positive control passes, 16 KILLED / 0 survived. Bonus: roundSlack 2→200 is caught by the sync unit test.
+  - gates → pnpm check EXIT 0 at 51c9f04 (458 tests); 51c9f04 tree == ca81e67 tree; PR run 44401196003 all green; main run 44403376469 green (evidence skipped on push); 0 review threads.
+criteria FAILED:      none
+criteria DESCOPED:    none
+criteria HUMAN:       none
+UNVERIFIABLE:         none
+claims that did NOT hold: "CI trace upload never ran on a real red e2e" is out of date: it ran and worked on 44403795614 attempt 1.
+notes: lint/config.spec.ts `$effect placement > fails in a feature component` took 516–679 ms over 5 isolated runs and 799–1068 ms in 3 full-suite runs (10 cores), against the 5 s timeout. The 5 s timeout did not reproduce. It's the first lint in its describe block, so it pays the ESLint/svelte cold start. e2e:local leaves empty build/ and .vercel/ mount-point dirs on the host when they're absent (harmless).
+```
+
 ### WS10 — prod canary + performance budgets — HELD (ceo-review)
 - Type: impl EM (ws10 impl). CEO 2026-11-18: "Runtime canary is fine to implement. I definitely agree with performance budgets." It's a HOLD chunk (PM directive): every gate run, not merged, and the CEO merges.
 - PR #27, label `ceo-review`. Head `8f74e42` over `7dc0ef6`. 3 pushes: the initial one, the final budgets, and a rebase over #26.
