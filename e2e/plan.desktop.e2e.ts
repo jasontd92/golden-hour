@@ -6,7 +6,7 @@ const pane = (page: Page) => page.getByRole('complementary', { name: 'Selected' 
 const grid = (page: Page) => page.getByRole('grid', { name: 'Weeks and days' });
 const cell = (page: Page, name: RegExp) => grid(page).getByRole('button', { name });
 
-async function seedLog(page: Page, records: { id: string; sessionDate: string; kind?: 'session' }[]): Promise<void> {
+async function seedLog(page: Page, records: ({ id: string; sessionDate: string } & Record<string, unknown>)[]): Promise<void> {
 	await page.evaluate(
 		(seeded) =>
 			new Promise<void>((done, fail) => {
@@ -129,4 +129,77 @@ test('Progress charts Fran and a lift on the 17-week axis', async ({ page }, tes
 	await expect(squat.locator('figure path.plan')).toHaveCount(1);
 	await expect(squat.locator('figure figcaption')).toContainText('Training max');
 	await captureEvidence(page, testInfo, 'progress');
+});
+
+const truncated = (locator: ReturnType<Page['locator']>) =>
+	locator.evaluateAll((els) => els.filter((el) => el.scrollWidth > el.clientWidth).map((el) => el.textContent));
+
+test('holiday-week cells show a test and the session that moved in beside it', async ({ page }, testInfo) => {
+	await openOn(page, '2026-12-09');
+	await expect(cell(page, /^Thu Dec 31, Mile TT \+ deadlift/)).toHaveText('Mile TT · DL');
+	await expect(cell(page, /^Wed Dec 30, Z1 bike \+ gymnastics/)).toHaveText('Gymnastics');
+	await expect(cell(page, /^Wed Dec 23, Z1 run \+ gymnastics/)).toHaveText('Gymnastics');
+	await expect(cell(page, /^Thu Dec 24, Deadlift \+ bike/)).toHaveText('Deadlift');
+	await expect(cell(page, /^Fri Jan 29, Mile TT \+ deadlift/)).toHaveText('Mile TT');
+	await expect(pane(page)).toBeVisible();
+	expect(await truncated(grid(page).locator('.trunc'))).toEqual([]);
+	await captureEvidence(page, testInfo, 'plan-holiday-weeks');
+});
+
+test('column headers fit at 1440 with the pane open', async ({ page }) => {
+	await openOn(page, '2026-12-09');
+	await expect(pane(page)).toBeVisible();
+	const headers = grid(page).getByRole('columnheader');
+	await expect(headers.filter({ hasText: /^Wed\s*Threshold$/ })).toHaveAttribute('title', 'Threshold intervals');
+	expect(await truncated(headers.locator('.trunc'))).toEqual([]);
+});
+
+test('a logged day shows the logged reps, the session RPE and the score in the pane', async ({ page }, testInfo) => {
+	await openOn(page, '2026-12-09');
+	const at = (minute: number) => `2026-12-07T17:${String(minute).padStart(2, '0')}:00.000-07:00`;
+	const set = (n: number, prescriptionIndex: number, setIndex: number, reps: number, blockIndex = 1) => ({
+		id: `01938a5e-0000-7000-8000-0000000001${String(n).padStart(2, '0')}`,
+		sessionDate: '2026-12-07',
+		blockIndex,
+		prescriptionIndex,
+		setIndex,
+		movement: blockIndex === 1 ? 'back_squat' : 'lunge',
+		reps,
+		loggedAt: at(n),
+		deviceId: 'e2e'
+	});
+	await seedLog(page, [
+		set(1, 0, 0, 5),
+		set(2, 0, 1, 5),
+		set(3, 0, 2, 7),
+		...[0, 1, 2, 3, 4].map((i) => set(4 + i, 1, i, 5)),
+		set(9, 0, 0, 10, 3),
+		{
+			id: '01938a5e-0000-7000-8000-000000000199',
+			kind: 'session',
+			sessionDate: '2026-12-07',
+			rpe: 8,
+			score: { blockIndex: 2, prescriptionIndex: 0, type: 'time', value: 412 },
+			loggedAt: at(30),
+			deviceId: 'e2e'
+		}
+	]);
+	await page.reload();
+	await cell(page, /^Mon Dec 7, .*, logged$/).click();
+	await expect(pane(page).getByText(/^\d+ min · Logged · RPE 8$/)).toBeVisible();
+	await pane(page).getByRole('button', { name: /^Couplet/ }).click();
+	await expect(pane(page).getByText('✓ 6:52')).toBeVisible();
+	await pane(page).getByRole('button', { name: /^Single-leg/ }).click();
+	await expect(pane(page).getByText('✓ 10', { exact: true })).toBeVisible();
+	await pane(page).getByRole('button', { name: /^Back squat/ }).click();
+	const lines = pane(page).locator('.lines p');
+	await expect(lines.filter({ hasText: '140 × 5' }).first()).toHaveText(/^140 × 5\s*✓ 5$/);
+	await expect(lines.filter({ hasText: '185 × 5' })).toHaveText(/✓ 7$/);
+	await expect(lines.filter({ hasText: '5 × 5 at 140' })).toHaveText(/✓ 5\/5\/5\/5\/5$/);
+	await captureEvidence(page, testInfo, 'plan-pane-logged');
+
+	await cell(page, /^Thu Dec 10/).click();
+	await pane(page).getByRole('button', { name: /^Gymnastics|^Z1/ }).first().click();
+	await expect(pane(page).getByText(/^\d+ min$/)).toBeVisible();
+	await expect(pane(page).getByText(/✓/)).toHaveCount(0);
 });

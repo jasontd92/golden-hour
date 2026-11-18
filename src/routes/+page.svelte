@@ -22,7 +22,7 @@
 <Viewport only="desk" page>
 	<Plan plan={data.plan} today={clock.today} logged={loggedSessions.dates}>
 		{#snippet session(session, dayLabel, status)}
-			<SessionView {session} {dayLabel} {status} nested />
+			<SessionView {session} {dayLabel} {status} nested log={loggedSessions.on(session.date)} />
 		{/snippet}
 	</Plan>
 </Viewport>

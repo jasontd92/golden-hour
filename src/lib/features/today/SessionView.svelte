@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import type { DayLog } from '#lib/domain/log.ts';
 	import { sessionMinutes, type PlanSession } from '#lib/domain/plan.ts';
 	import BlockRow from './BlockRow.svelte';
 
@@ -8,8 +9,18 @@
 		dayLabel,
 		startable = false,
 		nested = false,
-		status
-	}: { session: PlanSession; dayLabel: string; startable?: boolean; nested?: boolean; status?: string } = $props();
+		status,
+		log
+	}: {
+		session: PlanSession;
+		dayLabel: string;
+		startable?: boolean;
+		nested?: boolean;
+		status?: string;
+		log?: DayLog;
+	} = $props();
+
+	const rpe = $derived(log?.session ? ` · RPE ${log.session.rpe}` : '');
 
 	const uid = $props.id();
 
@@ -21,12 +32,14 @@
 	<header>
 		<p class="day">{dayLabel}</p>
 		<svelte:element this={nested ? 'h2' : 'h1'} class="title">{session.title}</svelte:element>
-		<p class="minutes"><span class="num">{sessionMinutes(session)}</span> min{status ? ` · ${status}` : ''}</p>
+		<p class="minutes"><span class="num">{sessionMinutes(session)}</span> min{status ? ` · ${status}` : ''}{rpe}</p>
 	</header>
 	<svelte:element this={nested ? 'div' : 'main'} class="blocks">
 		{#each session.blocks as block, i (i)}
 			<BlockRow
 				{block}
+				blockIndex={i}
+				{log}
 				id="{uid}-block-{i}"
 				open={openBlock === i}
 				ontoggle={() => (openBlock = openBlock === i ? undefined : i)}

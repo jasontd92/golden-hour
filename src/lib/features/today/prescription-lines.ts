@@ -1,13 +1,21 @@
+import type { DayLog } from '#lib/domain/log.ts';
 import type { Block, MovementWork, PercentSet, Prescription } from '#lib/domain/plan.ts';
+import { formatScore } from '#lib/domain/score.ts';
 import { wendlerSet } from '#lib/domain/strength.ts';
 import { movementLabels } from '#lib/ui/movement-labels.ts';
 import type { MovementId } from '#lib/domain/movements.ts';
 
 export type LineTone = 'plain' | 'quiet' | 'strong';
 
+export interface LinePosition {
+	prescriptionIndex: number;
+	setIndexes: number[];
+}
+
 export interface Line {
 	text: string;
 	tone: LineTone;
+	at?: LinePosition;
 }
 
 const plain = (text: string): Line => ({ text, tone: 'plain' });
@@ -42,14 +50,18 @@ export function movementLine(work: MovementWork): string {
 
 const sameSet = (a: PercentSet, b: PercentSet) => a.pct === b.pct && a.reps === b.reps && a.amrap === b.amrap;
 
-function percentSetLines(trainingMax: number, sets: PercentSet[]): Line[] {
+const indexes = (count: number) => Array.from({ length: count }, (_, i) => i);
+
+function percentSetLines(trainingMax: number, sets: PercentSet[], prescriptionIndex: number): Line[] {
 	const [first] = sets;
 	if (first && sets.length > 1 && !first.amrap && sets.every((set) => sameSet(set, first))) {
-		return [plain(`${sets.length} × ${first.reps} at ${wendlerSet(trainingMax, first.pct)}`)];
+		const text = `${sets.length} × ${first.reps} at ${wendlerSet(trainingMax, first.pct)}`;
+		return [{ ...plain(text), at: { prescriptionIndex, setIndexes: indexes(sets.length) } }];
 	}
-	return sets.map((set) => {
+	return sets.map((set, setIndex) => {
 		const text = `${wendlerSet(trainingMax, set.pct)} × ${set.reps}`;
-		return set.amrap ? { text: `${text}+`, tone: 'strong' } : plain(text);
+		const at = { prescriptionIndex, setIndexes: [setIndex] };
+		return set.amrap ? { text: `${text}+`, tone: 'strong', at } : { ...plain(text), at };
 	});
 }
 
@@ -71,13 +83,14 @@ function schemeHeader(p: Prescription): string | undefined {
 	}
 }
 
-function prescriptionLines(p: Prescription, blockName: string): Line[] {
+function prescriptionLines(p: Prescription, blockName: string, prescriptionIndex: number): Line[] {
 	switch (p.kind) {
 		case 'percentSets':
-			return percentSetLines(p.trainingMax, p.sets);
+			return percentSetLines(p.trainingMax, p.sets, prescriptionIndex);
 		case 'fixedSets': {
 			const load = p.load === undefined ? '' : ` at ${p.load}`;
-			return [plain(`${capitalize(label(p.movement, p.reps))} ${p.sets} × ${p.reps}${load}`)];
+			const text = `${capitalize(label(p.movement, p.reps))} ${p.sets} × ${p.reps}${load}`;
+			return [{ ...plain(text), at: { prescriptionIndex, setIndexes: indexes(p.sets) } }];
 		}
 		case 'steady':
 			return [plain(`${p.minutes} min ${movementLabels[p.movement][0]}`)];
@@ -89,12 +102,30 @@ function prescriptionLines(p: Prescription, blockName: string): Line[] {
 		case 'intervals': {
 			const header = schemeHeader(p);
 			const lines = p.movements.map((work) => plain(movementLine(work)));
-			return header && header !== blockName ? [quiet(header), ...lines] : lines;
+			const [first, ...rest] = header && header !== blockName ? [quiet(header), ...lines] : lines;
+			return first ? [{ ...first, at: { prescriptionIndex, setIndexes: [] } }, ...rest] : [];
 		}
 	}
 }
 
 export function blockLines(block: Block): Line[] {
-	const lines = block.prescriptions.flatMap((p) => prescriptionLines(p, block.name));
+	const lines = block.prescriptions.flatMap((p, i) => prescriptionLines(p, block.name, i));
 	return block.notes ? [...lines, quiet(block.notes)] : lines;
+}
+
+export function loggedText(line: Line, blockIndex: number, log: DayLog): string | undefined {
+	if (!line.at) return undefined;
+	const { prescriptionIndex, setIndexes } = line.at;
+	const score = log.session?.score;
+	if (setIndexes.length === 0) {
+		const scored = score?.blockIndex === blockIndex && score.prescriptionIndex === prescriptionIndex;
+		return score && scored ? `✓ ${formatScore(score.value, score.type)}` : undefined;
+	}
+	const reps = setIndexes.flatMap((setIndex) => {
+		const set = log.sets.findLast(
+			(r) => r.blockIndex === blockIndex && r.prescriptionIndex === prescriptionIndex && r.setIndex === setIndex
+		);
+		return set ? [set.reps] : [];
+	});
+	return reps.length > 0 ? `✓ ${reps.join('/')}` : undefined;
 }

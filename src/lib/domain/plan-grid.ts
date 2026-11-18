@@ -3,13 +3,13 @@ import {
 	checkpointWeeks,
 	conditioningScale,
 	liftWeek,
+	MainLift,
 	mainLifts,
 	mondayGirl,
 	qualityB,
 	weekLayout,
 	weekdays,
 	type LiftWeek,
-	type MainLift,
 	type Slot
 } from './evolution.ts';
 import { isHardSession, type PlanSession } from './plan.ts';
@@ -21,6 +21,7 @@ export interface GridDay {
 	scaled: boolean;
 	test: string | undefined;
 	moved: string | undefined;
+	label: string | undefined;
 	holiday: string | undefined;
 }
 
@@ -111,6 +112,35 @@ export function nextAttempt(
 
 const isScaled = (session: PlanSession) => isHardSession(session) && conditioningScale(session.week) < 1;
 
+const liftShortNames: Record<MainLift, string> = { back_squat: 'Squat', shoulder_press: 'Press', deadlift: 'DL' };
+
+const headerChars = 10;
+
+export function columnHeader(name: string): string {
+	const [first = '', ...rest] = name.split(' ');
+	let header = first;
+	for (const word of rest) {
+		if (header.length + 1 + word.length > headerChars) break;
+		header = `${header} ${word}`;
+	}
+	return header;
+}
+
+function movedColumns(session: PlanSession, column: string, columns: readonly string[]): string[] | undefined {
+	const title = session.title.toLowerCase();
+	if (title.includes(column)) return undefined;
+	const segments = title.split(' + ');
+	return columns.filter((c) => c !== column && segments.includes(c));
+}
+
+function movedLabel(session: PlanSession, moved: readonly string[], test: string | undefined): string | undefined {
+	if (!test) return moved.length > 0 ? moved.map((c) => columnHeader(capitalize(c))).join(' · ') : session.title;
+	if (moved.length === 0) return undefined;
+	const lift = MainLift.safeParse(percentSets([session])[0]?.lift);
+	const parts = lift.success && moved.length === 1 ? [liftShortNames[lift.data]] : moved.map((c) => columnHeader(capitalize(c)));
+	return parts.join(' · ');
+}
+
 export function planGrid(plan: readonly PlanSession[]): GridWeek[] {
 	const weeks = [...new Set(plan.map((s) => s.week))].toSorted((a, b) => a - b);
 	const columns = columnNames(plan).map((name) => name.toLowerCase());
@@ -119,18 +149,22 @@ export function planGrid(plan: readonly PlanSession[]): GridWeek[] {
 		const monday = mondayOf(sessions[0]?.date ?? '');
 		const phase = phaseName(week);
 		const previous = weeks[i - 1];
-		const days = weekdays.map((_, d) => {
+		const days = weekdays.map((_, d): GridDay => {
 			const date = addDays(monday, d);
 			const session = sessions.find((s) => s.date === date);
-			const usual = session?.title.toLowerCase().includes(columns[d] ?? '') ?? true;
+			const holiday = holidayName(date);
+			const test = session ? testLabel(session) : undefined;
+			const away = session ? movedColumns(session, columns[d] ?? '', columns) : undefined;
+			const moved = session && away ? movedLabel(session, away, test) : undefined;
 			return {
 				date,
 				session,
 				hard: session ? isHardSession(session) : false,
 				scaled: session ? isScaled(session) : false,
-				test: session ? testLabel(session) : undefined,
-				moved: usual ? undefined : session?.title,
-				holiday: holidayName(date)
+				test,
+				moved,
+				label: [test, moved].filter(Boolean).join(' · ') || holiday,
+				holiday
 			};
 		});
 		return { week, monday, phase, firstOfPhase: previous === undefined || phaseName(previous) !== phase, days };

@@ -1,4 +1,5 @@
 import { untrack } from 'svelte';
+import { dayLog, type DayLog, type SyncRecord } from '#lib/domain/log.ts';
 import { loggedDates } from '#lib/domain/plan-grid.ts';
 import { saveSyncToken, syncToken } from './device.ts';
 import { startSyncLoop, type SyncLoop } from './effects.ts';
@@ -12,11 +13,15 @@ let pending = $state(0);
 let hasToken = $state(false);
 let rejected = $state(false);
 let loop: SyncLoop | undefined;
-let logged = $state<ReadonlySet<string>>(loggedDates([]));
+let records = $state.raw<readonly SyncRecord[]>([]);
+const logged = $derived(loggedDates(records));
 
 export const loggedSessions = {
 	get dates() {
 		return logged;
+	},
+	on(date: string): DayLog {
+		return dayLog(records, date);
 	}
 };
 
@@ -26,8 +31,8 @@ export function trackLoggedSessions(): void {
 		const refresh = () => {
 			void localLog()
 				.then(async (store) => [...(await store.entries()), ...(await store.sessions())])
-				.then((records) => {
-					if (!stopped) logged = loggedDates(records);
+				.then((found) => {
+					if (!stopped) records = found;
 				})
 				.catch(() => undefined);
 		};

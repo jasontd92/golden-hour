@@ -60,6 +60,20 @@ export const SyncRecord = z.union([LogRecord, SessionRecord]);
 export type SyncRecord = z.infer<typeof SyncRecord>;
 
 export const isSessionRecord = (record: SyncRecord): record is SessionRecord => 'kind' in record;
+const isSetRecord = (record: SyncRecord): record is LogRecord => !isSessionRecord(record);
+
+export interface DayLog {
+	sets: LogRecord[];
+	session: SessionRecord | undefined;
+}
+
+export function dayLog(records: readonly SyncRecord[], date: string): DayLog {
+	const onDate = records.filter((r) => r.sessionDate === date).toSorted((a, b) => Date.parse(a.loggedAt) - Date.parse(b.loggedAt));
+	return {
+		sets: onDate.filter(isSetRecord),
+		session: onDate.filter(isSessionRecord).at(-1)
+	};
+}
 
 export const syncBatchLimit = 100;
 
