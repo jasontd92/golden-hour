@@ -816,6 +816,36 @@ Explicitly cut, so don't reintroduce:
 - UNVERIFIABLE: local e2e (stale Playwright browsers), so the CI job logs are the evidence.
 - claims that did NOT hold: none
 
+### WS11a — test-harness hygiene — MERGED
+- Type: impl EM (ws11a). Not a hold chunk. PR #26, squash-merged as `51c9f04`. Heads: `92053ad`, then `ca81e67`. The PR branched from `c4b77cb`, and main never moved, so no rebase was needed. Branch deleted.
+- CI: PR run 44399877640 (`92053ad`) was green, but the Vercel preview FAILED there (see the gotchas). PR run 44401196003 (`ca81e67`) was green on all jobs, and the preview built. Main: run 44403376469 on `51c9f04`, success (typecheck, lint, unit, policy, e2e; evidence skipped on push); Vercel production "Deployment has completed", `/` 200.
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws11a` at `ca81e67` over `c4b77cb` (458 tests). `pnpm proof:sync`: EXIT 0, control passes, 16/16 killed. `pnpm e2e:local`: 72 passed in 1.7m. All logs are PR comments. Reviews: none; 0 threads.
+- Public API:
+  - `pnpm e2e:local` → `scripts/e2e-local.ts`, with exports `ciPlaywrightImage(workflowYaml)`, `pinnedPnpm(packageJson)` and `dockerArgs(image, pnpm, repo, tty)`.
+    - It reads the image from `ci.yml` `jobs.e2e.container.image`.
+    - It runs with `CI=true HOME=/root --ipc=host` and mounts the repo at /work.
+    - It masks `node_modules`, `.svelte-kit`, `.vercel` and `build` with anonymous volumes, so host installs are untouched.
+    - `test-results/` (traces) comes back to the host.
+    - With no Docker, it exits 1 with one line.
+  - Playwright `trace: 'retain-on-failure'`. CI step `if: failure()` uploads `test-results/` as `e2e-traces` (7 days).
+- Decisions:
+  - The spec `scripts/e2e-local.spec.ts` pins the CI image tag to `v${installed @playwright/test}-noble`. A bump to one side without the other then fails unit, not e2e: the stale 1243-vs-1255 browser class.
+  - Vercel ignoreCommand: `b=${VERCEL_GIT_PREVIOUS_SHA:-HEAD^}`, then build when `git cat-file -e "$b^{commit}"` fails, else `git diff --quiet "$b" HEAD -- . ':^.sprint' ':^team' ':^profiles' ':^prompts'`. Any error is mapped to exit 1 (build).
+    - Per the Vercel docs, VERCEL_GIT_PREVIOUS_SHA is "the last successful deployment for the project and branch", empty on a branch's first deploy, and exposed only when an Ignored Build Step is set. A canceled (ignored) deploy is not a successful one, so a docs-only push doesn't advance the base. A rate-limited failed deploy doesn't either, so the next push still sees its code.
+    - New spec cases:
+      - code-then-docs builds (fails against the old command)
+      - multi-commit docs-only skips
+      - an unknown base builds
+      - the command is ≤256 characters
+  - `effects.spec`: "backs off after an unfinished sync and retries until it succeeds". A writer logs during every send, so the outcome is `unfinished`. Then: 1 timer pending; nothing fires before `retryDelayMs(0)`; at the delay it ends `synced` with 0 pending and 0 timers. Treating `unfinished` as done fails this test (checked by mutating `effects.ts`).
+  - The property bound is now `syncRoundLimit(pendingCount, batchSize)`, with `batchSize = 3` named once.
+- Gotchas:
+  - vercel.json `ignoreCommand` has a schema `maxLength` of 256. At 273 characters the deploy failed with only "Deployment failed", and the status linked the project-configuration docs. That is now a unit test.
+  - Vercel docs: canceled (ignored) builds still count toward the deployment quota, so ignoreCommand saves build minutes but not deploy slots.
+  - Local `pnpm check` once timed out at 5s in `lint/config.spec.ts > $effect placement > fails in a feature component` under load. The rerun was green. A possible flake candidate.
+- Brief drift: none material. The brief said "import syncRoundLimit (or roundSlack)"; I used `syncRoundLimit`.
+- Status: MERGED. Verifier pending.
+
 ### CLOSE — Stage 5′ — DONE (awaiting CEO HUMAN checks)
 - 2026-11-18 PM close: every chunk is merged and has a verifier verdict, with no FAIL (flake-diag verdict c7063e1).
 - main is green: run 44366280301 on f53140e passed e2e 70/70 and 442 unit tests.
