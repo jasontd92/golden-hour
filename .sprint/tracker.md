@@ -32,6 +32,15 @@
 
 - Desktop vs phone (CEO, 2026-11-17): on desktop the user is planning and reviewing, so a calendar-style planning view is the default there. On the phone the default stays Today: today's workout and logging, with the week secondary. A desktop design pass (Pass 3) goes to the CEO for approval before any desktop chunk is built. WS4 ships the phone design in a centred column on wide screens, with a layout-level breakpoint seam. The desktop chunk will need one desktop Chromium e2e project: a deliberate, narrow exception to the "no desktop matrix" cut.
 
+- Desktop Pass 3 approved (CEO, 2026-11-17), with every PM recommendation accepted:
+  - the default view shows all 17 weeks
+  - session names go in the column headers; the cells show only what changes
+  - no Sunday column, and no logging on desktop
+  - a missed day is an empty cell: no badges, no adherence percentage
+  - "Progress" naming, and charts drawn "up is better"
+  - P3Week is rejected as the default
+- SYNC_TOKEN (CEO, 2026-11-17): the PM may generate it; the CEO adds it in Vercel when they're ready to use the app. Not a blocker for the code.
+
 ### Prose and docs policy
 - Durable intent only. Semi-permanent design decisions, the why and the focus. Mostly the methodology side (`team/`, `profiles/`, `prompts/`).
 - No planning artifacts or prescriptive agent instructions that need upkeep. Code documents itself through function names, variable names and directories.
