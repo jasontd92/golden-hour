@@ -127,8 +127,26 @@ Explicitly cut, so don't reintroduce:
 ### WS6 — progress — NOT STARTED
 - Depends: WS3. Doc: ws-06-progress.md.
 
-### WS7 — agent-session scorer — NOT STARTED
-- Depends: WS1. Doc: ws-07-session-scorer.md.
+### WS7 — agent-session scorer — MERGED
+- Type: impl EM. Doc: ws-07-session-scorer.md.
+- PR #2, squash-merged as `c1d1bba`. Head `cde061d`. Branch deleted.
+- CI: PR run 44214496538 green (typecheck, lint, unit, policy, e2e, evidence); main run 44214711979 green (evidence skipped on push).
+- `pnpm check`: EXIT 0 on `../golden-hour-wt/ws7` at `cde061d` after the final rebase (68 unit tests, 15 in `scripts/score-sessions.spec.ts`). Logs are PR comments.
+- Reviews: none in a 10-minute window; Codex has never posted, gate skipped. 0 threads.
+- Real run (10 sessions, aggregate only): 2h40m, 425 tool calls, 32.5M cache-read tokens, 15 failed calls, 3 retried commands, 0 repeated searches; ws1-impl PR #1 green on the first CI run, 0 threads, 0 reverts.
+- Decisions:
+  - Code: `scripts/score-sessions.ts` (CLI, table, totals) and `scripts/sessions/{transcripts,metrics,github}.ts`. Flags: `--json`, `--root`, `--projects`, `--no-github`. Root defaults to the parent of `git --git-common-dir`, so it works from any worktree.
+  - Discovery: project dirs named after the root or its worktrees are read in full. Ancestor dirs (e.g. `-Users-jason-Documents`) contribute only `<session>/subagents/*.jsonl`, never their top-level sessions. A file is kept only if its first cwd-bearing record is in the repo or `golden-hour-wt/*`; otherwise reading stops at that record. Foreign-cwd records inside a kept file are dropped.
+  - Tokens are deduped by `message.id`, because one API message spans several records that repeat the same usage.
+  - Session label: `name` from the subagent's `.meta.json` (e.g. `ws1-impl`), else `session-<uuid8>`.
+  - PRs come from `toolUseResult.gitOperation.pr` with action created or merged (commented is excluded, so a verifier commenting on a PR doesn't own it), plus the URL printed by `gh pr create`. Commits come from `[branch sha]` lines in `git commit` output.
+  - "1st rel" counts Read/Edit/Write and Bash commands that name a file from the session's commits or PR (agents mostly read through Bash in auto mode). "Unused reads" counts only Read-tool paths.
+  - A failed Bash command counts as retried if a later command has the same program and subcommand after stripping `cd … &&`.
+  - "CI to green" counts PR-event runs in creation order up to the first success, or `never/N`.
+- Gotchas:
+  - `gitBranch` on subagent records is the PM checkout's branch (`main`), not the EM's worktree branch, so the branch can't come from the transcript; it comes from `gh pr view`.
+  - `gh api graphql -F owner={owner} -F repo={repo}` placeholders work.
+- Brief errors: EM transcripts are not under the `-…-golden-hour*` project dirs. They live under the PM session's dir (`-Users-jason-Documents/<pm-session>/subagents/`), next to non-repo subagents, which is why discovery filters by cwd.
 
 ### CLOSE — Stage 5′ — NOT STARTED
 - Runner: the full mobile e2e suite on the final `main` tip.
