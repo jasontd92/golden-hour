@@ -791,6 +791,21 @@ Explicitly cut, so don't reintroduce:
 - Gotchas: local Playwright browsers are stale (1243 vs 1255), so the log e2e ran in the `v1.65.1-noble` Docker image from a `git archive` (14/14) before the push.
 - Brief errors: "(date, plan session) pair": the record has no plan-session id; the date is the key. "When a record already exists, the Session step pre-fills": a live record opens on the saved view, so the pre-fill shows after Undo (in the flow and on reopen).
 - Status: MERGED. Verifier pending.
+- VERIFIER: WS5f — PASS. Fresh clone at `0c7a00b` (tree identical to PR head `d80f375`).
+  - criteria met: 6/6 testable (+1 HUMAN)
+  - (1) replace edits the record → `replaceSession` spreads only `next` (a strict SessionLog with no deletedAt) plus `{id: existing.id, revision: existing.revision + 1}`. `saveSession` uses `put` with pending 1 when there is a record and `add` when there isn't, so nothing is ever deleted. Store spec covers the pending case (rev 2, an ack of rev 1 marks 0) and the synced case (rev 3, back in the outbox). Reproduced in `pnpm check`.
+  - (2) Undo then save revives the record → store spec gives the same id at rev 3 with deletedAt gone. Read `upsertSessionRecords` myself: `onConflictDoUpdate` sets every column from `excluded`, deleted_at included (written as null), `where excluded.revision > revision`. A replayed rev 1 or 2 cannot beat rev 3, so it can't resurrect or overwrite. e2e (CI, both projects) shows the server row at rev 3 with deleted_at null.
+  - (3) Two tabs, one record → own mutant: read the date's record outside the readwrite tx, then write in a new tx. Killed by store spec "two tabs saving … one record". Reverted. Legacy undone+live dates: `sessions()` filters live first. `sessionOn`/`dayLog`/`saveSession` prefer live over undone, then the latest loggedAt. No delete path exists. Readers: Progress doesn't read session records. The only readers are `loggedSessions.dates`/`.on` (Plan dots, day pane, SessionView) via `dayLog`/`loggedDates`, and `LogFlow.resume`. With undone+live, live is shown. With two live (pre-WS5f double save), the latest is shown, the same as the old `at(-1)`. The logged-dates set is unchanged.
+  - (4) proof:sync → EXIT 0, control passed, 16/16 KILLED. "replace creates a new id…" is killed by [replace] in the property and in the scripted history. Own mutants, each reverted: "replace keeps the old revision" is killed by [replace] (2 tests). "replace drops the score" is killed by [client].
+  - (5) `sessions()` consumers → git grep finds only effects.svelte.ts (`.values()`), plus specs. flow.svelte.ts moved to `sessionOn`. At 1dc610c there were 3 call sites; all are updated. Nothing that showed a live record now drops it (see 3).
+  - (7) Gates → `pnpm check` EXIT 0 locally (47 files, 450 tests). PR run 44395084716 success on d80f375. Main run 44397419348 success on 0c7a00b (evidence skipped on main). The new e2e passed on mobile-webkit and mobile-chromium, 72 passed. 0 review threads, 0 reviews.
+- criteria FAILED: none
+- criteria DESCOPED: none
+- criteria HUMAN: (6) What the user sees: reopening a day whose session is logged lands on "Session saved" (RPE · score) with Undo. To repeat: tap Undo. The saved card goes and the fields keep the previous RPE, score and note (and are pre-filled on reopen). Adjust, then Done: the same record is now rev +2. Caveats for the CEO:
+  - (a) Between Undo and Done the day is unlogged. Leaving at that point leaves it undone.
+  - (b) Only the session record is replaced. A day's set steps that are already logged are skipped on reopen, and the flow has no way back to re-log them.
+- UNVERIFIABLE: local e2e (stale Playwright browsers), so the CI job logs are the evidence.
+- claims that did NOT hold: none
 
 ### CLOSE — Stage 5′ — DONE (awaiting CEO HUMAN checks)
 - 2026-11-18 PM close: every chunk is merged and has a verifier verdict, with no FAIL (flake-diag verdict c7063e1).
