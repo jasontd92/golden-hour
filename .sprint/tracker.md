@@ -256,7 +256,55 @@ Explicitly cut, so don't reintroduce:
 - Tests: `scripts/data-build.spec.ts` builds perturbed copies of `data/curated` and `data/raw/sugarwod` in a temp root. It covers the integer-key case (curated splits and set_details), Arabic-Indic and full-width digits, BOM, `\x1c`, `\x85` and NBSP, plus SugarWOD display/raw. Mutation proof (in the PR body): removing the key guard fails 2 tests; removing the score guard fails 8.
 - Gotchas: a fixture built with `JSON.stringify` already reorders integer keys, so the integer-key fixture is written as raw text.
 
-### WS5a — logging data layer + sync — NOT STARTED
+### WS5a — logging data layer + sync — MERGED
+- Type: impl EM. Doc: ws-05-logging-sync.md (everything except the log UI and the UI e2e). Hold-the-line A.
+- PRs, all squash-merged, branches deleted:
+  - #5 → `4fd9a0b` (head `b7ac9b1`): the main chunk.
+  - #7 → `35c8e2e`: fix-forward, migrate on first request.
+  - #10 → `c7baeaa` (head `81a68a9`): fix-forward, web libSQL driver, and /api/sync never returns 500.
+- CI:
+  - PR runs 44226919662 (#5), 44227742425 (#7) and 44228820621 (#10): all jobs green.
+  - main: 44227126050 (`4fd9a0b`) success; 44227951660 (`35c8e2e`) success; `c7baeaa` cancelled as superseded, and the run covering it, 44229069558 on `fcd3cf9`, succeeded.
+  - Vercel production: FAILED on `4fd9a0b` and `7fc720c` (my build-time migrate step); success on `35c8e2e`, `c7baeaa` and `fcd3cf9`. Production `/` returns 200.
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws5a` for each head, after rebasing (the last was 253 tests on `81a68a9` over `bdc3b36`). The logs are PR comments.
+- `pnpm proof:sync`: EXIT 0. The positive control passes, and the PR #5 comment records 4/4 mutants killed, each with a changed-line count. #10 re-ran it 3 times, 4/4 each time.
+- Reviews: none, 0 threads. #7 and #10 merged straight after green CI, without the 10-minute window, because production was red or broken.
+- Public API:
+  - `#lib/domain/log.ts`: `LogRecord` (LogEntry + `revision` + optional `deletedAt`), `SyncRequest` `{records}` (1–100), `SyncResponse` `{accepted: ids}`, `syncBatchLimit`; `schemas/log-record.json`.
+  - `#lib/features/log/store.ts`: `openLogStore()` returns `LogStore`, with `save`, `undo` (a tombstone), `amend` (rpe/note), `entries` (non-undone), `pending`, `pendingCount`, `acknowledge(sent, accepted)` and `close`.
+  - `sync.ts`: `syncOutbox(store, transport, batch?)` returns a `SyncOutcome`; `httpTransport(token)`.
+  - `effects.ts`: `startSyncLoop(store, () => transport | undefined, onOutcome)`. It syncs on open, on `online` and on `request()`; backs off from 1s to 60s; stops on 401; runs one sync at a time.
+  - `entry.ts`: `newLogEntry(set, deviceId, now?)`. `device.ts`: `deviceId()`, `syncToken()`, `saveSyncToken()` (localStorage).
+  - Server: `/api/sync`.
+    - POST takes a Bearer `SYNC_TOKEN` and upserts by id, where a newer revision wins. A missing token, a database that isn't ready, or any throw gives 503, and nothing is accepted. A wrong token gives 401; a bad batch gives 400.
+    - GET is health: `{token, database: ready|unmigrated|unconfigured|error, reason?}`. The reason is the error name plus a code, never a value.
+- Decisions:
+  - Every set carries a `revision`. The client marks a record synced only if its stored revision still equals the one it sent, so an undo during an in-flight sync survives.
+  - Undo and amend both bump the revision, and the server ignores revisions that aren't newer, so a replayed old request can't resurrect an undone entry.
+  - Migrations: drizzle-kit generates `drizzle/*.sql`, which is committed. `src/lib/server/db/migrate.ts` bundles them through `import.meta.glob` and applies them on first use, once per instance, retrying after a failure. It keeps drizzle-kit's `__drizzle_migrations` bookkeeping, and a test checks compatibility both ways. Builds never touch the DB, so previews can't migrate production.
+  - Remote URLs use `drizzle-orm/libsql/web`. The node driver, which needs the native binding, is a dynamic import only for `:memory:` and `file:`.
+  - Kit 3 has no `$env/*`: the variables are declared in `src/env.ts` (`defineEnvVars`) and read from `$app/env/private`.
+  - Lint: route specs may now import `src/lib/server`. `no-unused-vars` has `ignoreRestSiblings`.
+  - The property test lives in `src/routes/api/sync/sync.spec.ts`. It runs 2000 runs (about 2s) against the real `+server.ts` over `:memory:` libSQL, with fake-indexeddb for the client.
+- Gotchas:
+  - `drizzle-orm/libsql` statically imports `@libsql/client`'s node entry, which loads the native `libsql` binding when imported. That gave 500s on Vercel and probably also failed the build-time migration (#5).
+  - drizzle libsql `db.get()` on an empty result throws; use `all()`.
+  - `vi.mock` of `$app/env/private` works.
+  - At 300 runs the replay mutant sometimes survived, so keep the property at 2000 or more.
+- **Production state (GET /api/sync at `fcd3cf9`):** `{"token":false,"database":"unmigrated","reason":"LibsqlError URL_SCHEME_NOT_SUPPORTED"}`, status 503.
+  - **SYNC_TOKEN is NOT set** (HALT, CEO: pick the secret and add it to Vercel, then enter it on the phone).
+  - **The `TURSO_DATABASE_URL` value has an unsupported scheme** (HALT, CEO). It must start with `libsql://` (or `https://`), with no quotes or other prefix; check it in the Vercel dashboard. Until it's fixed, no migration has been applied to Turso.
+  - After the env change, a redeploy is needed. Done means GET /api/sync returns 200 `{"token":true,"database":"ready"}`.
+- For the second record kind (session completion): the wire is `{records: LogRecord[]}`, and the store, outbox and ack are keyed on `id` + `revision` + `deletedAt` only. Adding a kind means:
+  - an optional `kind` discriminant on the record, where absent means set
+  - a second table with the same upsert
+  - no protocol break
+  The set fields themselves are not yet a union; that's left for the chunk that needs it.
+- Brief errors:
+  - The brief named `$env/dynamic/private`; Kit 3 uses `$app/env/private` plus `src/env.ts`.
+  - The brief's "e2e: log three sets offline…" criterion belongs to WS5b, which needs the UI.
+  - The Vercel CLI isn't installed and Vercel API access was denied, so env presence came from the health endpoint.
+- Status: MERGED. Verifier pending.
 ### WS5b — log UI — NOT STARTED (after WS4)
 ### WS7b — scorer fixes — NOT STARTED
 ### WS8 — desktop planning view — NOT STARTED (needs CEO approval of Pass 3; after WS4, and WS5b/WS6 for review data)
