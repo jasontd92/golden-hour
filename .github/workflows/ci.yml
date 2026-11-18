@@ -46,6 +46,23 @@ jobs:
         if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: pnpm test:unit
 
+  bundle-budget:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      - run: pnpm build
+      - run: node scripts/budgets.ts bundle
+
+  sync-budget:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      - run: node scripts/budgets.ts sync
+
   e2e:
     runs-on: ubuntu-latest
     timeout-minutes: 20
