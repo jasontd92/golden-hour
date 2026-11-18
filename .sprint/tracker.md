@@ -571,7 +571,40 @@ Explicitly cut, so don't reintroduce:
   - Week 8 (ws9 plan) has no scored session without sets, so the score e2e reaches the score field through the sets (Squat + Fran).
 - Status: MERGED. Verifier pending. ws8-impl is notified (it derives logged days from `entries()` + `sessions()`).
 
-### WS8 — desktop planning view — NOT STARTED (needs CEO approval of Pass 3; after WS4, and WS5b/WS6 for review data)
+### WS8 — desktop planning view — MERGED
+- Type: impl EM (ws8-impl). Design: Pass 3 (P3Plan, P3Progress), CEO-approved. Depends: WS4, WS5b, WS6/6b, WS9.
+- PR #20, squash-merged as `c1ed16c`. Head `ef8148d`. Branch deleted.
+- CI: PR run 44311093535 (final head; earlier heads 44308450925, 44310397931) green (typecheck, lint, unit, policy, e2e 45/45 = 20 tests × mobile-webkit and mobile-chromium, plus 5 on desktop-chromium; evidence). Main run 44311730052 success on c1ed16c; Vercel success, production / 200 with the desk view prerendered.
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws8` at `ef8148d` (422 unit tests, after rebasing on WS5d 2534b12 and e40a18b); the log is a PR comment. Reviews: none, 0 threads.
+- Public API:
+  - `#lib/domain/plan-grid.ts`: `planGrid`, `columnNames`, `weekSummary`, `testLabel`, `sessionSlot`, `attemptDates`, `nextAttempt`, `trainingMaxByWeek`, `loggedDates`, `phaseName`.
+  - `#lib/domain/targets.ts`: `evolutionTargets` (team/draft-plan.md § G End targets; the mile is omitted for lack of a baseline) and `targetPoints`.
+  - `#lib/domain/evolution-chart.ts`: `evolutionChart`, `chartX`, `chartY`, `weeksSince`.
+  - `#lib/domain/progress-detail.ts`: `benchmarkDetail`, `liftDetail`.
+  - `#lib/domain/calendar.ts`: `holidayName` (fixed dates Dec 25 and Jan 1).
+  - UI:
+    - `#lib/ui/Viewport.svelte` (`only="phone"|"desk"`, `page`) and `viewport.svelte.ts` (`deskMinWidth` 1024, `trackHydration`, `showsView`, `viewport.hydrated`)
+    - `DeskNav.svelte`
+  - Features:
+    - `features/plan/Plan.svelte` and `WeekSummary.svelte`
+    - `features/progress/ProgressDesk.svelte` and `EvolutionChart.svelte`
+    - `features/log/effects.svelte.ts`: `trackLoggedSessions`, `loggedSessions.dates`
+  - `SessionView` gains `nested` (h2 and div instead of h1 and main) and `status`. Its ids come from `$props.id()`.
+- Decisions:
+  - Breakpoint 1024px, not 768: at 768 the 8-column grid plus the pane leaves about 29px per cell. Tablets in portrait keep the phone column. `layout-breakpoint.spec.ts` asserts the layout CSS equals `deskMinWidth`.
+  - No flash: prerendered `/` and `/progress` contain both views, and the CSS picks one. After hydration (a flag set by the layout's `trackHydration`), `Viewport` removes the hidden one. The first client render matches the HTML, so there is no hydration mismatch.
+  - The desktop pane renders its SessionView only after hydration. Otherwise the HTML holds the session twice and Playwright `getByText` hits strict-mode violations, which aren't retried.
+  - Test labels, phases, scaled weeks (hard in a `conditioningScale < 1` week) and the Progress "Next" week are derived from ws9's `evolution.ts` per session date. No `test?` field on PlanSession: the PM allowed one, but I declined, since "Next" also needs per-test benchmark and lift ids.
+  - Column headers: for each weekday, the most common ` + ` title segment (Squat, Press, Threshold intervals, Gymnastics, Deadlift, Long run). A cell whose title lacks its column name shows the title: the holiday-week moves.
+  - "Logged" = any live set record for the date (`loggedDates(store.entries())`). It also counts WS5d session records: `store.sessions()` is unioned in, and the desktop e2e seeds one of each kind.
+  - Lift chart: dashed TM step line from the plan's percentSets. Benchmark chart: dashed from the last point to the targets. Start = the latest result before the plan; target baselines likewise.
+  - Desktop lists have no "All" rows. A deep link to /progress/benchmarks/[id] on desktop shows the phone detail with DeskNav.
+- Gotchas:
+  - Svelte trims a leading space inside `{#if}` (`min{#if s} · {s}{/if}` renders "min·"). Use an expression.
+  - `svelte/prefer-writable-derived` fires on the module `$state` + `$effect` hydration flag. A disable carrying a why sits on the `let`.
+  - Local Docker e2e: WebKit link-tap tests (week, progress "All") fail on clean main too. That's a local environment issue; CI is green.
+- Deviations from the mockups: hard dots on retest cells (the plan marks them hard); moved-session labels in holiday weeks; the chart adds a two-item key (dataviz) and uses `<title>` tooltips, not a crosshair. Accent vs muted is ΔE 14.9, under the 15 categorical floor, so the dash pattern and direct labels carry identity. Tokens are unchanged.
+- Status: MERGED. Verifier pending.
 
 ### CLOSE — Stage 5′ — NOT STARTED
 - Runner: the full mobile e2e suite on the final `main` tip.
