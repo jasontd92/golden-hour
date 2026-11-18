@@ -206,6 +206,19 @@ Explicitly cut, so don't reintroduce:
 ### WS7 verdict
 - VERIFIER: PASS WITH GAPS 3/3 mechanical, HUMAN pending. Privacy of the scored set is proven by mutation. Gaps go to WS7b.
 
+### WS3 verdict
+- VERIFIER: FAIL on hold-the-line B with adversarial inputs. Real-data parity is exact (sha256-identical) and the other criteria pass. The divergences:
+  - (1) Integer-like object keys (e.g. splits {"10","2","1"}) get reordered by JS objects.
+  - (2) Unicode digits and exotic whitespace in score strings parse differently from Python.
+  - (3) Repr of emoji newer than Python 3.11.
+  - None occur in today's data.
+- PM ruling: build.py is gone, so the TS build is now the reference. WS3b makes each divergence impossible rather than reproducing Python quirks:
+  - (1) Preserve key order, or reject integer-like keys at the schema level.
+  - (2) Reject score strings with non-ASCII digits, BOM or control characters, failing loudly in the build.
+  - (3) Accepted, and recorded here.
+
+### WS3b — data build hardening — NOT STARTED
+
 ### WS5a — logging data layer + sync — NOT STARTED
 ### WS5b — log UI — NOT STARTED (after WS4)
 ### WS7b — scorer fixes — NOT STARTED
