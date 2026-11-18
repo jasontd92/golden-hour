@@ -363,7 +363,26 @@ Explicitly cut, so don't reintroduce:
 - week-01.json: hard days and Monday TM 265/AMRAP don't match the plan. The notes repeat the structured sets, so drop the duplicate notes. The real plan JSON from the debate replaces the fixture.
 
 ### WS5b — log UI — IN PROGRESS (ws5b-impl)
-### WS7b — scorer fixes — NOT STARTED
+### WS7b — scorer fixes — MERGED
+- Type: impl EM (ws7b-impl). Fixes from the WS7 verdict.
+- PR #11, squash-merged as `6c9a0fe`. Head `fea17a9`. Branch deleted.
+- CI: PR run 44230310218 green on the first head. The rebased head `fea17a9` was green on all jobs (typecheck, lint, unit, policy, e2e, evidence). Main run 44261330700 success. Vercel production success on `6c9a0fe`.
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws7b` at `fea17a9`, over `ee4cb50` (284 tests, 21 in `score-sessions.spec`). Logs are PR comments.
+  - Main gained `eb228a8` (tracker only) between the gate and the merge. Main CI on the merge commit was green.
+- Reviews: none, 0 threads.
+- Decisions:
+  - Folders scanned:
+    - the repo folder and its `<root>-wt-*` folders are read in full
+    - the repo's parent folder (`dirname(root)`, which is where the PM runs) contributes subagents only
+    - higher ancestors (`-Users-jason`) and lookalike siblings (`<root>-other`) are never listed, statted or opened
+  - Sessions started inside a repo subdirectory (`<root>-src`) are no longer found. That's accepted.
+  - All fs access goes through an injectable `TranscriptFs`, so tests spy on it. A sync line reader reads 4 KB chunks, so rejecting a file costs only its first record plus at most one chunk. Real run: largest rejected read 8192 B, mean 4915 B.
+  - Commits come from `gh pr view --json commits` for the session's PRs, unioned with printed `[branch sha]` lines, as 7-char shas. Without gh, only printed lines count, as before. Real run: 9 EM sessions now have commits.
+  - A session counts as running when its meta lacks `finished: true` and its last record is under 30 minutes old (`runningWindowMs`). Running sessions are labelled `(running)`, carry `running: true` in the JSON, and are left out of the totals. The scorer's own session is caught by the same rule.
+  - Subagent `.meta.json` now carries `finished: true` once an agent hands back.
+- Tests: mutation proof in the PR body, 11/11 guards killed.
+- Brief errors: none.
+- Status: MERGED. Verifier pending.
 ### WS8 — desktop planning view — NOT STARTED (needs CEO approval of Pass 3; after WS4, and WS5b/WS6 for review data)
 
 ### CLOSE — Stage 5′ — NOT STARTED
