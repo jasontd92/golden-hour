@@ -23,7 +23,8 @@
 		"test:e2e": "playwright test",
 		"sessions:score": "node scripts/score-sessions.ts",
 		"schema:emit": "node scripts/schema-emit.ts",
-		"plan:check": "node scripts/plan-check.ts"
+		"plan:check": "node scripts/plan-check.ts",
+		"data:build": "node scripts/data-build.ts"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
