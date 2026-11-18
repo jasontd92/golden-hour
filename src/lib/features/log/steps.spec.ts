@@ -45,3 +45,20 @@ describe('logSteps', () => {
 		expect(nextLabel(steps, steps.length - 1)).toBeUndefined();
 	});
 });
+
+describe('a max set with no target', () => {
+	const checkpoint = sessions[1]!;
+	const dips = logSteps(checkpoint).find((s) => s.movement === 'dip');
+
+	it('logs the ring-dip max as one set with no target, counted up from zero', () => {
+		expect(dips).toMatchObject({ blockIndex: 3, prescriptionIndex: 1, setIndex: 0, setCount: 1, amrap: true, groupSummary: 'Max dips' });
+		expect(dips).not.toHaveProperty('reps');
+		expect(repsTarget(dips!)).toBe('max reps');
+		expect(stepTitle(dips!)).toBe('Dip · 1 of 1');
+	});
+
+	it('is announced by its summary as the next set', () => {
+		const steps = logSteps(checkpoint);
+		expect(nextLabel(steps, steps.findIndex((s) => s.movement === 'dip') - 1)).toBe('Max dips');
+	});
+});

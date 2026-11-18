@@ -11,7 +11,7 @@ export interface LogStep {
 	setCount: number;
 	movement: MovementId;
 	load?: number;
-	reps: number;
+	reps?: number;
 	amrap: boolean;
 	groupSummary: string;
 }
@@ -60,6 +60,10 @@ function prescriptionSteps(p: Prescription, blockIndex: number, prescriptionInde
 				groupSummary
 			}));
 		}
+		case 'maxReps':
+			return [
+				{ ...at, setIndex: 0, setCount: 1, movement: p.movement, amrap: true, groupSummary: `Max ${repsLabel(p.movement, 2)}` }
+			];
 		default:
 			return [];
 	}
@@ -71,12 +75,13 @@ export const logSteps = (session: PlanSession): LogStep[] =>
 export const stepTitle = (step: LogStep) =>
 	`${capitalize(movementLabels[step.movement][0])} · ${step.setIndex + 1} of ${step.setCount}`;
 
-export const repsTarget = (step: LogStep) => `${step.reps}${step.amrap ? ' or more' : ''} ${step.reps === 1 ? 'rep' : 'reps'}`;
+export const repsTarget = (step: LogStep) =>
+	step.reps === undefined ? 'max reps' : `${step.reps}${step.amrap ? ' or more' : ''} ${step.reps === 1 ? 'rep' : 'reps'}`;
 
 export function nextLabel(steps: readonly LogStep[], index: number): string | undefined {
 	const next = steps[index + 1];
 	if (!next) return undefined;
-	if (next.setIndex === 0) return next.groupSummary;
+	if (next.setIndex === 0 || next.reps === undefined) return next.groupSummary;
 	return next.load === undefined ? `${next.reps} ${repsLabel(next.movement, next.reps)}` : loadedSet(next.load, next.reps, next.amrap);
 }
 

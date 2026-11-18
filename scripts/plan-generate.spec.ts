@@ -136,7 +136,7 @@ describe('the generated plan', () => {
 			expect(session.blocks.map((b) => b.name)).toEqual(['Warm-up', 'Shoulder press', 'Submax run', 'Gymnastics maxes']);
 			const maxes = blockOf(session, 'Gymnastics maxes');
 			expect(maxes?.hard).toBe(false);
-			expect(maxes?.prescriptions.flatMap((p) => ('movements' in p ? p.movements.map((m) => m.movement) : p.kind === 'fixedSets' ? [p.movement] : []))).toEqual(['l_sit', 'push_up']);
+			expect(maxes?.prescriptions.map((p) => ('movements' in p ? p.movements.map((m) => m.movement).join() : `${p.kind} ${'movement' in p ? p.movement : ''}`))).toEqual(['l_sit', 'maxReps dip', 'fixedSets push_up']);
 			expect(maxes?.notes).toMatch(/max L-sit.*ring dips.*max push-ups/);
 		}
 	});
@@ -171,6 +171,9 @@ describe('missing and provisional inputs', () => {
 			}
 		});
 		expect(bombolini(logged)).toContain('500 m 1:33, 100 m 0:16.4');
+		const dipsMax = (i: PlanInputs) => blockOf(generatePlan(i)[3]?.find((s) => blockOf(s, 'Gymnastics maxes')), 'Gymnastics maxes')?.prescriptions[1];
+		expect(dipsMax(inputs)).toEqual({ kind: 'maxReps', movement: 'dip' });
+		expect(dipsMax(logged)).toEqual({ kind: 'fixedSets', movement: 'dip', sets: 1, reps: 12 });
 		const tuesday = generatePlan(logged)[0]?.[1];
 		expect(blockOf(tuesday, 'Z1 run')?.notes).toBe('9:49/mi or slower · HR <142 · RPE ≤3');
 		expect(blockOf(generatePlan(logged)[0]?.[2], '3 × 10 min')?.notes).toBe('8:49–8:53/mi · HR 162–171 ceiling');

@@ -39,6 +39,7 @@ export const Prescription = z.discriminatedUnion('kind', [
 		reps: positiveInt,
 		load: loadLb.optional()
 	}),
+	z.strictObject({ kind: z.literal('maxReps'), movement: MovementId }),
 	z.strictObject({ kind: z.literal('amrap'), minutes: positiveInt, movements }),
 	z.strictObject({
 		kind: z.literal('forTime'),
