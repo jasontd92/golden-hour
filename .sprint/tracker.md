@@ -605,6 +605,22 @@ Explicitly cut, so don't reintroduce:
   - The main run's first attempt failed the untouched "Why this session" test on mobile-webkit; the same tree passed on the PR. The re-run failed the same way. The test opens 2026-12-07, which this PR doesn't change. Likely cause: on iPhone 15 the "Why this session" button sits under the fixed Start button and nav, so the tap can land on Start. This is unconfirmed; flagged to the PM, not fixed here (Today layout is WS4's).
   - Playwright browsers aren't installed locally, so e2e ran in CI only.
 
+### WS5e — sync loop termination + RPE polish — MERGED
+- Type: impl EM (ws5e-impl). Closes the WS5d verifier gaps (V3 livelock, select chevron, RPE label).
+- PR #22, squash-merged as `6700c94`. Head `d89f52c`. Branch deleted.
+- CI: PR runs 44313834520 (first head) and 44316158368 (final head, after the rebase on 1ece847) green (typecheck, lint, unit, policy, e2e, evidence with note-open and session-step inline). Main 44316925911 success on 6700c94.
+- Vercel: FAILED, "Deployment rate limited — retry in 24 hours" (the free-tier build limit) on the PR, on main 6700c94, and already on 1ece847 before this merge. Production still serves the last deployed build (`/` is 200). Needs a CEO/PM decision: wait it out or upgrade the plan (that costs money, so not an EM call).
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws5e` at `d89f52c` over `1ece847` (430 tests). `pnpm proof:sync`: EXIT 0 (control passes, 15/15 killed by tags). Logs are PR comments. Reviews: none, 0 threads.
+- Public API: `SyncOutcome` adds `{ kind: 'unfinished'; count }`. `sync.ts` exports `roundSlack` (2) and `syncRoundLimit(outboxSize, batchSize)` = ceil(outbox / batch) + 2, taken from `pendingCount()` at call start. `startSyncLoop` treats `unfinished` like any other non-success (backoff retry).
+- Decisions:
+  - Property `[terminates]` (new tag): each `sync` sends at most ceil(outbox/3)+2 batches, and it never resends the batch it just sent (same ids at the same revisions). An unchanged resend means the round made no progress, so this is what kills V3 now that the bound stops the loop. The bound assertion only bites on a livelock without the bound. The property test timeout is 120s → 30s.
+  - Mutants added: V3 "still-pending check treats session records as never pending" → `[terminates]`; "the round limit has no slack" → `[outcome]` (undo-during-sync needs one extra round).
+  - Unit `src/lib/features/log/sync.spec.ts`: a writer logs a set during every send, so the sync ends `unfinished` after exactly `syncRoundLimit` sends with 1 still pending.
+  - Chevron: two `linear-gradient`s in `--text-muted` (an SVG data URI can't read tokens), padding-right 26px. e2e asserts the computed background-image.
+  - Labels: "Effort (RPE)" and "session RPE" both read "RPE" (P3 mockups use "RPE"). Input idioms are unchanged (select vs stepper: a CEO call).
+- Not done, by brief (CEO decisions for the morning report): Undo-last-set on the Session step; a one-session-per-date limit.
+- Status: MERGED. Verifier pending.
+
 ### WS8 — desktop planning view — MERGED
 - Type: impl EM (ws8-impl). Design: Pass 3 (P3Plan, P3Progress), CEO-approved. Depends: WS4, WS5b, WS6/6b, WS9.
 - PR #20, squash-merged as `c1ed16c`. Head `ef8148d`. Branch deleted.
