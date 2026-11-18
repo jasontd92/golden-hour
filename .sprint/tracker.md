@@ -168,8 +168,35 @@ Explicitly cut, so don't reintroduce:
   - The build reads `data/` relative to the cwd.
 - Drift from brief: none found. Committed normalized output already matched a fresh build.py run. The score.spec describe names no longer mention build.py.
 
-### WS4 — shell, PWA, Today, Week — NOT STARTED
-- Depends: WS2. Doc: ws-04-shell-today-week.md.
+### WS4 — shell, PWA, Today, Week — MERGED
+- Type: impl EM. Doc: ws-04-shell-today-week.md. Depends: WS2.
+- PR #6, squash-merged as `bdc3b36`. Head `8ef1082`. Branch deleted.
+- CI: PR runs 44225689094, 44226008491, 44226923769, 44227206465 (one per rebase) and 44228438020 (final head) green: typecheck, lint, unit, policy, e2e (16/16: 8 tests × mobile-webkit and mobile-chromium), evidence. Main run 44228693700 success. Vercel production success on `bdc3b36`; production `/manifest.webmanifest` returns 200.
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws4` at `8ef1082` after the final rebase onto `35c8e2e` (239 unit tests). Logs are PR comments.
+- Merge was held by the PM's halt (red production after WS5a) and done after the all-clear on `35c8e2e`; WS4 merged before #8 (ws6) and #9 (ws3b).
+- Reviews: none in the window (Codex has still never posted). 0 threads.
+- Public API / seams for later chunks:
+  - Shell: `src/routes/+layout.svelte` `.shell` owns `--tab-bar-height` and `--shell-width`. A single layout-level breakpoint (`@media (min-width: 768px)`) sets `--shell-width: 430px`, so wide viewports get the phone layout in a centred column (the interim state per the CEO desktop directive). The desktop chunk switches its layout or default route at that one place: swap the shell contents, or route `/` by viewport, there. No desktop components exist yet.
+  - Start seam (WS5b): `features.yaml` `today.flags.start: false`. `/+page.server.ts` reads it via `#lib/server/flags.ts` `featureFlag('today','start')`. `/+page.svelte` builds `startHref` as `/log/<date>`, and `SessionView` renders the Start link. WS5b adds `src/routes/log/[date]`, changes the href to `resolve('/log/[date]', { date })`, deletes the `eslint-disable-next-line svelte/no-navigation-without-resolve` line in `SessionView.svelte`, and flips the flag. The update prompt is suppressed on `/log*` (`midSession` in the layout).
+  - Plan: `#lib/server/plan.ts` `loadPlan()` (glob of `/fixtures/plan/*.json`, `PlanWeek`-validated, throws on a bad file). `#lib/domain/schedule.ts` `planSessions`, `pickToday` (before the plan starts → first session with `beforePlan`; no session that day → rest), `focusDate`, `weekView` (Mon–Sun, clamped to the plan). `#lib/domain/calendar.ts` holds date labels. `#lib/ui/clock.svelte.ts` `clock.today` holds the local date and refreshes on visibility/focus.
+  - Today: `#lib/features/today/SessionView.svelte` (also used by `/day/[date]`), `prescription-lines.ts` `blockLines(block)` → `{ text, tone: plain|quiet|strong }`, `movement-labels.ts` (`Record<MovementId, [one, many]>`, which tsc keeps exhaustive).
+  - Week: `#lib/features/week/Week.svelte`. Rows link to `/day/[date]` (prerendered through `entries`); the highlighted row (the day Today shows) links to `/`.
+  - UI: `TabBar.svelte` (Progress is an inert span until WS6 adds a link with `resolve('/progress')`), `HardDot.svelte`, `UpdatePrompt.svelte`, `service-worker.svelte.ts` `appUpdate`.
+- Decisions:
+  - Every page is prerendered (`+layout.server.ts` `prerender = true`). Plan data reaches the client as layout data (`__data.json`), so zod never ships for validation.
+  - Service worker `src/service-worker/index.ts` (a directory with its own tsconfig extending `$app/tsconfig/service-worker`; the root tsconfig excludes it; `pnpm typecheck` adds `tsc -p src/service-worker`). It precaches `immutable` + `assets` + `prerendered` (every page and its `__data.json`) and serves them cache-first by pathname. The first install calls `skipWaiting` because no session is open. Updates wait for the "Update ready · Reload" tap, then `skip-waiting` runs and the page reloads on `controllerchange`. The app checks for an update on each visibility change (iOS PWAs rarely relaunch).
+  - Manifest `static/manifest.webmanifest`: standalone, `#06090b`, icons 192/512/maskable 512, apple-touch-icon 180, `apple-mobile-web-app-status-bar-style: black-translucent`. Icons are a teal half-sun over an accent-2 horizon, generated once with PIL (no script committed).
+  - `check-features` validates optional `flags` as a map of booleans.
+  - A scheme header (e.g. `AMRAP 12`) is omitted when it equals the block name, matching the mockup. A uniform `percentSets` group collapses to `5 × 5 at 170`, and an AMRAP set renders strong as `225 × 5+`.
+- Gotchas:
+  - Kit 3 removed `$service-worker`: use `$app/manifest` (`immutable`, `assets`, `prerendered`, with paths relative to base and no leading slash; `''` is `/`), `$app/env` `version`, and `$app/service-worker` `self`. `$app/environment` is now `$app/env`.
+  - `svelte/no-navigation-without-resolve` is syntactic (typed lint is off): an href passed through a prop fails, so components that render links call `resolve()` themselves.
+  - `svelte/prefer-svelte-reactivity` flags `new Date()` in `.svelte.ts`; `localIsoDate` takes epoch ms.
+  - e2e pins the clock (`e2e/clock.ts` `openOn`), so tests don't drift with the real date.
+  - Full-page screenshots draw the fixed tab bar at the original viewport bottom, so when the page is taller than the viewport the bar overlaps content in the PNG. That's a screenshot artifact, not a layout bug.
+  - Local Playwright browsers on the host are older than 1.65; e2e ran in CI only.
+- Drift from WS doc / brief: the mockup's "Week 1 of 16" renders as "of 17" (`planWeeks`, per WS2). The WS doc says `src/service-worker.ts`; Kit 3's sync expects `src/service-worker/` with its own tsconfig. Lighthouse isn't run; the manifest is asserted by a unit test (fields, icon PNG sizes) and an e2e test (linked, fetchable, icons 200). Progress isn't tappable yet.
+- HUMAN pending: CEO installs to the iPhone home screen and checks full screen and the status bar.
 
 ### WS5 — logging + offline sync — NOT STARTED
 - Depends: WS2 (data layer); WS4 (UI mount). Hold-the-line A. Doc: ws-05-logging-sync.md.
