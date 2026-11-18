@@ -9,6 +9,7 @@ import { goldenHour } from './lint/plugin.ts';
 const effectsFiles = ['src/lib/features/*/effects.ts', 'src/lib/features/*/effects.svelte.ts'];
 const timerFix = "Timers mask ordering bugs. Move scheduling into the feature's effects.ts.";
 const timers = ['setTimeout', 'requestAnimationFrame', 'requestIdleCallback'];
+const e2eTestFix = "Import test from e2e/test.ts: its page waits for hydration, so a tap is never lost.";
 const effectFix = "derive with $derived or move side effects to the feature's effects.svelte.ts";
 
 export default defineConfig(
@@ -54,6 +55,16 @@ export default defineConfig(
 				...['window', 'globalThis', 'self'].flatMap((object) =>
 					timers.map((property) => ({ object, property, message: timerFix }))
 				)
+			]
+		}
+	},
+	{
+		files: ['e2e/**'],
+		ignores: ['e2e/test.ts'],
+		rules: {
+			'no-restricted-imports': [
+				'error',
+				{ paths: [{ name: '@playwright/test', importNames: ['test'], message: e2eTestFix }] }
 			]
 		}
 	}

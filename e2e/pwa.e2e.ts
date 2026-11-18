@@ -1,5 +1,8 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './test.ts';
 import { openOn } from './clock.ts';
+
+// why: offline specs need the service worker; elsewhere its precache contends with the navigation under test
+test.use({ serviceWorkers: 'allow' });
 
 test('the manifest is linked and installable as a standalone dark app', async ({ page, request }) => {
 	await page.goto('/');

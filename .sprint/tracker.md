@@ -604,16 +604,6 @@ Explicitly cut, so don't reintroduce:
   - Main moved three times during the gate (ws5d, WS8, tracker). The WS8 merge conflicted in today.e2e.ts; both sides were kept.
   - The main run's first attempt failed the untouched "Why this session" test on mobile-webkit; the same tree passed on the PR. The re-run failed the same way. The test opens 2026-12-07, which this PR doesn't change. Likely cause: on iPhone 15 the "Why this session" button sits under the fixed Start button and nav, so the tap can land on Start. This is unconfirmed; flagged to the PM, not fixed here (Today layout is WS4's).
   - Playwright browsers aren't installed locally, so e2e ran in CI only.
-- VERIFIER: WS9b — PASS WITH GAPS. 6/6 met. Checked in a fresh clone at `d3b5ef2` with an independent Python script that reads plan/week-*.json and imports no app code, then compared against `d3b5ef2^`.
-  - Body comp: Tuesday of weeks 1/5/9/13 only, as block 0 "Body comp", warmup, 1 min, not hard, "Fasted, before eating: weight · tape". No other week 1–15 Tuesday has one.
-  - Checkpoint: Tuesday of weeks 4/8/12, in the order Shoulder press → Submax run → Gymnastics maxes (not hard). It holds an L-sit hold, push-ups 1×50 and a note that says max. The old "Gymnastics" skill block is gone. Hard days match the parent on all dates (wks 1–15: 3/wk, holiday wks 3–4: 2) and hard block names match too.
-  - Holiday weeks 3–4: Wednesday now has "Pull-ups" 5×6 + ring rows 2×10 after "Pull-up max". The parent had none.
-  - Rounding, by my own arithmetic: P10 = 3193/6.214 = 513.84. 3×10 = 528.84..533.84 → ceil 8:49, floor 8:53. 4×8 = 513.84..528.84 → 8:34–8:48. 100 m = 100×65.42/400 = 16.355 → 0:16.4. Bike 60 s / 153 s/mi = 0.392 → 0.40. Ran both trees with hrMax 190: Z1 0.75×190 = 142.5 → <142 (parent <143), range 162–171 and ~171. The diff against the parent shows only these note changes.
-  - `pnpm plan:generate` leaves git status clean (byte-identical). plan:check 17 of 17. `pnpm check` EXIT 0 (428 tests).
-  - Mutants killed: body comp on wk+1 (3 tests fail), Z1 HR ceiling 'down'→'up' (1 test), Quality A upper pace 'down'→'up' (2 tests), `bound` → Math.round (4 tests). Clone reverted to clean.
-  - Gap (not a FAIL): ring dips appear only in the Gymnastics maxes note, with no structured prescription (their baseline is null), so a ring-dip max can't be logged as sets.
-  - CEO items as the EM flagged them, not judged: set loads round to the nearest 5; deload cuts are ~10% (wk 7) and ~12% (wk 15) vs the doc's 20%; warm-up jogs aren't counted in the +10% rule.
-  - Main CI: 44313587826 on d3b5ef2 failed (flake-diag owns that). Every later main run is green: 44314179954, 44315564318, 44316925911, 44317551134, 44318667295, 44319038990.
 
 ### WS5e — sync loop termination + RPE polish — MERGED
 - Type: impl EM (ws5e-impl). Closes the WS5d verifier gaps (V3 livelock, select chevron, RPE label).
@@ -630,27 +620,6 @@ Explicitly cut, so don't reintroduce:
   - Labels: "Effort (RPE)" and "session RPE" both read "RPE" (P3 mockups use "RPE"). Input idioms are unchanged (select vs stepper: a CEO call).
 - Not done, by brief (CEO decisions for the morning report): Undo-last-set on the Session step; a one-session-per-date limit.
 - Status: MERGED. Verifier pending.
-- VERIFIER: WS5e — PASS WITH GAPS (fresh clone of `6700c94`)
-  - criteria met: 5/5 (excluding descoped)
-    - Termination → `syncOutbox` reads `syncRoundLimit(pendingCount(), batch)` at call start and returns `unfinished` at the limit. `startSyncLoop` retries every non-synced, non-401 outcome with backoff, `unfinished` included. Reproduced: `sync.spec.ts` (a writer logs during every send) passes and ends `unfinished` after exactly `syncRoundLimit(1,1)`=3 sends with 1 pending. With the bound removed it times out at 5s.
-    - No-loss proof → `pnpm proof:sync` EXIT 0: the control passes and 15/15 mutants are killed by tags. Own mutants, all killed and then reverted:
-      - acknowledge before send: [client], [server], [drain], [tombstone]
-      - drop the zero-mark failure guard: [terminates]
-      - bound taken from the first batch instead of the outbox: [drain]
-    - `[terminates]` vs V3 → the EM's claim holds, but only half of it.
-      - With the bound, V3 is caught only by the resend assertion. Removing that assertion lets V3 survive: 4/4 pass.
-      - Without the bound, the resend assertion never runs, because it is checked after `syncOutbox` returns. V3 then shows up only as a 30s test timeout, the same failure mode WS5d found.
-      - So the bound and the resend check each need the other: the bound makes the livelock end, and the resend check makes it visible.
-    - RPE polish → the select has two `linear-gradient` chevrons in `--text-muted`. The e2e asserts the computed background-image matches /linear-gradient/, and both labels read "RPE" (LogSet.svelte:74 and 157). The three-sets e2e passed on mobile-webkit and mobile-chromium in run 44316158368 (55/55).
-    - Gates → `pnpm check` EXIT 0 in the clone (430 tests). PR head d89f52c: all CI jobs pass (run 44316158368). Main 44316925911 on 6700c94 succeeded. 0 review threads. No AI trailer.
-  - criteria FAILED: none
-  - criteria DESCOPED: Undo-last-set on the Session step; a one-session-per-date limit (by brief, CEO for the morning report).
-  - criteria HUMAN: whether the chevron reads well on the phone. The e2e proves the gradient is applied, not how it looks; the evidence is the note-open screenshot.
-  - UNVERIFIABLE: the Vercel production deploy of 6700c94 ("Deployment rate limited — retry in 24 hours"), an expected rate limit, not a failure.
-  - claims that did NOT hold: none on log loss. Nuance: "the no-unchanged-resend assertion is what catches V3" holds only with the bound in place; on its own it cannot catch a livelock.
-  - Gaps:
-    - (1) No `effects.spec` case drives `startSyncLoop` with an `unfinished` outcome; the backoff was checked by reading the code only.
-    - (2) The property's bound is a literal (`/3 + 2`) duplicated from `sync.ts`. That is deliberate, but changing `roundSlack` requires editing the spec too.
 
 ### WS8 — desktop planning view — MERGED
 - Type: impl EM (ws8-impl). Design: Pass 3 (P3Plan, P3Progress), CEO-approved. Depends: WS4, WS5b, WS6/6b, WS9.
