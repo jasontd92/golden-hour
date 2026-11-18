@@ -28,7 +28,7 @@
 	{#if allCount !== undefined}
 		<li>
 			<a class="row all" href={kind === 'lifts' ? resolve('/progress/lifts') : resolve('/progress/benchmarks')}>
-				<span class="name">All<span class="visually-hidden"> {kind}</span></span>
+				<span class="name">All <span class="visually-hidden">{kind}</span></span>
 				<span class="best num">{allCount}</span>
 			</a>
 		</li>
