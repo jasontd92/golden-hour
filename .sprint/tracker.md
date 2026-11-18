@@ -353,6 +353,24 @@ Explicitly cut, so don't reintroduce:
   - The brief's "e2e: log three sets offline…" criterion belongs to WS5b, which needs the UI.
   - The Vercel CLI isn't installed and Vercel API access was denied, so env presence came from the health endpoint.
 - Status: MERGED. Verifier pending.
+### Sync-diag — production URL_SCHEME_NOT_SUPPORTED — MERGED (env fix still needed, CEO)
+- PR #14 → `c398a9e` (head `a736117`). PR CI 44261547643 and 44261889230: all green. Main 44262186877: success. Vercel production: success.
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/sync-diag` (316 tests, over `7f9a0cc`). The log is a PR comment.
+- `@libsql/client@0.18.0` web, probed:
+  - `libsql://`, `https://` and `wss://` all work; so does a `?tls=1` or `?authToken=` query. The client maps `libsql:` to `https:` itself.
+  - Quotes, whitespace, a bare host, or `NAME=value` give `URL_INVALID`, not this error.
+  - `URL_SCHEME_NOT_SUPPORTED` needs a value shaped `<letters.+->:…` with any other scheme.
+- Change:
+  - `#lib/server/db/url.ts`: `normalizeDbUrl` trims and strips one pair of quotes, for both TURSO values.
+  - `urlScheme` is an allowlisted scheme name, or `memory|missing|quoted|none|other`, so it never leaks a host.
+  - Health adds `urlScheme` when the status is `unmigrated` or `error`. A ready response is unchanged.
+- **Production after merge:** `{"token":true,"database":"unmigrated","reason":"LibsqlError URL_SCHEME_NOT_SUPPORTED","urlScheme":"other"}`.
+  - The value's scheme is none of libsql, http(s), ws(s), file or postgres-like. It's a mistyped or foreign scheme (e.g. `libsq:`, `turso:`, `sqlite+libsql:`) or a label prefix such as `url:`.
+  - Turso hosts contain digits, so a bare `host:port` can't be it.
+  - **HALT, CEO:** set `TURSO_DATABASE_URL` (Production) to exactly the `libsql://<db>-<org>.<region>.turso.io` URL from Turso's dashboard or `turso db show --url`, then redeploy.
+- Gotcha: #13 merged between my rebase and my merge. It's unrelated (a data build), and main CI on the combined sha is green.
+- Status: MERGED.
+
 ### WS3c — residual data-build gaps — MERGED
 - Handoff (ws7b-impl): PR #13, squash-merged as `03dceaf`. Head `47b78ba`. Branch deleted.
 - CI: PR run 44261834040 green (typecheck, lint, unit, policy incl. the drift step, e2e, evidence). Main run 44262119910 success. Vercel production success on `03dceaf`. Production 200.
