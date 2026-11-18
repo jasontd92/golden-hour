@@ -5,31 +5,42 @@ import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { isSessionRecord, type LogEntry, type SessionLog, type SyncRecord, type SyncRequest } from '#lib/domain/log.ts';
 import { openLogStore, type LogStore } from '#lib/features/log/store.ts';
 import { syncOutbox, syncRoundLimit, type SyncOutcome, type Transport } from '#lib/features/log/sync.ts';
-import type { Db } from '#lib/server/db/client.ts';
+import { openDb, type Db } from '#lib/server/db/client.ts';
+import { migrateDb } from '#lib/server/db/migrate.ts';
 import { allLogRecords } from '#lib/server/db/log-entries.ts';
-import { logEntries, sessionLogs } from '#lib/server/db/schema.ts';
 import { allSessionRecords } from '#lib/server/db/session-logs.ts';
+import { handleSync } from '#lib/server/sync.ts';
 import { syncDatabase } from '#lib/server/sync-env.ts';
 import { GET, POST } from './+server.ts';
 
 vi.mock('$app/env/private', () => ({ SYNC_TOKEN: 'test-token', TURSO_DATABASE_URL: ':memory:', TURSO_AUTH_TOKEN: undefined }));
 
-let db: Db;
+let routeDb: Db;
 beforeAll(async () => {
 	expect((await (await GET({} as Parameters<typeof GET>[0])).json())).toEqual({ token: true, database: 'ready' });
 	const database = await syncDatabase();
 	if (database.status !== 'ready') throw new Error(`database is ${database.status}`);
-	db = database.db;
+	routeDb = database.db;
 });
 
-const post = (body: string, token = 'test-token') =>
-	POST({
-		request: new Request('http://app.test/api/sync', {
-			method: 'POST',
-			headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
-			body
-		})
-	} as Parameters<typeof POST>[0]) as Promise<Response>;
+const syncRequest = (body: string, token: string) =>
+	new Request('http://app.test/api/sync', {
+		method: 'POST',
+		headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
+		body
+	});
+
+const post = (body: string, token = 'test-token') => POST({ request: syncRequest(body, token) } as Parameters<typeof POST>[0]) as Promise<Response>;
+
+type Post = (body: string) => Promise<Response>;
+
+// why: a vitest timeout does not stop fc.assert, so each history gets its own server; a run left behind can only touch its own tables
+async function freshServer(): Promise<{ db: Db; post: Post }> {
+	const own = await openDb(':memory:');
+	await migrateDb(own);
+	const deps = { token: 'test-token', database: async () => ({ status: 'ready' as const, db: own }) };
+	return { db: own, post: (body) => handleSync(syncRequest(body, deps.token), deps) };
+}
 
 interface PartialServer {
 	commit: boolean[];
@@ -45,6 +56,12 @@ class Network {
 	inFlight: (() => Promise<void>) | undefined;
 	readonly sent: string[] = [];
 
+	readonly post: Post;
+
+	constructor(post: Post) {
+		this.post = post;
+	}
+
 	readonly transport: Transport = async (request: SyncRequest) => {
 		if (!this.online) throw new TypeError('Failed to fetch');
 		const partial = this.partial;
@@ -53,7 +70,7 @@ class Network {
 		if (records.length > 0) {
 			const body = JSON.stringify({ records });
 			this.sent.push(body);
-			response = await post(body);
+			response = await this.post(body);
 		}
 		if (partial && response.ok) {
 			const { accepted } = (await response.json()) as { accepted: string[] };
@@ -138,11 +155,10 @@ async function onThePhone(change: string, applied: Promise<void>) {
 let run = 0;
 
 async function play(commands: Command[]) {
-	await db.delete(logEntries);
-	await db.delete(sessionLogs);
+	const { db, post } = await freshServer();
 	const name = `property-${run++}`;
 	const tabs: LogStore[] = [await openLogStore(name), await openLogStore(name)];
-	const network = new Network();
+	const network = new Network(post);
 	const live = new Map<string, Logged>();
 	const undone = new Set<string>();
 	const sessionIds = new Map<string, string>();
@@ -313,13 +329,15 @@ function expectConverged(result: Awaited<ReturnType<typeof play>>) {
 	expect(result.serverUndone, '[tombstone] every undo reached the server and none was resurrected').toStrictEqual(result.undone);
 }
 
+const propertyTimeoutMs = 30_000;
+
 describe('hold-the-line A: no log entry is ever lost', () => {
 	it('the server ends with exactly the client\'s non-undone entries, whatever the network does', async () => {
 		await fc.assert(
 			fc.asyncProperty(fc.array(command, { maxLength: 40, size: 'max' }), async (commands) => expectConverged(await play(commands))),
-			{ numRuns: 1000, includeErrorInReport: true }
+			{ numRuns: 1000, includeErrorInReport: true, interruptAfterTimeLimit: propertyTimeoutMs * 0.8, markInterruptAsFailure: true }
 		);
-	}, 30_000);
+	}, propertyTimeoutMs);
 
 	it('positive control: a scripted interrupted, partial, raced, replayed and reloaded history converges', async () => {
 		const set = { movement: 'back_squat' as const, reps: 5, load: 225 };
@@ -353,10 +371,9 @@ describe('hold-the-line A: no log entry is ever lost', () => {
 	});
 
 	it('one clean sync drains an outbox larger than the batch limit', async () => {
-		await db.delete(logEntries);
-		await db.delete(sessionLogs);
+		const { db, post } = await freshServer();
 		const store = await openLogStore(`drain-${run++}`);
-		const network = new Network();
+		const network = new Network(post);
 		const start = Date.UTC(2026, 11, 7, 17);
 		for (let i = 0; i < 250; i++) {
 			const at = { id: v7({ msecs: start + i, seq: 0 }), sessionDate: '2026-12-07', loggedAt: new Date(start + i).toISOString(), deviceId: 'phone-1' };
@@ -376,8 +393,6 @@ describe('hold-the-line A: no log entry is ever lost', () => {
 
 describe('POST /api/sync', () => {
 	it('rejects a wrong token and a malformed batch without writing', async () => {
-		await db.delete(logEntries);
-		await db.delete(sessionLogs);
 		expect((await post('{"records":[]}', 'nope')).status).toBe(401);
 		expect((await post('not json')).status).toBe(400);
 		expect((await post('{"records":[]}')).status).toBe(400);
@@ -385,7 +400,7 @@ describe('POST /api/sync', () => {
 		const session = { kind: 'session', id: v7(), sessionDate: '2026-12-07', rpe: 8.5, loggedAt: '2026-12-07T17:00:00Z', deviceId: 'phone-1', revision: 1 };
 		expect((await post(JSON.stringify({ records: [session] }))).status).toBe(400);
 		expect((await post(JSON.stringify({ records: [{ ...session, rpe: 8, kind: 'set' }] }))).status).toBe(400);
-		expect(await allLogRecords(db)).toEqual([]);
-		expect(await allSessionRecords(db)).toEqual([]);
+		expect(await allLogRecords(routeDb)).toEqual([]);
+		expect(await allSessionRecords(routeDb)).toEqual([]);
 	});
 });
