@@ -57,6 +57,10 @@ Explicitly cut, so don't reintroduce:
 - visual-regression pixel diffing (screenshots are evidence, not gates)
 - Storybook
 
+### Evidence (CEO, 2026-11-17)
+- Screenshots render inline in the PR comment, never as a zip that has to be downloaded.
+- A screenshot is evidence only if the page has actually rendered: wait for fonts and network idle, and assert that the theme applied, so a blank render fails the test.
+
 ### Who ticks acceptance criteria
 - The implementing EM never ticks its own boxes. It lists criterion → evidence in its exit summary.
 - The verifier ticks mechanical and empirical criteria in the WS doc.
