@@ -12,8 +12,8 @@
 - Base health: green (main run 44211177511 on 36d5f7e).
 - Vercel: connected. Turso: DB created, credentials in Vercel env (CEO, 2026-11-17).
 - Codex review: CEO enabling async. Not a blocker.
-- Open PRs: see gh. Live subagents: ws1-verify (verifier), ws2-impl (worktree ../golden-hour-wt/ws2), ws7-impl (worktree ../golden-hour-wt/ws7).
-- Merged: WS1 → d003a28 (verifier pending).
+- Open PRs: see gh. Live subagents: ws2-impl (worktree ../golden-hour-wt/ws2), ws7-impl (worktree ../golden-hour-wt/ws7).
+- Merged + verified: WS1 → d003a28 → PASS WITH GAPS 8/9 (HUMAN phone check pending).
 - Production URL: https://golden-hour-iota-three.vercel.app/ (previews are behind Vercel SSO).
 - Parallel track (not an EM chunk): Evolution 5 coaches debate, PM-moderated with the CEO. Starts after WS2 merges, since its output is `PlanSession` JSON. First agenda items:
   1. Does the 2–3 hard-sessions cap apply to running quality only, or to metcons too? PM recommendation: running only.
@@ -88,7 +88,7 @@ Explicitly cut, so don't reintroduce:
 
 ## §3 Per-chunk handoff log (dispatch order)
 
-### WS1 — scaffold + guardrails + CI — MERGED
+### WS1 — scaffold + guardrails + CI — VERIFIED
 - Type: impl EM, serial. Doc: ws-01-scaffold.md.
 - PR #1, squash-merged as `d003a28`. Head `05f6361`. Branch deleted.
 - CI: PR run 44209459070 green (typecheck, lint, unit, policy, e2e, evidence); main run 44210814289 green (evidence skipped on push by design). Vercel success on `d003a28`; production `https://golden-hour-iota-three.vercel.app/` returns 200 with the Today placeholder.
@@ -110,6 +110,7 @@ Explicitly cut, so don't reintroduce:
   - vitest `requireAssertions` breaks ESLint RuleTester; `lint/rule-tester.ts` wraps each case in `expect().not.toThrow()`.
   - The Playwright image ships Node 26 and has no corepack; pnpm comes from `pnpm/action-setup` with its store cache.
 - Drift from WS doc: `data/normalized/REPORT.md` (build.py output) added to the markdown allowlist. Runes need `.svelte.ts`, so the `$effect` home is `effects.svelte.ts`, not `effects.ts`. Acceptance criterion "curl preview, expect 200" cannot pass anonymously because of SSO: the preview loads for a logged-in browser, and production curls 200.
+- VERIFIER VERDICT: PASS WITH GAPS 8/9. The 9th is HUMAN: the CEO checks it on the phone (production URL). The e2e mutant claim was inspected, not reproduced; the logic holds.
 
 ### WS2 — domain contract — NOT STARTED
 - Depends: WS1. Doc: ws-02-domain.md.
