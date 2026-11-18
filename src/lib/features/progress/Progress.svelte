@@ -2,15 +2,26 @@
 	import type { ProgressRow } from '#lib/domain/progress.ts';
 	import ProgressRows from './ProgressRows.svelte';
 
-	let { benchmarks, lifts }: { benchmarks: ProgressRow[]; lifts: ProgressRow[] } = $props();
+	let {
+		benchmarks,
+		lifts,
+		benchmarkCount,
+		liftCount
+	}: { benchmarks: ProgressRow[]; lifts: ProgressRow[]; benchmarkCount: number; liftCount: number } = $props();
 </script>
 
 <header>
 	<h1>Progress</h1>
 </header>
 <main>
-	<ProgressRows title="Benchmarks" rows={benchmarks} kind="benchmarks" />
-	<ProgressRows title="Lifts · 1 rep max" rows={lifts} kind="lifts" />
+	<section aria-label="Benchmarks">
+		<h2>Benchmarks</h2>
+		<ProgressRows rows={benchmarks} kind="benchmarks" allCount={benchmarkCount} />
+	</section>
+	<section aria-label="Lifts · 1 rep max">
+		<h2>Lifts · 1 rep max</h2>
+		<ProgressRows rows={lifts} kind="lifts" allCount={liftCount} />
+	</section>
 </main>
 
 <style>
@@ -28,5 +39,18 @@
 		flex-direction: column;
 		gap: 28px;
 		padding: 0 16px 32px;
+	}
+
+	section {
+		display: flex;
+		flex-direction: column;
+	}
+
+	h2 {
+		margin: 0 8px 8px;
+		font-size: 15px;
+		font-weight: 400;
+		letter-spacing: 0;
+		color: var(--text-muted);
 	}
 </style>

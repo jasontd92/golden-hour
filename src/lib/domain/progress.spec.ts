@@ -7,10 +7,14 @@ import {
 	bestResult,
 	dateLabel,
 	liftHistory,
+	isMainLift,
 	liftRows,
+	mainLiftRows,
 	resultHistory,
-	sourceLabel
+	sourceLabel,
+	topBenchmarkRows
 } from './progress.ts';
+import { testBattery } from './battery.ts';
 
 const read = (file: string) => readFileSync(new URL(`../../../data/normalized/${file}`, import.meta.url), 'utf8');
 const workouts = WorkoutsFile.parse(JSON.parse(read('workouts.json')));
@@ -91,11 +95,13 @@ describe('benchmarkRows', () => {
 	const rows = benchmarkRows(workouts, results);
 	const ids = rows.map((r) => r.id);
 
-	it('lists favorites first, then the test battery, then recurring girls', () => {
+	it('lists favorites, then the battery in plan order, then other tests and recurring girls', () => {
 		expect(ids.slice(0, 3)).toEqual(['turkey-trot-triple', 'jason-cunningham', 'crossfit-total']);
-		const kinds = rows.map((r) => workout(r.id)).map((w) => (w.favorite ? 'favorite' : w.kind));
-		expect(kinds).toEqual([...kinds].sort((a, b) => order(a) - order(b)));
-		expect(new Set(kinds)).toEqual(new Set(['favorite', 'test', 'girl']));
+		const battery = testBattery.filter((id) => id !== 'jason-cunningham');
+		expect(ids.slice(2, 2 + battery.length)).toEqual(battery);
+		const rest = rows.slice(2 + battery.length).map((r) => workout(r.id).kind);
+		expect(rest).toEqual([...rest].sort((a, b) => order(a) - order(b)));
+		expect(new Set(rest)).toEqual(new Set(['test', 'girl']));
 	});
 
 	it('leaves out lost or reconstructed definitions and unscorable tests', () => {
@@ -111,7 +117,27 @@ describe('benchmarkRows', () => {
 	});
 });
 
-const order = (kind: string) => ['favorite', 'test', 'girl'].indexOf(kind);
+const order = (kind: string) => ['test', 'girl'].indexOf(kind);
+
+describe('topBenchmarkRows', () => {
+	const top = topBenchmarkRows(workouts, results).map((r) => r.id);
+
+	it('every battery test is a scored workout in the catalog', () => {
+		const scored = new Set(benchmarkRows(workouts, results).map((r) => r.id));
+		expect(testBattery.filter((id) => !scored.has(id))).toEqual([]);
+	});
+
+	it('is the favorites plus the test battery, in the full list order', () => {
+		const all = benchmarkRows(workouts, results).map((r) => r.id);
+		expect(top).toEqual(all.slice(0, top.length));
+		expect(new Set(top)).toEqual(new Set(['turkey-trot-triple', ...testBattery]));
+	});
+
+	it('leaves tests outside the revised battery for the full list', () => {
+		for (const id of ['king-kong-womens-rx', 'ski-2000m', 'run-5k', 'helen']) expect(top).not.toContain(id);
+		expect(benchmarkRows(workouts, results).map((r) => r.id)).toContain('king-kong-womens-rx');
+	});
+});
 
 describe('lifts', () => {
 	it('best back squat 1RM is 295', () => {
@@ -132,12 +158,51 @@ describe('lifts', () => {
 		]);
 	});
 
-	it('lists every piece of evidence, dated first', () => {
+	it('lists every piece of evidence, newest first', () => {
 		const history = liftHistory(lifts['back-squat'] ?? []);
-		expect(history).toHaveLength(11);
-		expect(history[0]).toEqual({ date: 'Nov 6, 2024', score: '235', source: 'SugarWOD' });
+		expect(history).toHaveLength(12);
+		expect(history[0]).toEqual({ date: 'Nov 16, 2026', score: '255 × 1', source: 'Sheet' });
+		expect(history[1]).toEqual({ date: 'Nov 6, 2024', score: '235', source: 'SugarWOD' });
 		expect(history.at(-1)?.date).toBe('Undated');
 		expect(history.map((h) => h.score)).toContain('275 × 3');
+	});
+
+	it('the 2026-11-16 CrossFit Total adds 1RM evidence without changing the bests', () => {
+		const cft = (id: string) => (lifts[id] ?? []).filter((e) => e.date === '2026-11-16');
+		expect(['back-squat', 'shoulder-press', 'deadlift'].map((id) => cft(id).map((e) => [e.load, e.reps, e.source]))).toEqual([
+			[[255, 1, 'google-sheet/tests']],
+			[[160, 1, 'google-sheet/tests']],
+			[[335, 1, 'google-sheet/tests']]
+		]);
+		expect(['back-squat', 'shoulder-press', 'deadlift'].map((id) => bestOneRepMax(lifts[id] ?? []))).toEqual([
+			295, 165, 365
+		]);
+	});
+});
+
+describe('mainLiftRows', () => {
+	const today = '2026-11-18';
+
+	it('shows the four main lifts on the normalized data', () => {
+		expect(mainLiftRows(lifts, today).map((r) => [r.name, r.best])).toEqual([
+			['Deadlift', '365'],
+			['Back squat', '295'],
+			['Bench press', '275'],
+			['Shoulder press', '165']
+		]);
+	});
+
+	it('adds any other lift with dated 1RM evidence in the last 3 years', () => {
+		const at = (date: string | null, reps: number | null = 1) => [{ date, load: 200, reps, source: 'x' }];
+		expect(isMainLift('thruster', at('2023-11-18'), today)).toBe(true);
+		expect(isMainLift('thruster', at('2023-11-17'), today)).toBe(false);
+		expect(isMainLift('thruster', at(null), today)).toBe(false);
+		expect(isMainLift('thruster', at('2026-01-01', 3), today)).toBe(false);
+		expect(isMainLift('bench-press', [], today)).toBe(true);
+	});
+
+	it('keeps every lift for the full list', () => {
+		expect(liftRows(lifts)).toHaveLength(11);
 	});
 });
 

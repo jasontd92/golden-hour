@@ -1,14 +1,12 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
 	import type { HistoryRow } from '#lib/domain/progress.ts';
+	import ConflictMarker from './ConflictMarker.svelte';
+	import DetailHeader from './DetailHeader.svelte';
 
 	let { name, rows }: { name: string; rows: HistoryRow[] } = $props();
 </script>
 
-<header>
-	<a class="back" href={resolve('/progress')}>Progress</a>
-	<h1>{name}</h1>
-</header>
+<DetailHeader title={name} />
 <main>
 	<ol aria-label="{name} results">
 		{#each rows as row, index (index)}
@@ -19,7 +17,7 @@
 				</div>
 				<span class="score num">{row.score}</span>
 				{#if row.conflict}
-					<p class="conflict">{row.conflict}</p>
+					<p class="conflict"><ConflictMarker />{row.conflict}</p>
 				{/if}
 			</li>
 		{/each}
@@ -27,28 +25,6 @@
 </main>
 
 <style>
-	header {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-		padding: 24px 24px 20px;
-	}
-
-	.back {
-		align-self: flex-start;
-		min-height: 44px;
-		display: flex;
-		align-items: center;
-		color: var(--text-muted);
-		font-size: 15px;
-		text-decoration: none;
-	}
-
-	h1 {
-		font-size: 34px;
-		line-height: 1.08;
-	}
-
 	main {
 		padding: 0 16px 32px;
 	}
@@ -92,6 +68,8 @@
 
 	.conflict {
 		flex-basis: 100%;
+		display: flex;
+		gap: 8px;
 		margin: 0;
 	}
 </style>
