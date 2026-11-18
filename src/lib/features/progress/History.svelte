@@ -5,35 +5,28 @@
 	let { name, rows }: { name: string; rows: HistoryRow[] } = $props();
 </script>
 
-<div class="column">
-	<header>
-		<a class="back" href={resolve('/progress')}>Progress</a>
-		<h1>{name}</h1>
-	</header>
-	<main>
-		<ol aria-label="{name} results">
-			{#each rows as row, index (index)}
-				<li>
-					<div class="when">
-						<span class="date">{row.date}</span>
-						<span class="source">{row.source}</span>
-					</div>
-					<span class="score num">{row.score}</span>
-					{#if row.conflict}
-						<p class="conflict">{row.conflict}</p>
-					{/if}
-				</li>
-			{/each}
-		</ol>
-	</main>
-</div>
+<header>
+	<a class="back" href={resolve('/progress')}>Progress</a>
+	<h1>{name}</h1>
+</header>
+<main>
+	<ol aria-label="{name} results">
+		{#each rows as row, index (index)}
+			<li>
+				<div class="when">
+					<span class="date">{row.date}</span>
+					<span class="source">{row.source}</span>
+				</div>
+				<span class="score num">{row.score}</span>
+				{#if row.conflict}
+					<p class="conflict">{row.conflict}</p>
+				{/if}
+			</li>
+		{/each}
+	</ol>
+</main>
 
 <style>
-	.column {
-		max-width: 480px;
-		margin: 0 auto;
-	}
-
 	header {
 		display: flex;
 		flex-direction: column;

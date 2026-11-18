@@ -5,7 +5,8 @@
 	const weekRoutes: ReadonlySet<string | null> = new Set(['/week', '/day/[date]']);
 	const links = [
 		{ label: 'Today', href: resolve('/'), current: () => page.route.id === '/' },
-		{ label: 'Week', href: resolve('/week'), current: () => weekRoutes.has(page.route.id) }
+		{ label: 'Week', href: resolve('/week'), current: () => weekRoutes.has(page.route.id) },
+		{ label: 'Progress', href: resolve('/progress'), current: () => page.route.id?.startsWith('/progress') === true }
 	];
 </script>
 
@@ -13,7 +14,6 @@
 	{#each links as link (link.label)}
 		<a href={link.href} aria-current={link.current() ? 'page' : undefined}>{link.label}</a>
 	{/each}
-	<span aria-disabled="true">Progress</span>
 </nav>
 
 <style>
@@ -30,8 +30,7 @@
 		-webkit-backdrop-filter: blur(var(--blur)) saturate(180%);
 	}
 
-	a,
-	span {
+	a {
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -55,9 +54,5 @@
 	[aria-current='page'] {
 		color: var(--text-primary);
 		font-weight: 600;
-	}
-
-	span {
-		opacity: 0.5;
 	}
 </style>
