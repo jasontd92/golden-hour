@@ -574,7 +574,7 @@ Explicitly cut, so don't reintroduce:
 ### WS8 — desktop planning view — MERGED
 - Type: impl EM (ws8-impl). Design: Pass 3 (P3Plan, P3Progress), CEO-approved. Depends: WS4, WS5b, WS6/6b, WS9.
 - PR #20, squash-merged as `c1ed16c`. Head `ef8148d`. Branch deleted.
-- CI: PR run 44311093535 (final head; earlier heads 44308450925, 44310397931) green (typecheck, lint, unit, policy, e2e 45/45 = 20 tests × mobile-webkit and mobile-chromium, plus 5 on desktop-chromium; evidence). Main run 44311730052 success on c1ed16c; Vercel success, production / 200 with the desk view prerendered.
+- CI: PR run 44311093535 (final head; earlier heads 44308450925, 44310397931) green (typecheck, lint, unit, policy, e2e 51/51 = 23 tests × mobile-webkit and mobile-chromium, plus 5 on desktop-chromium only; evidence). Main run 44311730052 success on c1ed16c; Vercel success, production / 200 with the desk view prerendered.
 - `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws8` at `ef8148d` (422 unit tests, after rebasing on WS5d 2534b12 and e40a18b); the log is a PR comment. Reviews: none, 0 threads.
 - Public API:
   - `#lib/domain/plan-grid.ts`: `planGrid`, `columnNames`, `weekSummary`, `testLabel`, `sessionSlot`, `attemptDates`, `nextAttempt`, `trainingMaxByWeek`, `loggedDates`, `phaseName`.
