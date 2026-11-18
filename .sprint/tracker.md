@@ -745,6 +745,32 @@ Explicitly cut, so don't reintroduce:
 - Brief errors: the worktree didn't exist (I created it). Start isn't fixed. No Playwright trace artifacts exist for the failing run. /log has no fixed bottom UI (the tab bar is hidden there), so it isn't in the fixed-UI check.
 - Follow-ups for the PM: (1) The SW precache is ~40 MB on first visit, because every prerendered page and its `__data.json` embed the plan. That's costly on cellular and slows first-visit navigation. (2) Real taps before hydration are lost on a cold start. Native `<details>` for the disclosures would make them work before hydration. (3) The e2e has no trace on failure. `trace: 'retain-on-failure'` plus uploading test-results would make the next diagnosis faster.
 - Status: MERGED. Verifier pending.
+- VERIFIER: flake-diag — PASS WITH GAPS (fresh clone at `f53140e`; tracker checked at `428f325`)
+  - criteria met: 7/8, plus 1 HUMAN
+  - (1) Root cause → `gh run view 44313587826 --log-failed`: the click at today.e2e:66 resolved with no "intercepts pointer events" and no retry loop. Then `getByText('Leader block…')` → "element(s) not found" for 5s. mobile-chromium passed the same test. This fits a tap that was lost before hydration, not an overlap. Reproduced the mechanism in Docker v1.65.1: with today.e2e importing `test` from `@playwright/test` again, the delayed-entry regression test failed 2 of 4 runs (2 repeats × 2 projects). The EM said 2/2. It catches the bug, but not every time.
+  - (2) No assertion weakened → I read the full diff of every e2e spec and of playwright.config. The changes are import swaps, two `test.use({ serviceWorkers: 'allow' })` lines, and two new tests. Nothing removed, no `force`, no `.first()`, no new timeouts, and `retries` is unset both before and after. One thing is loosened by design: every goto/reload now waits for hydration, so no test taps before hydration any more. The new regression test asserts what the harness does, not what the product does (see follow-up 2).
+  - (3) Lint fires → changed week.e2e to import `test` from `@playwright/test`: `no-restricted-imports` error, exit 1. A namespace import (`import * as pw`) is caught too. Reverted, and `eslint e2e` exits 0.
+  - (4) The mark can't be set early → `trackHydration` sets `dataset.hydrated` inside `$effect` (client only, after mount), and the root `+layout.svelte` calls it. In a local `pnpm build`, none of the 236 prerendered HTML files has `hydrated` on `<html>`. index.html opens with `<html lang="en">`.
+  - (6) vercel-ignore → the spec passes 3/3. I ran the real command against this repo's history: f53140e exits 1 (build); 428f325, 65a33d2 and 32ce05c exit 0 (skip). `.sprint`, `team`, `profiles` and `prompts` hold only .md files, plus .sprint/design/*.dc.html and team/panes.txt. There is no src in any of them, and no code reads them at build or run time. The only mentions are comments in targets.ts and strength.spec.ts, and the allowlist in check-md.
+  - (7) CI → main 44366280301 on f53140e: success, e2e 70 passed, unit 442 passed, evidence skipped. PR run attempts: 44362736701 had e2e green on all 3 attempts and evidence red on attempts 2 and 3, as described. 44364798225 was green on both attempts. Docker run at f53140e: the regression test, fixed-ui and "Why this session" ran 3 times each on both phone projects, 42/42 passed.
+  - (8) Tracker integrity → every line that 32ce05c (WS9b, 10 lines), 86837c2 (WS5e, 21 lines) and 65a33d2 (WS8b, 1 line) added to tracker.md is present verbatim at 428f325. 65a33d2..428f325 only adds lines (+30/−0). f53140e doesn't touch the tracker.
+  - criteria FAILED: none
+  - criteria DESCOPED: none
+  - criteria HUMAN: (5) service-worker coverage. Before this change every spec ran with the SW allowed, because that is Playwright's default. Now these run with it blocked: today (10), week (2), progress (6), plan.desktop (8), and the new fixed-ui (5). Only log (6) and pwa (2) keep it. The pwa test covers Today → Week → Long run with the SW. These paths now run only without a SW:
+    - every Progress screen (lists, lift history, benchmarks)
+    - the desktop Plan view
+    - Today's disclosures
+
+    The EM found a real slow path: a client navigation's `__data.json` is stuck for more than 5s while the first install precaches. That is a real first-visit effect, and the tests now hide it. CEO: is that acceptable?
+  - UNVERIFIABLE: none
+  - claims that did NOT hold:
+    - "fails 2/2 against the old harness": I saw 2/4 failures. It still catches the bug, but not every run.
+  - Gaps:
+    - The ignoreCommand compares `HEAD^..HEAD` only. A push whose last commit is docs-only but contains an earlier code commit would skip its deploy. That is safe on main with squash merges and single verdict commits, but not on PR preview branches. Vercel's `$VERCEL_GIT_PREVIOUS_SHA` would close it.
+  - Observations:
+    - (a) The 40 MB claim is confirmed. `du` gives 40M for prerendered: 472 files, 236 HTML plus 236 `__data.json`, 39.1 MB apparent size, of which the HTML is 21 MB. A page gzips about 12× (index.html: 134 KB → 10.7 KB), so the bytes sent are much smaller if the server compresses.
+    - (b) Lost cold-start taps on a real phone remain a product gap. No test covers them.
+    - (c) There are still no traces kept on failure.
 
 ### CLOSE — Stage 5′ — NOT STARTED
 - Runner: the full mobile e2e suite on the final `main` tip.
