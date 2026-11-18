@@ -772,6 +772,26 @@ Explicitly cut, so don't reintroduce:
     - (b) Lost cold-start taps on a real phone remain a product gap. No test covers them.
     - (c) There are still no traces kept on failure.
 
+### WS5f — replace same-day session record — MERGED
+- Type: impl EM (ws5f-impl). CEO 2026-11-18: "repeating a session on the same day … replacing the previous one."
+- PR #25, squash-merged as `0c7a00b`. Head `d80f375`. Branch deleted. One push.
+- CI: PR run 44395084716 green (typecheck, lint, unit, policy, e2e 72/72, evidence with session-prefilled inline). Main run 44397419348 success on `0c7a00b`; Vercel success.
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws5f` at `d80f375` over `1dc610c` (450 tests). `pnpm proof:sync`: EXIT 0, control passes, 16/16 mutants killed by tags. Both logs are PR comments. Reviews: none, 0 threads.
+- Public API:
+  - `#lib/domain/log.ts`: `SessionsByDate` (ReadonlyMap date → SessionRecord), `sessionsByDate(records)` (one per date: live over undone, then latest loggedAt), `replaceSession(existing, next)` (same id, revision + 1, next's values; revision 1 when there is none). `dayLog` reads through it.
+  - Store: `sessions()` now returns `SessionsByDate` (live only). New `sessionOn(date)` includes an undone record. `saveSession` finds the date's record and writes the replacement inside one readwrite transaction (IDB serialises these across tabs).
+  - Flow: the Session step pre-fills RPE, score and note from the date's record. A live record still opens on "Session saved" (unchanged), so in practice a repeat goes through Undo and then Done.
+- Decisions:
+  - The key is `sessionDate`: PlanWeek allows at most one session per day, so (date, plan session) = date.
+  - A save after Undo revives the undone record (same id, next revision, deletedAt cleared) instead of starting a second one. The server's newer-revision-wins upsert clears deleted_at. A replayed old request still can't resurrect it.
+  - No IDB unique index: legacy data already holds undone + live pairs for a date (the old Undo → Done path), and an index needs a version-2 upgrade that the open v1 tabs would block. The transaction guard covers the race; a store test saves from two tabs at once and gets one record at revision 2.
+  - Legacy extra records stay as they are (never deleted). The date's preferred record is the one replaced.
+  - Proof: logSession now spans two dates. New `resaveSession` command (direct, or during an in-flight sync) and a `[replace]` tag (same id, revision + 1, live). Reach per 1000 runs: resave of a pending record ~418, a synced one ~193, an undone one ~156. Scripted history adds a pending (offline) resave, a synced resave and an in-flight resave. The drain test's sessions moved to distinct dates.
+  - Mutant "replace creates a new id instead of bumping the revision" is killed by `[replace]` in both the property and the scripted history.
+- Gotchas: local Playwright browsers are stale (1243 vs 1255), so the log e2e ran in the `v1.65.1-noble` Docker image from a `git archive` (14/14) before the push.
+- Brief errors: "(date, plan session) pair": the record has no plan-session id; the date is the key. "When a record already exists, the Session step pre-fills": a live record opens on the saved view, so the pre-fill shows after Undo (in the flow and on reopen).
+- Status: MERGED. Verifier pending.
+
 ### CLOSE — Stage 5′ — DONE (awaiting CEO HUMAN checks)
 - 2026-11-18 PM close: every chunk is merged and has a verifier verdict, with no FAIL (flake-diag verdict c7063e1).
 - main is green: run 44366280301 on f53140e passed e2e 70/70 and 442 unit tests.
