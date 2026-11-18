@@ -6,16 +6,17 @@
 	import { deviceId } from './device.ts';
 	import { logSync, requestSync, restCountdown, resumeOnOpen } from './effects.svelte.ts';
 	import { persistLocalLog } from './effects.ts';
-	import { LogFlow } from './flow.svelte.ts';
+	import { LogFlow, sessionStepLabel } from './flow.svelte.ts';
 	import { localLog } from './local.ts';
 	import { formatRest, rememberedRest, rememberRest } from './rest.ts';
-	import { logSteps, repsTarget, stepTitle } from './steps.ts';
+	import { clockDigits, maxRpe, minRpe, scoreField, scoreText } from './session-step.ts';
+	import { repsTarget, stepTitle } from './steps.ts';
 
 	let { session }: { session: PlanSession } = $props();
 
 	const flow = untrack(
 		() =>
-			new LogFlow(session.date, logSteps(session), {
+			new LogFlow(session, {
 				store: localLog,
 				deviceId: () => deviceId(),
 				recallRest: () => rememberedRest(),
@@ -33,6 +34,12 @@
 	const rpeChoices = Array.from({ length: 19 }, (_, i) => 1 + i / 2);
 	const status = $derived(!logSync.online ? 'Offline' : logSync.notSynced ? 'Not synced' : undefined);
 
+	function typeScore(event: Event & { currentTarget: HTMLInputElement }) {
+		const input = event.currentTarget;
+		if (flow.scored?.type === 'time') input.value = clockDigits(input.value);
+		flow.score = input.value;
+	}
+
 	async function done() {
 		await flow.done();
 		noteOpen = false;
@@ -44,10 +51,72 @@
 		<a class="back" href={resolve('/')} aria-label="Back to today">
 			<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"></path></svg>
 		</a>
-		<span class="title">{flow.step ? stepTitle(flow.step) : session.title}</span>
+		<span class="title">{flow.step ? stepTitle(flow.step) : flow.onSession ? sessionStepLabel : session.title}</span>
 		<span class="status">{#if status}<a href={resolve('/sync')}>{status}</a>{/if}</span>
 	</header>
-	{#if flow.ready && flow.step}
+	{#if flow.ready && flow.onSession}
+		<main>
+			<div class="target">
+				<div class="load session-title">{session.title}</div>
+			</div>
+			{#if flow.savedSession}
+				{@const saved = flow.savedSession}
+				<div class="swap saved" data-testid="saved">
+					<div class="saved-reps">Session saved</div>
+					<div class="estimate">RPE <span class="num">{saved.rpe}</span>{#if saved.score} · <span class="num">{scoreText(saved.score)}</span>{/if}</div>
+				</div>
+			{:else}
+				<div class="swap session-fields">
+					<div class="stepper">
+						<button type="button" class="step" aria-label="Easier" disabled={flow.sessionRpe <= minRpe} onclick={() => flow.easier()}>−</button>
+						<div class="count">
+							<span class="num" aria-live="polite">{flow.sessionRpe}</span>
+							<span class="count-label">session RPE</span>
+						</div>
+						<button type="button" class="step" aria-label="Harder" disabled={flow.sessionRpe >= maxRpe} onclick={() => flow.harder()}>+</button>
+					</div>
+					{#if flow.scored}
+						{@const field = scoreField[flow.scored.type]}
+						<label class="score">
+							<span>{field.label}</span>
+							<input
+								class="num"
+								type="text"
+								inputmode={field.inputmode}
+								autocomplete="off"
+								placeholder={field.placeholder}
+								value={flow.score}
+								aria-invalid={flow.scoreInvalid}
+								aria-describedby={flow.scoreInvalid ? 'score-hint' : undefined}
+								oninput={typeScore}
+							/>
+						</label>
+						{#if flow.scoreInvalid}<p class="hint" id="score-hint">{field.hint}</p>{/if}
+					{/if}
+				</div>
+			{/if}
+		</main>
+		{#if noteOpen && !flow.savedSession}
+			<div class="swap note" id="note" data-testid="note">
+				<textarea bind:value={flow.note} maxlength="500" rows="3" placeholder="Note" aria-label="Note"></textarea>
+			</div>
+		{/if}
+		<footer>
+			{#if !flow.savedSession}
+				<button type="button" class="primary" disabled={flow.scoreInvalid} onclick={done}>Done</button>
+				<button
+					type="button"
+					class="secondary"
+					aria-expanded={noteOpen}
+					aria-controls="note"
+					onclick={() => (noteOpen = !noteOpen)}>{noteOpen ? 'Hide note' : 'Add a note'}</button
+				>
+			{:else}
+				<a class="primary" href={resolve('/')}>Finish</a>
+				<button type="button" class="secondary" onclick={() => flow.undo()}>Undo</button>
+			{/if}
+		</footer>
+	{:else if flow.ready && flow.step}
 		{@const step = flow.step}
 		<main>
 			<div class="target">
@@ -104,11 +173,8 @@
 					aria-controls="note"
 					onclick={() => (noteOpen = !noteOpen)}>{noteOpen ? 'Hide note' : 'Add a note'}</button
 				>
-			{:else if flow.next}
-				<button type="button" class="primary" onclick={() => flow.advance()}>Next: {flow.next}</button>
-				<button type="button" class="secondary" onclick={() => flow.undo()}>Undo</button>
 			{:else}
-				<a class="primary" href={resolve('/')}>Finish</a>
+				<button type="button" class="primary" onclick={() => flow.advance()}>Next: {flow.next}</button>
 				<button type="button" class="secondary" onclick={() => flow.undo()}>Undo</button>
 			{/if}
 		</footer>
@@ -192,6 +258,55 @@
 	.bodyweight {
 		font-size: 44px;
 		letter-spacing: -0.02em;
+	}
+
+	.session-title {
+		font-size: 34px;
+		line-height: 1.08;
+		letter-spacing: -0.02em;
+		text-align: center;
+	}
+
+	.session-fields {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 28px;
+	}
+
+	.step:disabled {
+		color: var(--text-muted);
+		opacity: 0.4;
+	}
+
+	.score {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 6px;
+		font-size: 13px;
+		color: var(--text-muted);
+	}
+
+	.score input {
+		width: 9ch;
+		min-height: 44px;
+		padding: 0 12px;
+		text-align: center;
+	}
+
+	.score input[aria-invalid='true'] {
+		border-color: var(--text-muted);
+	}
+
+	.hint {
+		margin: -20px 0 0;
+		font-size: 13px;
+		color: var(--text-muted);
+	}
+
+	.primary:disabled {
+		opacity: 0.4;
 	}
 
 	.sub {
@@ -285,16 +400,23 @@
 	}
 
 	.note select,
-	.note textarea {
+	.note textarea,
+	.score input {
 		background: var(--bg-glass);
 		border: 1px solid var(--border-glass);
 		border-radius: 12px;
 		color: var(--text-primary);
+		font-size: 16px;
 	}
 
 	.note select {
+		appearance: none;
+		-webkit-appearance: none;
 		min-height: 44px;
+		min-width: 64px;
 		padding: 0 12px;
+		text-align: center;
+		text-align-last: center;
 	}
 
 	.note textarea {

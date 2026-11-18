@@ -1,24 +1,49 @@
 import 'fake-indexeddb/auto';
 import { describe, expect, it } from 'vitest';
 import week from '../../../../plan/week-08.json' with { type: 'json' };
-import { PlanWeek } from '#lib/domain/plan.ts';
+import { PlanSession, PlanWeek } from '#lib/domain/plan.ts';
 import { LogFlow } from './flow.svelte.ts';
 import type { Rest } from './rest.ts';
-import { logSteps } from './steps.ts';
 import { openLogStore, type LogStore } from './store.ts';
 
 const [monday] = PlanWeek.parse(week);
-const steps = logSteps(monday!);
 const t0 = Date.parse('2027-01-25T09:00:00Z');
 let dbCount = 0;
 
-function harness() {
+const easyRun = PlanSession.parse({
+	date: '2026-12-08',
+	week: 1,
+	title: 'Easy run',
+	why: 'Aerobic base.',
+	location: 'home',
+	blocks: [{ name: 'Run', kind: 'conditioning', minutes: 40, hard: false, prescriptions: [{ kind: 'steady', movement: 'run', minutes: 40 }] }]
+});
+
+const pullUpsThenFran = PlanSession.parse({
+	date: '2026-12-09',
+	week: 1,
+	title: 'Pull-ups + Fran',
+	why: 'Benchmark.',
+	location: 'rec',
+	blocks: [
+		{ name: 'Strength', kind: 'strength', minutes: 10, hard: false, prescriptions: [{ kind: 'fixedSets', movement: 'pull_up', sets: 2, reps: 5 }] },
+		{
+			name: 'Fran',
+			kind: 'metcon',
+			minutes: 10,
+			hard: true,
+			prescriptions: [{ kind: 'forTime', rounds: 3, movements: [{ movement: 'thruster', reps: 21, load: 95 }] }]
+		}
+	]
+});
+
+function harness(session: PlanSession = monday!) {
 	const store = openLogStore(`flow-${dbCount++}`);
 	let rest: Rest | undefined;
 	let now = t0;
 	let syncRequests = 0;
 	const flow = () =>
-		new LogFlow(monday!.date, steps, {
+		new LogFlow(session, {
 			store: () => store,
 			deviceId: () => 'device-1',
 			recallRest: () => rest,
@@ -128,5 +153,97 @@ describe('LogFlow', () => {
 		expect(reopened.index).toBe(3);
 		expect(reopened.saved).toBeUndefined();
 		expect(reopened.ready).toBe(true);
+	});
+
+	it('a session with no sets opens straight on the Session step and saves a session record', async () => {
+		const h = harness(easyRun);
+		const flow = h.flow();
+		await flow.resume();
+		expect(flow.onSession).toBe(true);
+		expect(flow.scored).toBeUndefined();
+		expect(flow.sessionRpe).toBe(4);
+		for (let i = 0; i < 5; i++) flow.easier();
+		expect(flow.sessionRpe).toBe(1);
+		for (let i = 0; i < 12; i++) flow.harder();
+		expect(flow.sessionRpe).toBe(10);
+		flow.easier();
+		flow.note = ' legs heavy ';
+		await flow.done();
+
+		const store = await h.store;
+		expect(await store.entries()).toEqual([]);
+		expect(await store.sessions()).toEqual([
+			{
+				kind: 'session',
+				id: flow.savedSession?.id,
+				sessionDate: '2026-12-08',
+				rpe: 9,
+				note: 'legs heavy',
+				loggedAt: new Date(t0).toISOString(),
+				deviceId: 'device-1',
+				revision: 1
+			}
+		]);
+		expect(h.syncRequests()).toBe(1);
+
+		const reopened = h.flow();
+		await reopened.resume();
+		expect(reopened.savedSession?.id).toBe(flow.savedSession?.id);
+		await reopened.undo();
+		expect(await store.sessions()).toEqual([]);
+		expect(reopened.savedSession).toBeUndefined();
+		expect(reopened.onSession).toBe(true);
+	});
+
+	it('after the last set comes the Session step, scored when the session has a for-time block', async () => {
+		const h = harness(pullUpsThenFran);
+		const flow = h.flow();
+		await flow.resume();
+		await flow.done();
+		flow.advance();
+		await flow.done();
+		expect(flow.next).toBe('Session');
+		flow.advance();
+		expect(flow.onSession).toBe(true);
+		expect(flow.step).toBeUndefined();
+		expect(flow.sessionRpe).toBe(7);
+		expect(h.rest()).toBeUndefined();
+		expect(flow.scored).toEqual({ blockIndex: 1, prescriptionIndex: 0, type: 'time' });
+
+		flow.score = '4:75';
+		expect(flow.scoreInvalid).toBe(true);
+		await flow.done();
+		expect(flow.savedSession).toBeUndefined();
+
+		flow.score = '4:05';
+		expect(flow.scoreInvalid).toBe(false);
+		await flow.done();
+		const [saved] = await (await h.store).sessions();
+		expect(saved).toMatchObject({ rpe: 7, score: { blockIndex: 1, prescriptionIndex: 0, type: 'time', value: 245 } });
+
+		const reopened = h.flow();
+		await reopened.resume();
+		expect(reopened.onSession).toBe(true);
+		expect(reopened.score).toBe('4:05');
+	});
+
+	it('a reload after the last set, once rest is over, lands on the Session step', async () => {
+		const h = harness(pullUpsThenFran);
+		const flow = h.flow();
+		await flow.resume();
+		await flow.done();
+		flow.advance();
+		await flow.done();
+
+		const resting = h.flow();
+		await resting.resume();
+		expect(resting.index).toBe(1);
+		expect(resting.saved).toBeDefined();
+
+		resting.advance();
+		const reopened = h.flow();
+		await reopened.resume();
+		expect(reopened.onSession).toBe(true);
+		expect(reopened.savedSession).toBeUndefined();
 	});
 });

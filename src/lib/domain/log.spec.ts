@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LogEntry, LogRecord, SyncRequest, syncBatchLimit } from './log.ts';
+import { LogEntry, LogRecord, SessionRecord, SyncRequest, syncBatchLimit } from './log.ts';
 
 const entry = {
 	id: '019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e5f',
@@ -56,5 +56,34 @@ describe('LogRecord', () => {
 		expect(SyncRequest.safeParse({ records: [record] }).success).toBe(true);
 		expect(SyncRequest.safeParse({ records: [] }).success).toBe(false);
 		expect(SyncRequest.safeParse({ records: Array(syncBatchLimit + 1).fill(record) }).success).toBe(false);
+	});
+});
+
+describe('SessionRecord', () => {
+	const session = {
+		kind: 'session',
+		id: '019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e60',
+		sessionDate: '2026-12-08',
+		rpe: 9,
+		score: { blockIndex: 2, prescriptionIndex: 0, type: 'time', value: 245 },
+		loggedAt: '2026-12-08T07:10:00.000-07:00',
+		deviceId: 'phone-1',
+		revision: 1
+	};
+
+	it('is a done session with an integer RPE and an optional score', () => {
+		expect(SessionRecord.parse(session)).toStrictEqual(session);
+		const { score, ...unscored } = session;
+		expect(SessionRecord.safeParse(unscored).success).toBe(true);
+		expect(SessionRecord.safeParse({ ...session, rpe: 8.5 }).success).toBe(false);
+		expect(SessionRecord.safeParse({ ...session, rpe: 0 }).success).toBe(false);
+		expect(SessionRecord.safeParse({ ...session, score: { ...score, type: 'text' } }).success).toBe(false);
+		expect(SessionRecord.safeParse({ ...session, kind: 'set' }).success).toBe(false);
+	});
+
+	it('travels in the same batches as sets, and a set never passes as a session', () => {
+		const { kind, ...withoutKind } = session;
+		expect(SyncRequest.safeParse({ records: [session] }).success).toBe(true);
+		expect(SyncRequest.safeParse({ records: [withoutKind] }).success).toBe(false);
 	});
 });

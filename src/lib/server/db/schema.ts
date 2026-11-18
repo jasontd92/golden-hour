@@ -19,3 +19,21 @@ export const logEntries = sqliteTable('log_entries', {
 });
 
 export type LogEntryRow = typeof logEntries.$inferSelect;
+
+export const sessionLogs = sqliteTable('session_logs', {
+	id: text('id').primaryKey(),
+	sessionDate: text('session_date').notNull(),
+	rpe: integer('rpe').notNull(),
+	scoreBlockIndex: integer('score_block_index'),
+	scorePrescriptionIndex: integer('score_prescription_index'),
+	scoreType: text('score_type'),
+	scoreValue: real('score_value'),
+	note: text('note'),
+	loggedAt: text('logged_at').notNull(),
+	deviceId: text('device_id').notNull(),
+	revision: integer('revision').notNull(),
+	deletedAt: text('deleted_at'),
+	receivedAt: text('received_at').notNull()
+});
+
+export type SessionLogRow = typeof sessionLogs.$inferSelect;

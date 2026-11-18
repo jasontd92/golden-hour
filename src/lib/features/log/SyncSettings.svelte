@@ -14,7 +14,7 @@
 <div class="screen">
 	<header>
 		<h1>Sync</h1>
-		<p><span class="num">{logSync.pending}</span> {logSync.pending === 1 ? 'set' : 'sets'} waiting to sync</p>
+		<p><span class="num">{logSync.pending}</span> {logSync.pending === 1 ? 'entry' : 'entries'} waiting to sync</p>
 	</header>
 	<form onsubmit={save}>
 		<input

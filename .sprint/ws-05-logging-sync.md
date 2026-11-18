@@ -33,5 +33,12 @@ The CEO creates the Turso database and adds the env vars to Vercel. That's a HAL
 - [x] WS5b: The saved state shows an estimated 1RM equal to `estimatedOneRm` (mechanical). — VERIFIED ws5b-verify: the e2e asserts `Estimated max ${estimatedOneRm(load, reps)} lb` for 170×6, 200×5, 225×5; hand-checked 170×6 → 170·6·0.0333+170 = 203.97 → 204, which the saved-rest screenshot shows.
 - [ ] HUMAN (WS5b): CEO logs a real set on the phone in the gym with airplane mode on, then syncs.
 
+## WS5d: session-level record (CEO 2026-11-18)
+- [ ] A `SessionLog` (kind `session`, integer RPE 1–10, optional score and note) travels in the same outbox and request as sets, upserted by id into `session_logs` (an ADD TABLE migration) (mechanical).
+- [ ] The hold-the-line A property and `pnpm proof:sync` cover session records with the same client, server, tombstone and drain invariants; every mutant is killed by a tagged assertion (mechanical).
+- [ ] When two tabs sync at once, or an undo lands during a sync, `syncOutbox` reports success once nothing it sent is still pending, and never while something is (property, tagged `[outcome]`) (mechanical).
+- [ ] e2e on both mobile projects: a no-set session is logged offline with RPE, survives a reload and reaches the server (rows read back from the e2e libSQL file); a session with sets ends with one Session step; set rows are read back too (mechanical).
+- [ ] Screenshots of the Session step, the score entry and a no-set session's log in the PR evidence comment (empirical).
+
 ## Risks
 Undo after sync: model it as a tombstone (`deletedAt`) that syncs, never as a local delete.

@@ -1,7 +1,9 @@
-import type { LogRecord } from '#lib/domain/log.ts';
-import { newLogEntry } from './entry.ts';
+import type { LogRecord, SessionRecord } from '#lib/domain/log.ts';
+import type { PlanSession } from '#lib/domain/plan.ts';
+import { newLogEntry, newSessionLog } from './entry.ts';
 import { restSeconds, wallClock, type Rest } from './rest.ts';
-import { loggedAt, nextLabel, type LogStep } from './steps.ts';
+import { defaultSessionRpe, maxRpe, minRpe, readScore, scoredPrescription, scoreText, type ScoredPrescription } from './session-step.ts';
+import { loggedAt, logSteps, nextLabel, type LogStep } from './steps.ts';
 import type { LogStore } from './store.ts';
 
 export interface FlowDeps {
@@ -13,6 +15,8 @@ export interface FlowDeps {
 	now?: () => Date;
 }
 
+export const sessionStepLabel = 'Session';
+
 export class LogFlow {
 	index = $state(0);
 	reps = $state(0);
@@ -20,15 +24,22 @@ export class LogFlow {
 	note = $state('');
 	saved = $state<LogRecord | undefined>();
 	restEndsAt = $state<number | undefined>();
+	sessionRpe = $state(0);
+	score = $state('');
+	savedSession = $state<SessionRecord | undefined>();
 	ready = $state(false);
 	readonly sessionDate: string;
 	readonly steps: readonly LogStep[];
+	readonly scored: ScoredPrescription | undefined;
+	readonly #defaultRpe: number;
 	readonly #deps: FlowDeps;
 	#busy = false;
 
-	constructor(sessionDate: string, steps: readonly LogStep[], deps: FlowDeps) {
-		this.sessionDate = sessionDate;
-		this.steps = steps;
+	constructor(session: PlanSession, deps: FlowDeps) {
+		this.sessionDate = session.date;
+		this.steps = logSteps(session);
+		this.scored = scoredPrescription(session);
+		this.#defaultRpe = defaultSessionRpe(session);
 		this.#deps = deps;
 		this.#show(0);
 	}
@@ -37,8 +48,17 @@ export class LogFlow {
 		return this.steps[this.index];
 	}
 
+	get onSession(): boolean {
+		return this.index === this.steps.length;
+	}
+
 	get next(): string | undefined {
-		return nextLabel(this.steps, this.index);
+		if (this.onSession) return undefined;
+		return nextLabel(this.steps, this.index) ?? sessionStepLabel;
+	}
+
+	get scoreInvalid(): boolean {
+		return this.scored !== undefined && readScore(this.score, this.scored) === 'invalid';
 	}
 
 	#now = () => (this.#deps.now ?? wallClock)();
@@ -50,17 +70,31 @@ export class LogFlow {
 		this.reps = saved?.reps ?? this.steps[index]?.reps ?? 0;
 		this.rpe = saved?.rpe;
 		this.note = saved?.note ?? '';
+		this.savedSession = undefined;
+		this.sessionRpe = this.#defaultRpe;
+		this.score = '';
+	}
+
+	#showSession(saved?: SessionRecord): void {
+		this.#show(this.steps.length);
+		this.savedSession = saved;
+		this.sessionRpe = saved?.rpe ?? this.#defaultRpe;
+		this.score = saved?.score ? scoreText(saved.score) : '';
+		this.note = saved?.note ?? '';
 	}
 
 	async resume(): Promise<void> {
-		const records = (await (await this.#deps.store()).entries()).filter((r) => r.sessionDate === this.sessionDate);
+		const store = await this.#deps.store();
+		const records = (await store.entries()).filter((r) => r.sessionDate === this.sessionDate);
+		const sessionLog = (await store.sessions()).findLast((r) => r.sessionDate === this.sessionDate);
 		const logged = loggedAt(this.steps, records);
 		const firstOpen = logged.findIndex((record) => !record);
 		const lastIndex = (firstOpen === -1 ? this.steps.length : firstOpen) - 1;
 		const last = logged[lastIndex];
 		const rest = this.#deps.recallRest();
 		const resting = last && rest?.entryId === last.id ? rest.endsAt : undefined;
-		if (last && (resting !== undefined || firstOpen === -1)) this.#show(lastIndex, last, resting);
+		if (last && resting !== undefined && !sessionLog) this.#show(lastIndex, last, resting);
+		else if (firstOpen === -1) this.#showSession(sessionLog);
 		else this.#show(Math.max(0, firstOpen));
 		this.ready = true;
 	}
@@ -73,11 +107,29 @@ export class LogFlow {
 		this.reps += 1;
 	}
 
-	async done(): Promise<void> {
-		const step = this.step;
-		if (!step || this.saved || this.#busy) return;
+	easier(): void {
+		this.sessionRpe = Math.max(minRpe, this.sessionRpe - 1);
+	}
+
+	harder(): void {
+		this.sessionRpe = Math.min(maxRpe, this.sessionRpe + 1);
+	}
+
+	async #guarded(work: () => Promise<void>): Promise<void> {
+		if (this.#busy) return;
 		this.#busy = true;
 		try {
+			await work();
+		} finally {
+			this.#busy = false;
+		}
+	}
+
+	async done(): Promise<void> {
+		if (this.onSession) return this.#doneSession();
+		const step = this.step;
+		if (!step || this.saved) return;
+		await this.#guarded(async () => {
 			const note = this.note.trim();
 			const entry = newLogEntry(
 				{
@@ -100,29 +152,47 @@ export class LogFlow {
 			this.saved = record;
 			this.restEndsAt = endsAt;
 			this.#deps.saved();
-		} finally {
-			this.#busy = false;
-		}
+		});
+	}
+
+	async #doneSession(): Promise<void> {
+		const score = this.scored ? readScore(this.score, this.scored) : undefined;
+		if (this.savedSession || score === 'invalid') return;
+		await this.#guarded(async () => {
+			const note = this.note.trim();
+			const sessionLog = newSessionLog(
+				{
+					sessionDate: this.sessionDate,
+					rpe: this.sessionRpe,
+					...(score ? { score } : {}),
+					...(note ? { note } : {})
+				},
+				this.#deps.deviceId(),
+				this.#now()
+			);
+			this.savedSession = await (await this.#deps.store()).saveSession(sessionLog);
+			this.#deps.keepRest(undefined);
+			this.#deps.saved();
+		});
 	}
 
 	async undo(): Promise<void> {
-		const saved = this.saved;
-		if (!saved || this.#busy) return;
-		this.#busy = true;
-		try {
+		const saved = this.savedSession ?? this.saved;
+		if (!saved) return;
+		await this.#guarded(async () => {
 			await (await this.#deps.store()).undo(saved.id, this.#now());
 			this.#deps.keepRest(undefined);
 			this.saved = undefined;
+			this.savedSession = undefined;
 			this.restEndsAt = undefined;
 			this.#deps.saved();
-		} finally {
-			this.#busy = false;
-		}
+		});
 	}
 
 	advance(): void {
-		if (!this.saved || !this.next) return;
+		if (!this.saved || this.onSession) return;
 		this.#deps.keepRest(undefined);
-		this.#show(this.index + 1);
+		if (this.index + 1 === this.steps.length) this.#showSession();
+		else this.#show(this.index + 1);
 	}
 }
