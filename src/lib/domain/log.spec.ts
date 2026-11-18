@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { dayLog, LogEntry, LogRecord, SessionRecord, SyncRequest, syncBatchLimit } from './log.ts';
+import { dayLog, LogEntry, LogRecord, replaceSession, SessionRecord, sessionsByDate, SyncRequest, syncBatchLimit, type SessionLog } from './log.ts';
 
 const entry = {
 	id: '019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e5f',
@@ -106,5 +106,48 @@ describe('dayLog', () => {
 		const second = session('019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e63', 8, '2026-12-08T02:00:00Z');
 		expect(dayLog([later, second, otherDay, first, record], '2026-12-07')).toEqual({ sets: [record, later], session: second });
 		expect(dayLog([otherDay], '2026-12-07')).toEqual({ sets: [], session: undefined });
+	});
+});
+
+describe('one session record per date', () => {
+	const logged: SessionLog = {
+		kind: 'session',
+		id: '019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e70',
+		sessionDate: '2026-12-08',
+		rpe: 6,
+		score: { blockIndex: 2, prescriptionIndex: 0, type: 'time', value: 245 },
+		loggedAt: '2026-12-08T07:10:00.000-07:00',
+		deviceId: 'phone-1'
+	};
+	const again: SessionLog = { kind: 'session', id: '019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e71', sessionDate: '2026-12-08', rpe: 8, loggedAt: '2026-12-08T19:00:00.000-07:00', deviceId: 'phone-2' };
+
+	it('a first save starts at revision 1 under its own id', () => {
+		expect(replaceSession(undefined, logged)).toStrictEqual({ ...logged, revision: 1 });
+	});
+
+	it('a second save edits the first: same id, next revision, the second values', () => {
+		const first = replaceSession(undefined, logged);
+		expect(replaceSession({ ...first, revision: 4 }, again)).toStrictEqual({ ...again, id: logged.id, revision: 5 });
+	});
+
+	it('a save after an undo brings the record back instead of starting another', () => {
+		const undone = { ...replaceSession(undefined, logged), revision: 2, deletedAt: '2026-12-08T15:00:00.000Z' };
+		expect(replaceSession(undone, again)).toStrictEqual({ ...again, id: logged.id, revision: 3 });
+	});
+
+	it('keeps one record per date, a live one over an undone one, then the latest', () => {
+		const first = replaceSession(undefined, logged);
+		const later = { ...replaceSession(undefined, again), id: '019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e72' };
+		const undoneLatest = { ...later, id: '019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e73', loggedAt: '2026-12-09T09:00:00Z', deletedAt: '2026-12-09T09:01:00Z' };
+		const otherDay = { ...first, id: '019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e74', sessionDate: '2026-12-09' };
+		const set = LogRecord.parse({ ...entry, sessionDate: '2026-12-08', revision: 1 });
+		expect(sessionsByDate([undoneLatest, later, set, first, otherDay])).toStrictEqual(
+			new Map([
+				['2026-12-08', later],
+				['2026-12-09', otherDay]
+			])
+		);
+		expect(sessionsByDate([undoneLatest]).get('2026-12-08')).toBe(undoneLatest);
+		expect(dayLog([undoneLatest], '2026-12-08').session).toBeUndefined();
 	});
 });

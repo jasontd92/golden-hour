@@ -13,7 +13,7 @@ export interface Mutant {
 
 export const propertySpec = 'src/routes/api/sync/sync.spec.ts';
 
-export const assertionTags = ['client', 'duplicate', 'server', 'tombstone', 'drain', 'outcome', 'terminates'] as const;
+export const assertionTags = ['client', 'duplicate', 'server', 'tombstone', 'drain', 'outcome', 'terminates', 'replace'] as const;
 
 export const mutants: Mutant[] = [
 	{
@@ -120,6 +120,13 @@ export const mutants: Mutant[] = [
 		search: ',\n\t\t\tsetWhere: sql`excluded.revision > ${sessionLogs.revision}`',
 		replace: '',
 		changedLines: 3
+	},
+	{
+		name: 'replace creates a new id instead of bumping the revision',
+		file: 'src/lib/domain/log.ts',
+		search: '{ id: existing.id, revision: existing.revision + 1 }',
+		replace: '{ revision: 1 }',
+		changedLines: 2
 	}
 ];
 

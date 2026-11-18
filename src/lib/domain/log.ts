@@ -62,16 +62,33 @@ export type SyncRecord = z.infer<typeof SyncRecord>;
 export const isSessionRecord = (record: SyncRecord): record is SessionRecord => 'kind' in record;
 const isSetRecord = (record: SyncRecord): record is LogRecord => !isSessionRecord(record);
 
+export type SessionsByDate = ReadonlyMap<string, SessionRecord>;
+
+const byLoggedAt = (a: SyncRecord, b: SyncRecord) => Date.parse(a.loggedAt) - Date.parse(b.loggedAt);
+const preferred = (a: SessionRecord, b: SessionRecord) => Number(!a.deletedAt) - Number(!b.deletedAt) || byLoggedAt(a, b);
+
+export function sessionsByDate(records: readonly SyncRecord[]): SessionsByDate {
+	const byDate = new Map<string, SessionRecord>();
+	for (const record of records.filter(isSessionRecord)) {
+		const kept = byDate.get(record.sessionDate);
+		if (!kept || preferred(record, kept) > 0) byDate.set(record.sessionDate, record);
+	}
+	return byDate;
+}
+
+export const replaceSession = (existing: SessionRecord | undefined, next: SessionLog): SessionRecord =>
+	SessionRecord.parse({ ...next, ...(existing ? { id: existing.id, revision: existing.revision + 1 } : { revision: 1 }) });
+
 export interface DayLog {
 	sets: LogRecord[];
 	session: SessionRecord | undefined;
 }
 
 export function dayLog(records: readonly SyncRecord[], date: string): DayLog {
-	const onDate = records.filter((r) => r.sessionDate === date).toSorted((a, b) => Date.parse(a.loggedAt) - Date.parse(b.loggedAt));
+	const session = sessionsByDate(records).get(date);
 	return {
-		sets: onDate.filter(isSetRecord),
-		session: onDate.filter(isSessionRecord).at(-1)
+		sets: records.filter((r): r is LogRecord => isSetRecord(r) && r.sessionDate === date).toSorted(byLoggedAt),
+		session: session?.deletedAt ? undefined : session
 	};
 }
 

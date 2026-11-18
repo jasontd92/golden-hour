@@ -34,6 +34,7 @@ export class LogFlow {
 	readonly #defaultRpe: number;
 	readonly #deps: FlowDeps;
 	#busy = false;
+	#existing: SessionRecord | undefined;
 
 	constructor(session: PlanSession, deps: FlowDeps) {
 		this.sessionDate = session.date;
@@ -75,18 +76,19 @@ export class LogFlow {
 		this.score = '';
 	}
 
-	#showSession(saved?: SessionRecord): void {
+	#showSession(existing = this.#existing): void {
 		this.#show(this.steps.length);
-		this.savedSession = saved;
-		this.sessionRpe = saved?.rpe ?? this.#defaultRpe;
-		this.score = saved?.score ? scoreText(saved.score) : '';
-		this.note = saved?.note ?? '';
+		this.savedSession = existing?.deletedAt ? undefined : existing;
+		this.sessionRpe = existing?.rpe ?? this.#defaultRpe;
+		this.score = existing?.score ? scoreText(existing.score) : '';
+		this.note = existing?.note ?? '';
 	}
 
 	async resume(): Promise<void> {
 		const store = await this.#deps.store();
 		const records = (await store.entries()).filter((r) => r.sessionDate === this.sessionDate);
-		const sessionLog = (await store.sessions()).findLast((r) => r.sessionDate === this.sessionDate);
+		this.#existing = await store.sessionOn(this.sessionDate);
+		const sessionLog = this.#existing?.deletedAt ? undefined : this.#existing;
 		const logged = loggedAt(this.steps, records);
 		const firstOpen = logged.findIndex((record) => !record);
 		const lastIndex = (firstOpen === -1 ? this.steps.length : firstOpen) - 1;
@@ -94,7 +96,7 @@ export class LogFlow {
 		const rest = this.#deps.recallRest();
 		const resting = last && rest?.entryId === last.id ? rest.endsAt : undefined;
 		if (last && resting !== undefined && !sessionLog) this.#show(lastIndex, last, resting);
-		else if (firstOpen === -1) this.#showSession(sessionLog);
+		else if (firstOpen === -1) this.#showSession();
 		else this.#show(Math.max(0, firstOpen));
 		this.ready = true;
 	}
@@ -170,7 +172,7 @@ export class LogFlow {
 				this.#deps.deviceId(),
 				this.#now()
 			);
-			this.savedSession = await (await this.#deps.store()).saveSession(sessionLog);
+			this.savedSession = this.#existing = await (await this.#deps.store()).saveSession(sessionLog);
 			this.#deps.keepRest(undefined);
 			this.#deps.saved();
 		});
