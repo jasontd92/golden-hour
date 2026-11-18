@@ -20,3 +20,23 @@ describe('/api/sync without SYNC_TOKEN', () => {
 		expect(await response.json()).toEqual({ token: false, database: 'unconfigured' });
 	});
 });
+
+describe('/api/sync when the server module throws', () => {
+	it('answers 503 with a status, never 500', async () => {
+		vi.resetModules();
+		vi.doMock('#lib/server/sync-env.ts', () => {
+			throw Object.assign(new Error('native binding missing at libsql://secret'), { code: 'ERR_DLOPEN_FAILED' });
+		});
+		vi.spyOn(console, 'error').mockImplementation(() => {});
+		const route = await import('./+server.ts');
+		const get = await route.GET({} as Event);
+		expect(get.status).toBe(503);
+		const body = await get.json();
+		expect(body).toMatchObject({ token: false, database: 'error' });
+		expect(JSON.stringify(body)).not.toContain('secret');
+		const post = await route.POST({ request: new Request('http://app.test', { method: 'POST', body: '{}' }) } as Event);
+		expect(post.status).toBe(503);
+		expect(await post.json()).not.toHaveProperty('accepted');
+		vi.doUnmock('#lib/server/sync-env.ts');
+	});
+});

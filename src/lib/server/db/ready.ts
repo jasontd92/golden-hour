@@ -1,27 +1,30 @@
 import type { Db } from './client.ts';
+import { failureReason } from '../failure.ts';
 import { migrateDb } from './migrate.ts';
 
-export type Database = { status: 'ready'; db: Db } | { status: 'unconfigured' | 'unmigrated' };
+export type Database =
+	| { status: 'ready'; db: Db }
+	| { status: 'unconfigured' }
+	| { status: 'unmigrated'; reason: string };
 
-export function migratedOnFirstUse(open: () => Db | undefined, migrate: (db: Db) => Promise<unknown> = migrateDb): () => Promise<Database> {
-	let db: Db | undefined;
-	let migrated: Promise<void> | undefined;
+export function migratedOnFirstUse(
+	open: () => Promise<Db | undefined>,
+	migrate: (db: Db) => Promise<unknown> = migrateDb
+): () => Promise<Database> {
+	let ready: Promise<Db | undefined> | undefined;
 	return async () => {
-		db ??= open();
-		if (!db) return { status: 'unconfigured' };
-		const target = db;
-		migrated ??= migrate(target).then(
-			() => undefined,
-			(error: unknown) => {
-				migrated = undefined;
-				const code = (error as { code?: unknown } | null)?.code;
-				console.error(`sync: migrations not applied (${error instanceof Error ? error.name : 'error'}${code ? ` ${String(code)}` : ''})`);
-				throw error;
-			}
-		);
-		return migrated.then(
-			(): Database => ({ status: 'ready', db: target }),
-			(): Database => ({ status: 'unmigrated' })
-		);
+		ready ??= open().then(async (db) => {
+			if (db) await migrate(db);
+			return db;
+		});
+		try {
+			const db = await ready;
+			return db ? { status: 'ready', db } : { status: 'unconfigured' };
+		} catch (error) {
+			ready = undefined;
+			const reason = failureReason(error);
+			console.error(`sync: database not ready (${reason})`);
+			return { status: 'unmigrated', reason };
+		}
 	};
 }

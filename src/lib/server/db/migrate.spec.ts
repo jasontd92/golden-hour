@@ -15,17 +15,17 @@ describe('bundledMigrations', () => {
 
 describe('migrateDb', () => {
 	it('applies once, then is a no-op', async () => {
-		const db = openDb(':memory:');
+		const db = await openDb(':memory:');
 		expect(await migrateDb(db)).toBe(bundledMigrations.length);
 		expect(await migrateDb(db)).toBe(0);
 		expect(await logEntriesReadable(db)).toBe(true);
 	});
 
 	it('agrees with drizzle-kit\'s own migrator in both directions', async () => {
-		const byDrizzle = openDb(':memory:');
+		const byDrizzle = await openDb(':memory:');
 		await migrate(byDrizzle, { migrationsFolder: 'drizzle' });
 		expect(await migrateDb(byDrizzle)).toBe(0);
-		const byUs = openDb(':memory:');
+		const byUs = await openDb(':memory:');
 		await migrateDb(byUs);
 		await expect(migrate(byUs, { migrationsFolder: 'drizzle' })).resolves.toBeUndefined();
 		const hashes = (db: typeof byUs) => db.all(`select hash, created_at from __drizzle_migrations`);

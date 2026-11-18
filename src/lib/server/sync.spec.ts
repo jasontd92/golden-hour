@@ -17,9 +17,9 @@ describe('bearerMatches', () => {
 });
 
 describe('handleSync', () => {
-	it.each(['unconfigured', 'unmigrated'] as const)('fails closed with 503 and accepts nothing when the database is %s', async (status) => {
+	it.each([{ status: 'unconfigured' }, { status: 'unmigrated', reason: 'Error' }] as const)('fails closed with 503 and accepts nothing when the database is $status', async (state) => {
 		const request = post();
-		const response = await handleSync(request, { token: 't', database: database({ status }) });
+		const response = await handleSync(request, { token: 't', database: database(state) });
 		expect(response.status).toBe(503);
 		expect(await response.json()).not.toHaveProperty('accepted');
 		expect(request.bodyUsed).toBe(false);
@@ -32,9 +32,9 @@ describe('syncHealth', () => {
 			const response = await syncHealth(deps);
 			return [response.status, await response.json()];
 		};
-		expect(await health({ token: 't', database: database({ status: 'unmigrated' }) })).toEqual([503, { token: true, database: 'unmigrated' }]);
+		expect(await health({ token: 't', database: database({ status: 'unmigrated', reason: 'LibsqlError SERVER_ERROR' }) })).toEqual([503, { token: true, database: 'unmigrated', reason: 'LibsqlError SERVER_ERROR' }]);
 		expect(await health({ token: undefined, database: database({ status: 'unconfigured' }) })).toEqual([503, { token: false, database: 'unconfigured' }]);
-		const bare = openDb(':memory:');
+		const bare = await openDb(':memory:');
 		expect(await health({ token: 't', database: database({ status: 'ready', db: bare }) })).toEqual([503, { token: true, database: 'unmigrated' }]);
 	});
 });

@@ -157,7 +157,7 @@ describe('hold-the-line A: no log entry is ever lost', () => {
 				expect(serverIds).toBe(distinctServerIds);
 				expect(pending).toBe(0);
 			}),
-			{ numRuns: 300 }
+			{ numRuns: 2000 }
 		);
 	}, 120_000);
 
