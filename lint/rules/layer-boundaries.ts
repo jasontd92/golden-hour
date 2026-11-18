@@ -21,14 +21,14 @@ export const layerBoundaries: Rule.RuleModule = {
 			crossFeature:
 				"Feature '{{from}}' must not import feature '{{to}}'. Move what both need into src/lib/domain or src/lib/ui, or compose them in a route.",
 			serverFromClient:
-				'src/lib/server is server-only. Import it only from src/lib/server, *.server.ts or +server.ts, and pass data to the client through a load function.'
+				'src/lib/server is server-only. Import it only from src/lib/server, *.server.ts, +server.ts or a route spec, and pass data to the client through a load function.'
 		}
 	},
 	create(context) {
 		const root = context.cwd;
 		const file = context.filename;
 		const from = layerOf(root, file);
-		const serverOnly = isServerOnlyFile(root, file);
+		const serverOnly = isServerOnlyFile(root, file) || (from.kind === 'routes' && specFile.test(file));
 		const pureDomain = from.kind === 'domain' && !specFile.test(file);
 
 		function check(node: Rule.Node, specifier: unknown) {

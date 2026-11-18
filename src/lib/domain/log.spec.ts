@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LogEntry } from './log.ts';
+import { LogEntry, LogRecord, SyncRequest, syncBatchLimit } from './log.ts';
 
 const entry = {
 	id: '019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e5f',
@@ -38,5 +38,23 @@ describe('LogEntry', () => {
 		expect(LogEntry.safeParse({ ...entry, rpe: 11 }).success).toBe(false);
 		expect(LogEntry.safeParse({ ...entry, rpe: 8.3 }).success).toBe(false);
 		expect(LogEntry.safeParse({ ...entry, setIndex: 0.5 }).success).toBe(false);
+	});
+});
+
+describe('LogRecord', () => {
+	const record = { ...entry, revision: 1 };
+
+	it('is a LogEntry plus a revision and an optional tombstone', () => {
+		expect(LogRecord.parse(record)).toStrictEqual(record);
+		expect(LogRecord.safeParse({ ...record, deletedAt: '2026-12-07T17:45:00.000-07:00' }).success).toBe(true);
+		expect(LogRecord.safeParse(entry).success).toBe(false);
+		expect(LogRecord.safeParse({ ...record, revision: 0 }).success).toBe(false);
+		expect(LogRecord.safeParse({ ...record, synced: true }).success).toBe(false);
+	});
+
+	it('travels in bounded, non-empty batches', () => {
+		expect(SyncRequest.safeParse({ records: [record] }).success).toBe(true);
+		expect(SyncRequest.safeParse({ records: [] }).success).toBe(false);
+		expect(SyncRequest.safeParse({ records: Array(syncBatchLimit + 1).fill(record) }).success).toBe(false);
 	});
 });

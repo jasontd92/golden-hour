@@ -2,13 +2,14 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { z } from 'zod';
 import { LiftEvidence, Result, Workout } from '#lib/domain/history.ts';
-import { LogEntry } from '#lib/domain/log.ts';
+import { LogEntry, LogRecord } from '#lib/domain/log.ts';
 import { PlanSession, PlanWeek } from '#lib/domain/plan.ts';
 
 export const emittedSchemas: Record<string, z.ZodType> = {
 	'plan-session': PlanSession,
 	'plan-week': PlanWeek,
 	'log-entry': LogEntry,
+	'log-record': LogRecord,
 	workout: Workout,
 	result: Result,
 	'lift-evidence': LiftEvidence

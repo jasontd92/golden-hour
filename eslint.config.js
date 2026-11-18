@@ -22,6 +22,7 @@ export default defineConfig(
 		plugins: { 'golden-hour': goldenHour },
 		rules: {
 			'no-undef': 'off',
+			'@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
 			'golden-hour/layer-boundaries': 'error',
 			'golden-hour/no-prose-comments': 'error'
 		}
