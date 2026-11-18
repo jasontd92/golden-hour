@@ -29,6 +29,10 @@ function vercelBuilds(previousSha?: string): boolean {
 	return status === 1;
 }
 
+it('the ignoreCommand fits the 256-character limit in the vercel.json schema', () => {
+	expect(ignoreCommand.length).toBeLessThanOrEqual(256);
+});
+
 describe('vercel ignoreCommand', () => {
 	afterEach(() => rmSync(repo, { recursive: true, force: true }));
 
