@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Plan</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+sc-for, sc-if{display: contents}
+a{color:inherit}
+button{font:inherit}
+.press{transition: transform 140ms cubic-bezier(0.23, 1, 0.32, 1); user-select: none}
+.press:active{transform: scale(0.97)}
+.cell{position: relative; isolation: isolate}
+.cell::before{content: ''; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: #ffffff0d; opacity: 0; transition: opacity 100ms ease}
+.quiet-btn{transition: color 100ms ease}
+:focus-visible{outline: 2px solid #2fd8c6; outline-offset: 3px}
+@media (hover: hover) and (pointer: fine){
+  .cell:hover::before{opacity: 1}
+  .row:hover{background: #ffffff0d}
+  .quiet-btn:hover{color: #eef4f3}
+}
+@media (prefers-reduced-motion: reduce){
+  .press, .cell::before, .quiet-btn{transition: none}
+  .press:active{transform: none}
+}
+.mono{font-family: 'Geist Mono', ui-monospace, monospace}
+.trunc{min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; background: #06090b; color: #eef4f3; font-family: Geist, -apple-system, system-ui, sans-serif; font-variant-numeric: tabular-nums; display: flex; flex-direction: column; overflow: hidden">
+
+<nav aria-label="Main" style="height: 56px; flex: none; padding: 0 48px; display: flex; align-items: center; gap: 28px; font-size: 15px">
+<a href="P3Plan.dc.html" aria-current="page" style="text-decoration: none; font-weight: 600">Plan</a>
+<a href="P3Progress.dc.html" class="quiet-btn" style="text-decoration: none; color: #93a3a1">Progress</a>
+</nav>
+
+<div style="flex: 1; min-height: 0; padding: 0 48px 36px; display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 40px">
+
+<section aria-label="Evolution 5 calendar" style="display: flex; flex-direction: column; min-width: 0">
+<header style="padding: 20px 0 22px; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-size: 15px; color: #93a3a1">Evolution 5 · Dec 7 – Apr 4</div>
+<h1 style="margin: 0; font-size: 34px; line-height: 1.08; letter-spacing: -0.02em; font-weight: 650">Week 6 <span style="color: #93a3a1; font-weight: 600">of 17</span></h1>
+</div>
+<div aria-hidden="true" style="display: flex; align-items: center; gap: 18px; padding-bottom: 4px; font-size: 13px; color: #93a3a1">
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; border-radius: 50%; background: #2fd8c6"></span>Hard</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; box-sizing: border-box; border-radius: 50%; border: 1.5px solid #2fd8c6"></span>Scaled</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 20px; height: 12px; border-radius: 16px; background: #ffffff0d"></span>Logged</span>
+</div>
+</header>
+
+<div style="display: grid; grid-template-columns: 76px 96px repeat(6, minmax(0, 1fr)); column-gap: 4px; height: 40px; align-items: center; font-size: 13px">
+<span></span><span></span>
+<sc-for list="{{columns}}" as="col" hint-placeholder-count="6">
+<span style="padding: 0 10px; display: flex; gap: 6px; min-width: 0"><span style="color: #93a3a1">{{col.day}}</span><span class="trunc">{{col.name}}</span></span>
+</sc-for>
+</div>
+
+<sc-for list="{{weeks}}" as="w" hint-placeholder-count="17">
+<div style="display: grid; grid-template-columns: 76px 96px repeat(6, minmax(0, 1fr)); column-gap: 4px; height: 34px; align-items: center; margin-top: {{w.gap}}">
+<span style="font-size: 13px; color: #93a3a1">{{w.phase}}</span>
+<button type="button" class="cell press" onClick="{{w.select}}" aria-label="{{w.aria}}" aria-pressed="{{w.selected}}" style="height: 30px; border: 0; border-radius: 16px; padding: 0 10px; display: flex; align-items: center; gap: 8px; background: transparent; box-shadow: {{w.ring}}; color: {{w.color}}; font-size: 13px; text-align: left; cursor: pointer">
+<span class="mono" style="width: 18px; text-align: right">{{w.n}}</span><span style="color: #93a3a1; white-space: nowrap">{{w.date}}</span>
+</button>
+<sc-for list="{{w.days}}" as="d" hint-placeholder-count="6">
+<button type="button" class="cell press" onClick="{{d.select}}" aria-label="{{d.aria}}" title="{{d.aria}}" aria-pressed="{{d.selected}}" style="height: 30px; min-width: 0; border: 0; border-radius: 16px; padding: 0 10px; display: flex; align-items: center; gap: 8px; background: {{d.fill}}; box-shadow: {{d.ring}}; color: {{d.labelColor}}; font-size: 13px; text-align: left; cursor: pointer">
+<span aria-hidden="true" style="flex: none; width: 8px; height: 8px; box-sizing: border-box; border-radius: 50%; display: {{d.dotDisplay}}; background: {{d.dotBg}}; border: 1.5px solid {{d.dotBorder}}"></span>
+<span class="trunc">{{d.label}}</span>
+</button>
+</sc-for>
+</div>
+</sc-for>
+</section>
+
+<aside aria-label="Selected" style="border-left: 1px solid #ffffff1a; padding: 24px 0 0 40px; display: flex; flex-direction: column; min-height: 0">
+<div style="height: 22px; display: flex; justify-content: space-between; font-size: 15px; color: #93a3a1">
+<span>{{pane.kicker}}</span>
+<sc-if value="{{pane.showToday}}" hint-placeholder-val="{{false}}"><button type="button" class="quiet-btn" onClick="{{goToday}}" style="border: 0; padding: 0; background: transparent; color: #93a3a1; font-size: 15px; cursor: pointer">Today</button></sc-if>
+</div>
+<h2 style="margin: 6px 0 0; font-size: 28px; line-height: 1.1; letter-spacing: -0.02em; font-weight: 650">{{pane.title}}</h2>
+<div style="margin-top: 6px; font-size: 15px; color: #93a3a1">{{pane.sub}}</div>
+
+<div style="margin-top: 24px; display: flex; flex-direction: column; overflow: auto">
+<sc-for list="{{pane.rows}}" as="b" hint-placeholder-count="4">
+<div style="border-top: 1px solid #ffffff1a">
+<sc-if value="{{b.expandable}}" hint-placeholder-val="{{true}}">
+<button type="button" class="row press" onClick="{{b.toggle}}" aria-expanded="{{b.open}}" style="width: 100%; min-height: 52px; padding: 0 8px; border: 0; border-radius: 16px; display: flex; align-items: center; gap: 10px; background: transparent; color: #eef4f3; font-size: 16px; text-align: left; cursor: pointer">
+<span style="flex: 1">{{b.name}}</span>
+<sc-if value="{{b.hard}}" hint-placeholder-val="{{false}}"><span aria-label="Hard effort" style="width: 8px; height: 8px; border-radius: 50%; background: #2fd8c6"></span></sc-if>
+<span class="mono" style="color: #93a3a1; font-size: 14px">{{b.min}}</span>
+</button>
+</sc-if>
+<sc-if value="{{b.plain}}" hint-placeholder-val="{{false}}">
+<div style="min-height: 52px; padding: 0 8px; display: flex; align-items: center; gap: 10px; font-size: 16px">
+<span style="flex: 1; color: #93a3a1">{{b.name}}</span>
+<span class="mono" style="font-size: 15px">{{b.min}}</span>
+</div>
+</sc-if>
+<sc-if value="{{b.open}}" hint-placeholder-val="{{false}}">
+<div style="padding: 0 8px 16px; display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{b.lines}}" as="l" hint-placeholder-count="3">
+<div style="display: flex; gap: 12px; font-size: 16px; line-height: 1.4">
+<span style="flex: 1; color: {{l.color}}; font-weight: {{l.weight}}">{{l.text}}</span>
+<span class="mono" style="font-size: 14px; color: #93a3a1">{{l.logged}}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</div>
+</sc-for>
+<div style="border-top: 1px solid #ffffff1a"></div>
+<sc-if value="{{pane.why}}" hint-placeholder-val="{{true}}">
+<button type="button" class="quiet-btn press" onClick="{{toggleWhy}}" style="align-self: flex-start; margin-top: 12px; min-height: 40px; padding: 0 8px; border: 0; background: transparent; color: #93a3a1; font-size: 15px; cursor: pointer">{{whyLabel}}</button>
+<sc-if value="{{whyOpen}}" hint-placeholder-val="{{false}}">
+<p style="margin: 0; padding: 0 8px; font-size: 15px; line-height: 1.5; color: #93a3a1; max-width: 40ch">{{pane.why}}</p>
+</sc-if>
+</sc-if>
+</div>
+</aside>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { sel: { kind: 'day', w: 6, d: 2 }, open: null, why: false };
+  }
+  renderVals() {
+    const C = { text: '#eef4f3', muted: '#93a3a1', accent: '#2fd8c6', glass: '#ffffff0d' };
+    const TODAY = { w: 6, d: 2 };
+    const START = Date.UTC(2026, 11, 7);
+    const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const DAY = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const DAYFULL = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const at = (w, d) => new Date(START + ((w - 1) * 7 + d) * 864e5);
+    const fmt = (dt) => `${MON[dt.getUTCMonth()]} ${dt.getUTCDate()}`;
+    const r5 = (x) => Math.round(x / 5) * 5;
+    const HOLIDAY = { '3-4': 'Christmas Day', '4-4': "New Year's Day" };
+    const MISSED = new Set(['3-4', '5-3']);
+    const PULLUPS = { 1: 13, 2: 13, 3: 14, 4: 14 };
+
+    const phaseOf = (w) => w <= 6 ? 'Leader' : w === 7 || w === 15 ? 'Deload' : w === 11 ? 'TM test' : w >= 16 ? 'Retest' : 'Anchor';
+    const firstOfPhase = new Set([1, 7, 8, 11, 12, 15, 16]);
+    const cycle = (w) => w <= 3 ? 0 : w <= 6 ? 1 : w <= 10 ? 2 : w <= 14 ? 3 : 4;
+    const tm = (w) => ({ squat: 215 + 10 * cycle(w), press: 135 + 5 * cycle(w), dl: 280 + 10 * cycle(w) });
+    const scaled = (w) => w <= 2 || w === 7 || w === 11 || w === 15;
+    const isPast = (w, d) => w < TODAY.w || (w === TODAY.w && d < TODAY.d);
+    const isDone = (w, d) => isPast(w, d) && !MISSED.has(`${w}-${d}`);
+    const latestPullups = (w) => { let v = 13; for (let i = 1; i < w; i++) if (PULLUPS[i]) v = PULLUPS[i]; return v; };
+    const longRun = (w) => { const m = Math.min(58 + 5 * (w - 1), 90); return w === 7 || w === 15 ? Math.round(m * 0.8) : m; };
+
+    const scheme = (w) => {
+      const p = phaseOf(w);
+      if (p === 'Leader') { const pc = [[.65, .75, .85], [.70, .80, .90], [.75, .85, .95]][(w - 1) % 3]; return { sets: pc.map((x) => [x, 5, false]), fsl: [5, pc[0]], label: `${pc.map((x) => Math.round(x * 100)).join('/')}% × 5` }; }
+      if (p === 'Anchor') { const cw = w <= 10 ? w - 8 : w - 12; const pc = [[.65, .75, .85], [.70, .80, .90], [.75, .85, .95]][cw]; const rp = [[5, 5, 5], [3, 3, 3], [5, 3, 1]][cw]; return { sets: pc.map((x, i) => [x, rp[i], i === 2]), fsl: [3, pc[0]], label: `${pc.map((x) => Math.round(x * 100)).join('/')}% × ${rp.join('/')}+` }; }
+      if (p === 'Deload') return { sets: [[.4, 5, false], [.5, 5, false], [.6, 5, false]], fsl: null, label: '40/50/60% × 5' };
+      if (p === 'TM test') return { sets: [[.7, 5, false], [.8, 5, false], [.9, 5, false], [1, 1, true]], fsl: null, label: '70/80/90% × 5, TM × max' };
+      return null;
+    };
+    const P = (t) => ({ text: t, color: C.text, weight: 400 });
+    const Q = (t) => ({ text: t, color: C.muted, weight: 400 });
+    const S = (t) => ({ text: t, color: C.text, weight: 600 });
+    const liftLines = (w, max, done) => {
+      const s = scheme(w);
+      const lines = s.sets.map(([pc, reps, amrap]) => {
+        const line = (pc === 1 ? S : amrap ? S : P)(pc === 1 ? `${max} × max` : `${r5(max * pc)} × ${reps}${amrap ? '+' : ''}`);
+        return { ...line, logged: done ? `✓ ${reps}` : '' };
+      });
+      if (s.fsl) lines.push(Q(`Then ${s.fsl[0]} × 5 at ${r5(max * s.fsl[1])}`));
+      if (phaseOf(w) === 'TM test') lines.push(Q('Fewer than 3 reps: TM −10%'));
+      return lines;
+    };
+    const blk = (name, min, lines, hard) => ({ name, min, lines, hard: !!hard });
+
+    const session = (w, d) => {
+      const done = isDone(w, d);
+      const t = tm(w);
+      const even = w % 2 === 0;
+      const scaleNote = w <= 2 ? [Q('Ramp-up week: half volume')] : scaled(w) ? [Q('Scaled to about half')] : [];
+      if (w >= 16) return retest(w, d);
+      if (d === 0) {
+        const fam = w === 4 ? 'Grace' : w === 8 ? 'Fran' : w === 12 ? 'Diane' : ['Couplet', 'Sprint intervals', 'Intervals', 'Couplet'][(w - 1) % 4];
+        const girl = { Grace: '30 clean & jerks, 135 lb', Fran: '21-15-9 thrusters 95 lb, pull-ups', Diane: '21-15-9 deadlifts 225 lb, HSPU' }[fam];
+        const hardLines = girl ? [P(girl), Q('Same standard as every past Grace, Fran or Diane')]
+          : fam === 'Couplet' ? [P('For time, 2–10 min'), P('Upper-body and gymnastics biased')]
+          : fam === 'Sprint intervals' ? [P('10–30 s on, rest 1:3'), P('Run, gymnastics or weights, not bike')]
+          : [P('30–120 s on, rest 1:2'), P('Run, gymnastics or weights, not bike')];
+        return { title: girl ? `Squat + ${fam}` : `Squat + ${fam.toLowerCase()}`, label: girl ? fam : '', hard: true, scaled: scaled(w),
+          why: 'Squat first, then the first of the week’s three hard efforts. Nothing harder than Zone 1 the day before.',
+          blocks: [blk('Warm-up', 8, [P('10–15 box jumps'), Q('Air squats · pass-throughs · inchworms')]), blk('Back squat', 22, liftLines(w, t.squat, done)), blk(fam, girl ? 12 : 10, [...hardLines, ...scaleNote], true), blk('Cool-down', 6, [Q('Couch stretch · dead hang')])] };
+      }
+      if (d === 1) {
+        const check = w === 4 || w === 8 || w === 12;
+        return { title: check ? 'Press + submax test' : 'Press + easy run', label: check ? 'Submax' : '', hard: false,
+          why: check ? 'The checkpoint submax: same pace, grade and time of day as Nov 17. A lower heart rate means aerobic gain.' : 'Press and skill work, then an easy run. Nothing here should feel hard.',
+          blocks: [blk('Warm-up', 6, [P('10 plyo push-ups'), Q('Band pull-aparts · scap push-ups')]), blk('Shoulder press', 18, liftLines(w, t.press, done)), blk('Gymnastics', 12, [P('L-sit, 3 × max in short sets'), P('Pike or box HSPU'), P('Ring dips')]),
+            check ? blk('Submax run', 30, [P('30 min at the Nov 17 pace, 1% grade'), Q('Record average HR and RPE')]) : blk('Easy run', 30, [P('25–35 min, Zone 1'), Q('RPE 3 or lower')])] };
+      }
+      if (d === 2) {
+        const set = Math.floor(latestPullups(w) / 2);
+        return { title: even ? 'Tempo 4 × 8 min' : 'Tempo 3 × 10 min', label: '', hard: true,
+          why: 'The second hard effort. Paces are ceilings: never run faster than the target.',
+          blocks: [blk('Warm-up', 10, [P('Easy jog · drills · 2 strides')]),
+            blk(even ? '4 × 8 min' : '3 × 10 min', even ? 40 : 36, even ? [P('2 min jog between'), Q('P10 + 0–15 s/mi, hold rep 1 pace through rep 4')] : [P('2 min jog between'), Q('P10 + 15–20 s/mi, HR ceiling 85–90%')], true),
+            blk('Pull-ups', 10, [P(`Sets of ${set}`), Q('Fill to 50–100 reps with ring rows')])] };
+      }
+      if (d === 3) {
+        const v = PULLUPS[w];
+        return { title: even ? 'Easy flow + skill' : 'Easy run + skill', label: '', hard: false,
+          why: 'Easy only, because deadlift is tomorrow. The pull-up test sets next week’s set size.',
+          blocks: [even ? blk('Easy flow', 30, [P('Assault bike + easy calisthenics'), Q('RPE 4 or lower')]) : blk('Easy run', 30, [P('25–35 min, Zone 1'), Q('RPE 3 or lower')]),
+            blk('Skill', 12, [P('Handstand holds'), P('L-sit accumulation')]), blk('Pull-up test', 3, [{ ...P('Strict pull-ups, max reps'), logged: done && v ? `✓ ${v}` : '' }])] };
+      }
+      if (d === 4) {
+        if (even) {
+          const mile = w === 4 || w === 8 || w === 12;
+          const bomb = w === 2 || w === 10;
+          const run = mile ? blk('Mile time trial', 15, [P('1 mile, all out'), Q('Record peak HR. Resets speed paces.')], true)
+            : bomb ? blk('Bombolini', 25, [P('3 × [500 m, 200 m jog, 100 m]'), Q('5 min between sets. Paces are ceilings.')], true)
+            : blk('Ladder', 25, [P('3 × 600 / 400 / 300 / 200 m'), Q('Rest 2:00 / 1:30 / 1:00 / 0:30')], true);
+          return { title: mile ? 'Mile TT + deadlift' : 'Speed run + deadlift', label: mile ? 'Mile TT' : '', hard: true,
+            why: 'The long session: the run comes first while you’re fresh, then deadlift with assistance cut.',
+            blocks: [blk('Warm-up', 10, [P('Easy jog · drills · strides')]), run, blk('Deadlift', 25, liftLines(w, t.dl, done)), blk('Cool-down', 5, [Q('Pigeon stretch · hamstring floss')])] };
+        }
+        return { title: 'Deadlift + bike', label: '', hard: true,
+          why: 'Deadlift first, then bike intervals. Hinge work sits next to tomorrow’s long run.',
+          blocks: [blk('Warm-up', 6, [P('10 broad jumps'), Q('Hip hinges · glute bridges')]), blk('Deadlift', 22, liftLines(w, t.dl, done)), blk('Bike intervals', 14, [P('10–30 s on, rest 1:3'), Q('Distance targets from your 2-mile pace')], true), blk('Cool-down', 5, [Q('Pigeon stretch · hamstring floss')])] };
+      }
+      const lr = longRun(w);
+      return { title: 'Long run', label: '', hard: false,
+        why: 'Long and easy. Easy means easy: if HR and RPE disagree, take the slower one.',
+        blocks: [blk('Long run', lr, [P(`${lr} min, Zone 1`), Q('P10 + 75 s/mi or slower, HR under 75%')])] };
+    };
+
+    const retest = (w, d) => {
+      const T = (title, label, lines, min, rec) => ({ title, label, hard: false, test: true, rec, why: 'Retest window. It mirrors the Nov 16–30 tests so every result compares like for like.', blocks: [blk('Warm-up', 10, [Q('Easy jog · mobility · build-ups')]), blk(title, min, lines, true)] });
+      const plan = w === 16 ? [
+        T('CrossFit Total', 'CFT', [P('Squat, press, deadlift: 3 attempts each'), P('Then strict pull-ups, max')], 45),
+        T('Submax + body comp', 'Submax', [P('Fasted weight + tape'), P('30 min at the Nov 17 pace, 1% grade'), P('Max L-sit · max ring dips')], 50),
+        T('400 m + Grace', '400 m, Grace', [P('400 m, same surface as before'), P('Rest 20 min or more'), P('Grace, 135 lb')], 40),
+        T('2-mile bike', 'Bike 2 mi', [P('Assault bike, 2 miles'), Q('Record peak HR')], 20),
+        T('Mile + Cindy', 'Mile, Cindy', [P('1 mile time trial'), P('Rest 20 min or more'), P('Cindy')], 45),
+        { title: 'Open slot', label: 'Open', hard: false, open: true, why: 'Kong is King is lost. What replaces it in the test battery is still an open question.', blocks: [blk('To be decided', 0, [Q('Kong is King replacement')])] },
+      ] : [
+        T('10k run', '10k', [P('10k, steady'), Q('Average HR of the last 20 min sets threshold HR')], 55),
+        T('Amanda', 'Amanda', [P('9-7-5 muscle-ups, squat snatches')], 25, true),
+        T('Row 5k', 'Row 5k', [P('5,000 m row')], 30, true),
+        T('Fran', 'Fran', [P('21-15-9 thrusters 95 lb, pull-ups')], 20),
+        T('Launchpad', 'Launchpad', [P('Version and scoring to confirm')], 30),
+        T('Diane', 'Diane', [P('21-15-9 deadlifts 225 lb, HSPU')], 25),
+      ];
+      return plan[d];
+    };
+
+    const sel = this.state.sel;
+    const selectDay = (w, d) => () => this.setState({ sel: { kind: 'day', w, d }, open: null, why: false });
+    const selectWeek = (w) => () => this.setState({ sel: { kind: 'week', w }, open: null, why: false });
+
+    const weeks = [];
+    for (let w = 1; w <= 17; w++) {
+      const days = [];
+      for (let d = 0; d < 6; d++) {
+        const s = session(w, d);
+        const key = `${w}-${d}`;
+        const today = w === TODAY.w && d === TODAY.d;
+        const selected = sel.kind === 'day' && sel.w === w && sel.d === d;
+        const done = isDone(w, d);
+        const holiday = HOLIDAY[key];
+        const label = s.label || (holiday ? holiday.replace(' Day', '') : '');
+        const strongLabel = !!s.label && !s.open;
+        days.push({
+          label,
+          labelColor: strongLabel ? C.text : C.muted,
+          dotDisplay: s.hard ? 'inline-block' : 'none',
+          dotBg: s.scaled ? 'transparent' : C.accent,
+          dotBorder: C.accent,
+          fill: done ? C.glass : 'transparent',
+          ring: today && selected ? `inset 0 0 0 2px ${C.accent}` : today ? `inset 0 0 0 1px ${C.accent}` : selected ? `inset 0 0 0 1px ${C.text}` : 'none',
+          selected,
+          aria: `${DAY[d]} ${fmt(at(w, d))}, ${s.title}${s.hard ? ', hard' : ''}${today ? ', today' : ''}${done ? ', logged' : isPast(w, d) ? ', not logged' : ''}`,
+          select: selectDay(w, d),
+        });
+      }
+      const wSel = sel.kind === 'week' && sel.w === w;
+      weeks.push({
+        n: String(w), date: fmt(at(w, 0)),
+        phase: firstOfPhase.has(w) ? phaseOf(w) : '',
+        gap: firstOfPhase.has(w) && w > 1 ? '8px' : '0px',
+        color: w === TODAY.w ? C.accent : C.text,
+        ring: wSel ? `inset 0 0 0 1px ${C.text}` : 'none',
+        selected: wSel,
+        aria: `Week ${w}, ${phaseOf(w)}, starts ${fmt(at(w, 0))}`,
+        select: selectWeek(w),
+        days,
+      });
+    }
+
+    let pane;
+    if (sel.kind === 'day') {
+      const { w, d } = sel;
+      const s = session(w, d);
+      const done = isDone(w, d);
+      const min = s.blocks.reduce((t, b) => t + b.min, 0);
+      const holiday = HOLIDAY[`${w}-${d}`];
+      const status = done ? 'Logged' : isPast(w, d) ? 'Not logged' : '';
+      const sub = [s.open ? '' : `${min} min`, s.rec ? 'Rec center' : '', status].filter(Boolean).join(' · ');
+      pane = {
+        kicker: `${DAYFULL[d]}, ${fmt(at(w, d))}${holiday ? ` · ${holiday}` : ''}`,
+        title: s.title, sub, why: s.why,
+        showToday: !(w === TODAY.w && d === TODAY.d),
+        rows: s.blocks.map((b, i) => ({
+          name: b.name, min: b.min ? String(b.min) : '', hard: b.hard, expandable: true, plain: false,
+          open: this.state.open === i,
+          lines: b.lines.map((l) => ({ logged: '', ...l })),
+          toggle: () => this.setState({ open: this.state.open === i ? null : i }),
+        })),
+      };
+    } else {
+      const w = sel.w;
+      const s = scheme(w);
+      const t = tm(w);
+      const logged = [0, 1, 2, 3, 4, 5].filter((d) => isDone(w, d)).length;
+      const pastWeek = isPast(w, 6) || (w === TODAY.w);
+      const kv = (name, val) => ({ name, min: val, plain: true, expandable: false, open: false, lines: [] });
+      const rows = s ? [kv('Main lifts', s.label), kv('Squat TM', `${t.squat}`), kv('Press TM', `${t.press}`), kv('Deadlift TM', `${t.dl}`), kv('Long run', `${longRun(w)} min`)]
+        : [kv('Tests', '11'), kv('Open slots', '1')];
+      if (pastWeek) rows.push(kv('Logged', `${logged} of 6`));
+      pane = { kicker: `${fmt(at(w, 0))} – ${fmt(at(w, 6))}`, title: `Week ${w} · ${phaseOf(w)}`, sub: '', why: '', showToday: true, rows };
+    }
+
+    return {
+      columns: [['Mon', 'Squat'], ['Tue', 'Press'], ['Wed', 'Tempo'], ['Thu', 'Easy'], ['Fri', 'Deadlift'], ['Sat', 'Long run']].map(([day, name]) => ({ day, name })),
+      weeks, pane,
+      whyOpen: this.state.why,
+      whyLabel: this.state.why ? 'Hide why' : 'Why this session',
+      toggleWhy: () => this.setState({ why: !this.state.why }),
+      goToday: () => this.setState({ sel: { kind: 'day', w: TODAY.w, d: TODAY.d }, open: null, why: false }),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Progress</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+sc-for, sc-if{display: contents}
+a{color:inherit}
+button{font:inherit}
+.press{transition: transform 140ms cubic-bezier(0.23, 1, 0.32, 1); user-select: none}
+.press:active{transform: scale(0.98)}
+.row{position: relative; isolation: isolate}
+.row::before{content: ''; position: absolute; inset: 0; z-index: -1; border-radius: 16px; background: #ffffff0d; opacity: 0; transition: opacity 100ms ease}
+.quiet-btn{transition: color 100ms ease}
+:focus-visible{outline: 2px solid #2fd8c6; outline-offset: 3px}
+@media (hover: hover) and (pointer: fine){
+  .row:hover::before{opacity: 1}
+  .quiet-btn:hover{color: #eef4f3}
+}
+@media (prefers-reduced-motion: reduce){
+  .press, .row::before, .quiet-btn{transition: none}
+  .press:active{transform: none}
+}
+.mono{font-family: 'Geist Mono', ui-monospace, monospace}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; background: #06090b; color: #eef4f3; font-family: Geist, -apple-system, system-ui, sans-serif; font-variant-numeric: tabular-nums; display: flex; flex-direction: column; overflow: hidden">
+
+<nav aria-label="Main" style="height: 56px; flex: none; padding: 0 48px; display: flex; align-items: center; gap: 28px; font-size: 15px">
+<a href="P3Plan.dc.html" class="quiet-btn" style="text-decoration: none; color: #93a3a1">Plan</a>
+<a href="P3Progress.dc.html" aria-current="page" style="text-decoration: none; font-weight: 600">Progress</a>
+</nav>
+
+<div style="flex: 1; min-height: 0; padding: 0 48px 36px; display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: 40px">
+
+<section aria-label="Results" style="display: flex; flex-direction: column; min-height: 0">
+<header style="padding: 20px 0 22px; display: flex; flex-direction: column; gap: 4px">
+<div style="font-size: 15px; color: #93a3a1">Evolution 5 · week 6 of 17</div>
+<h1 style="margin: 0; font-size: 34px; line-height: 1.08; letter-spacing: -0.02em; font-weight: 650">Progress</h1>
+</header>
+<div style="display: flex; flex-direction: column; gap: 24px">
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column">
+<h2 style="margin: 0 8px 6px; font-size: 15px; font-weight: 400; color: #93a3a1">{{g.name}}</h2>
+<sc-for list="{{g.items}}" as="r" hint-placeholder-count="5">
+<div style="border-top: 1px solid #ffffff1a">
+<button type="button" class="row press" onClick="{{r.select}}" aria-pressed="{{r.selected}}" style="width: 100%; height: 44px; margin: 2px 0; padding: 0 8px; border: 0; border-radius: 16px; display: flex; align-items: baseline; gap: 10px; background: {{r.fill}}; color: #eef4f3; font-size: 16px; text-align: left; line-height: 44px; cursor: pointer">
+<span style="flex: 1">{{r.name}}</span><span class="mono" style="font-size: 15px; font-weight: 500">{{r.best}}</span>
+</button>
+</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</section>
+
+<article aria-label="{{d.name}}" style="border-left: 1px solid #ffffff1a; padding: 24px 0 0 40px; display: flex; flex-direction: column; min-width: 0; min-height: 0">
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="font-size: 15px; color: #93a3a1">{{d.kicker}}</div>
+<h2 style="margin: 0; font-size: 28px; line-height: 1.1; letter-spacing: -0.02em; font-weight: 650">{{d.name}}</h2>
+</div>
+<dl style="margin: 0; display: flex; gap: 36px">
+<sc-for list="{{d.stats}}" as="s" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 2px; align-items: flex-end">
+<dt style="font-size: 13px; color: #93a3a1">{{s.label}}</dt>
+<dd class="mono" style="margin: 0; font-size: 28px; font-weight: 500; letter-spacing: -0.01em; color: {{s.color}}">{{s.value}}</dd>
+</div>
+</sc-for>
+</dl>
+</div>
+
+<figure aria-label="{{d.chartAria}}" style="margin: 32px 0 0; position: relative; height: 236px">
+<div style="position: absolute; left: 0; top: 0; font-size: 13px; color: #93a3a1">This evolution · up is better</div>
+<div style="position: absolute; left: 48px; right: 8px; top: 32px; height: 168px">
+<sc-for list="{{d.grid}}" as="gl" hint-placeholder-count="3">
+<div style="position: absolute; left: 0; right: 0; top: {{gl.y}}px; border-top: 1px solid #ffffff1a"></div>
+<div class="mono" style="position: absolute; left: -48px; width: 40px; top: {{gl.y}}px; transform: translateY(-50%); text-align: right; font-size: 12px; color: #93a3a1">{{gl.label}}</div>
+</sc-for>
+<div style="position: absolute; top: -6px; bottom: 0; left: {{d.todayX}}px; border-left: 1px dashed #93a3a1; opacity: 0.6"></div>
+<div style="position: absolute; top: -24px; left: {{d.todayX}}px; transform: translateX(-50%); font-size: 12px; color: #93a3a1">Today</div>
+<svg width="{{d.w}}" height="168" viewBox="0 0 {{d.w}} 168" style="position: absolute; inset: 0; overflow: visible" aria-hidden="true">
+<path d="{{d.planPath}}" fill="none" stroke="#93a3a1" stroke-width="2" stroke-dasharray="4 5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="{{d.loggedPath}}" fill="none" stroke="#2fd8c6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+<sc-for list="{{d.points}}" as="p" hint-placeholder-count="6">
+<span title="{{p.tip}}" style="position: absolute; left: {{p.x}}px; top: {{p.y}}px; width: 10px; height: 10px; box-sizing: border-box; transform: translate(-50%, -50%); border-radius: 50%; background: {{p.bg}}; border: 2px solid {{p.border}}; box-shadow: 0 0 0 2px #06090b"></span>
+</sc-for>
+<sc-for list="{{d.labels}}" as="t" hint-placeholder-count="2">
+<span style="position: absolute; left: {{t.x}}px; top: {{t.y}}px; transform: translate(-50%, -100%); padding-bottom: 8px; font-size: 12px; color: {{t.color}}; white-space: nowrap">{{t.text}}</span>
+</sc-for>
+<sc-for list="{{d.ticks}}" as="k" hint-placeholder-count="5">
+<span class="mono" style="position: absolute; left: {{k.x}}px; top: 178px; transform: translateX(-50%); font-size: 12px; color: {{k.color}}">{{k.label}}</span>
+</sc-for>
+</div>
+</figure>
+
+<div style="margin-top: 20px; display: flex; flex-direction: column; min-height: 0; overflow: auto">
+<h3 style="margin: 0 8px 6px; font-size: 13px; font-weight: 400; color: #93a3a1">History</h3>
+<sc-for list="{{d.history}}" as="h" hint-placeholder-count="5">
+<div style="height: 36px; padding: 0 8px; display: flex; align-items: center; gap: 16px; border-top: 1px solid #ffffff1a; font-size: 15px">
+<span style="width: 120px; color: #93a3a1">{{h.date}}</span>
+<span class="mono" style="width: 80px; text-align: right">{{h.score}}</span>
+<span style="flex: 1; color: #93a3a1; font-size: 13px">{{h.note}}</span>
+</div>
+</sc-for>
+</div>
+</article>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { sel: 'pullups' };
+  }
+  renderVals() {
+    const C = { text: '#eef4f3', muted: '#93a3a1', accent: '#2fd8c6', bg: '#06090b', glass: '#ffffff0d' };
+    const TODAY_WEEK = 5.4;
+    const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const date = (s) => { if (!s) return 'Date unknown'; const [y, m, d] = s.split('-'); return d ? `${MON[+m - 1]} ${+d}, ${y}` : `${MON[+m - 1]} ${y}`; };
+    const secs = (t) => t.split(':').reduce((a, b) => a * 60 + +b, 0);
+    const clock = (s) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`;
+    const r5 = (x) => Math.round(x / 5) * 5;
+    const tmLine = (base, step) => Array.from({ length: 16 }, (_, i) => { const w = i + 1; const c = w <= 3 ? 0 : w <= 6 ? 1 : w <= 10 ? 2 : w <= 14 ? 3 : 4; return [w, base + step * c]; });
+
+    const items = {
+      ttt: { group: 0, name: 'Turkey Trot Triple', unit: 'time', start: '47:11', plan: [], hist: [['2019-11', '46:18', ''], ['2020-12-01', '46:19', ''], ['2021-11-30', '46:59', ''], ['2022-12-02', '47:11', '']], attempts: [] },
+      cunningham: { group: 0, name: 'Cunningham', unit: 'time', hist: [['2023-04-09', '38:00', '115 lb'], ['2023-08-11', '36:40', '']], attempts: [] },
+      cft: { group: 0, name: 'CrossFit Total', unit: 'lb', hist: [['2022-10-31', '780', ''], ['2023-04-04', '805', ''], ['2023-08-07', '845', 'Conflict: another source says 785'], ['2023-10', '785', ''], ['2023-10-30', '845', ''], ['2024-02-12', '825', ''], ['2025-08', '730', ''], ['2026-11-16', '750', '255 / 160 / 335']], target: [[16, 800]], attempts: [16] },
+      fran: { group: 0, name: 'Fran', unit: 'time', hist: [['2023-05-11', '4:43', ''], ['2025-08', '6:34', '']], attempts: [8, 17] },
+      grace: { group: 0, name: 'Grace', unit: 'time', hist: [['2021-12-15', '3:58', ''], ['2023-04-11', '2:56', 'Singles'], ['2023-08-13', '3:05', ''], ['2023-10', '2:44', ''], ['2024-02-10', '2:25', '']], logged: [], attempts: [4, 16] },
+      run10k: { group: 0, name: '10k run', unit: 'time', hist: [['2023-04', '48:45', ''], ['2023-08-08', '47:47', ''], ['2023-10', '47:34', ''], ['2024-02', '48:55', ''], ['2025-08', '53:13', '']], target: [[17, Math.round(secs('53:13') * 0.95)]], attempts: [17] },
+      pullups: { group: 0, name: 'Strict pull-ups', unit: 'reps', hist: [['2023-04-04', '15', ''], ['2023-08-07', '18', ''], ['2023-10', '16', ''], ['2024-02', '20', ''], ['2025-08', '13', ''], ['2026-11-16', '13', '']], logged: [[1, 13], [2, 13], [3, 14], [4, 14]], target: [[4, 14], [8, 16], [12, 18], [16, 20]], attempts: [] },
+      squat: { group: 1, name: 'Back squat', unit: 'lb', best: 295, hist: [['', '295', 'SugarWOD rep max'], ['2026-11-16', '255', 'CrossFit Total'], ['2024-11-06', '235', ''], ['2022-04-04', '285', ''], ['2022-03-14', '275', '']], latest: 255, tm: tmLine(215, 10), target: [[16, 275]], attempts: [16] },
+      press: { group: 1, name: 'Press', unit: 'lb', best: 165, hist: [['', '165', 'SugarWOD rep max'], ['2026-11-16', '160', 'CrossFit Total'], ['2023-03-24', '115', ''], ['2022-09-28', '160', ''], ['2022-08-22', '145', '']], latest: 160, tm: tmLine(135, 5), target: [[16, 170]], attempts: [16] },
+      deadlift: { group: 1, name: 'Deadlift', unit: 'lb', best: 365, hist: [['', '365', 'SugarWOD rep max'], ['2026-11-16', '335', 'CrossFit Total'], ['2024-11-13', '325', ''], ['2023-01-16', '305', ''], ['2022-06-20', '325', '']], latest: 335, tm: tmLine(280, 10), target: [[16, 355]], attempts: [16] },
+    };
+    const order = { 0: ['ttt', 'cunningham', 'cft', 'fran', 'grace', 'run10k', 'pullups'], 1: ['deadlift', 'squat', 'press'] };
+
+    const val = (it, s) => it.unit === 'time' ? secs(s) : +s;
+    const show = (it, v) => it.unit === 'time' ? clock(v) : String(v);
+    const better = (it, a, b) => it.unit === 'time' ? a < b : a > b;
+    const bestOf = (it) => {
+      if (it.best) return it.best;
+      return it.hist.filter((h) => !h[2].startsWith('Conflict')).map((h) => val(it, h[1])).reduce((a, b) => better(it, a, b) ? a : b);
+    };
+
+    const groups = [0, 1].map((g) => ({
+      name: g === 0 ? 'Benchmarks' : 'Lifts · 1 rep max',
+      items: order[g].map((id) => ({
+        name: items[id].name, best: show(items[id], bestOf(items[id])),
+        selected: this.state.sel === id,
+        fill: this.state.sel === id ? C.glass : 'transparent',
+        select: () => this.setState({ sel: id }),
+      })),
+    }));
+
+    const it = items[this.state.sel];
+    const best = bestOf(it);
+    const datedHist = it.hist.filter((h) => h[0]);
+    const latest = it.latest ?? val(it, datedHist[datedHist.length - 1][1]);
+    const target = it.target ? it.target[it.target.length - 1][1] : null;
+
+    const W = 820, H = 168;
+    const xs = (w) => (w / 17) * W;
+    const vals = [latest, best, ...(it.logged || []).map((p) => p[1]), ...(it.target || []).map((p) => p[1]), ...(it.tm || []).map((p) => p[1])];
+    let lo = Math.min(...vals), hi = Math.max(...vals);
+    const pad = Math.max((hi - lo) * 0.15, it.unit === 'reps' ? 1 : it.unit === 'time' ? 20 : 10);
+    lo -= pad; hi += pad;
+    const up = it.unit === 'time';
+    const ys = (v) => up ? ((v - lo) / (hi - lo)) * H : H - ((v - lo) / (hi - lo)) * H;
+    const path = (pts) => pts.map(([w, v], i) => `${i ? 'L' : 'M'}${xs(w).toFixed(1)} ${ys(v).toFixed(1)}`).join(' ');
+
+    const logged = [[0, latest], ...(it.logged || [])];
+    const points = (it.target || []).map(([w, v]) => ({ x: xs(w), y: ys(v), bg: C.bg, border: C.muted, tip: `Target, week ${w}: ${show(it, v)}` }));
+    logged.forEach(([w, v]) => points.push({ x: xs(w), y: ys(v), bg: C.accent, border: C.accent, tip: w === 0 ? `Start: ${show(it, v)}` : `Week ${w}: ${show(it, v)}` }));
+    const planPts = it.tm ? it.tm.flatMap(([w, v]) => [[w - 1, v], [w, v]]) : [[logged[logged.length - 1][0], logged[logged.length - 1][1]], ...(it.target || []).filter(([w]) => w > logged[logged.length - 1][0])];
+    const labels = [];
+    if (it.tm) labels.push({ x: xs(12), y: ys(it.tm[11][1]), text: 'Training max', color: C.muted });
+    if (target != null) labels.push({ x: xs(it.target[it.target.length - 1][0]), y: ys(target), text: 'Target', color: C.muted });
+
+    const gridVals = [hi - pad, (hi + lo) / 2, lo + pad];
+    const grid = gridVals.map((v) => ({ y: ys(v), label: show(it, it.unit === 'time' ? Math.round(v) : Math.round(v)) }));
+    const tickWeeks = [0, 4, 8, 12, 16];
+    const ticks = tickWeeks.map((w) => ({ x: xs(w), label: String(w), color: C.muted }));
+
+    const histRows = it.hist.slice().sort((a, b) => !a[0] ? 1 : !b[0] ? -1 : b[0].localeCompare(a[0])).map(([d, s, note]) => ({ date: date(d), score: s, note: [val(it, s) === best && !note.startsWith('Conflict') ? 'Best' : '', note].filter(Boolean).join(' · ') }));
+
+    const stats = [{ label: 'Best', value: show(it, best), color: C.text }, { label: 'Latest', value: show(it, latest), color: C.text }];
+    if (target != null) stats.push({ label: 'Target', value: show(it, target), color: C.muted });
+    const next = it.attempts.find((w) => w > TODAY_WEEK);
+    if (next) stats.push({ label: 'Next', value: `Wk ${next}`, color: C.muted });
+
+    return {
+      groups,
+      d: {
+        name: it.name,
+        kicker: it.group === 1 ? 'Lift · pounds' : it.unit === 'time' ? 'Benchmark · time' : 'Benchmark · reps',
+        stats, grid, points, labels, ticks, w: W,
+        todayX: xs(TODAY_WEEK),
+        loggedPath: path(logged),
+        planPath: path(planPts),
+        chartAria: `${it.name} over Evolution 5: start ${show(it, latest)}${target != null ? `, target ${show(it, target)}` : ''}`,
+        history: histRows,
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>
