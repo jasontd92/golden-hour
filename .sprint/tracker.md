@@ -353,7 +353,20 @@ Explicitly cut, so don't reintroduce:
   - The brief's "e2e: log three sets offline…" criterion belongs to WS5b, which needs the UI.
   - The Vercel CLI isn't installed and Vercel API access was denied, so env presence came from the health endpoint.
 - Status: MERGED. Verifier pending.
-### WS3c — residual data-build gaps — NOT STARTED (queued, low priority)
+### WS3c — residual data-build gaps — MERGED
+- Handoff (ws7b-impl): PR #13, squash-merged as `03dceaf`. Head `47b78ba`. Branch deleted.
+- CI: PR run 44261834040 green (typecheck, lint, unit, policy incl. the drift step, e2e, evidence). Main run 44262119910 success. Vercel production success on `03dceaf`. Production 200.
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws3c` at `47b78ba` over `7f9a0cc` (298 tests). `pnpm data:build` gives zero diff, and the byte test passes. Logs are PR comments.
+- Reviews: none, 0 threads.
+- Decisions:
+  - set_details must be a JSON array of objects (a float, an array or a number element is rejected), via `setDetails()` in data-build.ts.
+  - score_type lookup is a `Map`. `toString`, `constructor` and `__proto__` fall back to `text`.
+  - `parsePythonJson` names its origin for syntax errors (covers `NaN`), for non-finite numbers (`1e999`) and for unsafe integers. The unsafe-integer check moved from output time to parse time.
+  - A curated score that isn't a string throws, naming the record.
+  - A SugarWOD date error reads `sugarwod#rowN date: "…" is not a m/d/Y date`.
+- Tests: mutation proof in the PR body, 9/9 guards killed.
+- Brief errors: none. The coordinator's resume note said WS3c wasn't implemented yet; it already was, with PR #13 open.
+- Status: MERGED. Verifier pending.
 - (1) A set_details value that is valid JSON but not an array is silently dropped; make it loud.
 - (2) The score_type lookup hits the prototype (`toString`); use an own-key lookup.
 - (3) Loud errors that don't name the source record should attach the origin.
