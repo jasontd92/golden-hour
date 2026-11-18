@@ -407,7 +407,7 @@ Explicitly cut, so don't reintroduce:
 ### Fixture cleanup (fold into the debate output)
 - week-01.json: hard days and Monday TM 265/AMRAP don't match the plan. The notes repeat the structured sets, so drop the duplicate notes. The real plan JSON from the debate replaces the fixture.
 
-### WS5b — log UI — MERGED
+### WS5b — log UI — VERIFIED (PASS WITH GAPS 2/2 + HUMAN; the e2e proves the ack, not storage, and WebKit's select is unstyled. Both are folded into WS5d)
 - Type: impl EM (ws5b-impl). Doc: ws-05-logging-sync.md (the log UI and the UI e2e). Depends: WS4 (Start seam), WS5a (store, outbox).
 - PR #12, squash-merged as `2d3f61f`. Head `8c451d5`. Branch deleted.
 - CI:
