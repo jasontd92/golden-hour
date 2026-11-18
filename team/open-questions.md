@@ -1,4 +1,1 @@
-- [running] Would the athlete accept double days (e.g. a hard run and the deadlift as separate sessions, or back-to-back over 60 min)? FIRST/Seiler both open to a hard run on DL day with the run first.
-- [benchmarks] Does the athlete have a heart-rate monitor (chest strap/watch)? Seiler's HR-based zones and submax test depend on it; otherwise use RPE only.
-- [benchmarks] What exactly are "Launchpad" and "Kong is King" (movements/reps/scoring)? Glassman says Launchpad's version must be fixed to be repeatable (2024 scores 6:47 and 10:11 look like different versions).
-- [benchmarks] Amanda needs muscle-ups: test at the rec center, or drop it (losing the 2024 comparison)?
+- [benchmarks] Turkey Trot Triple this year? The athlete wants it in Thanksgiving week (athlete.md), and this round's tests fill that week. Recommendation: Sat 11/28, the slot freed by dropping Launchpad. The row needs the rec center, and Saturday may run long. Diane stays on Mon 11/30, 48h later. The TTT's bike leg isn't adjacent to Diane, so no spacing rule breaks, but Diane will be less fresh. Skip it this year if Diane's trend matters more [MOD].

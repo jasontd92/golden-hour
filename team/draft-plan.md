@@ -4,19 +4,78 @@ Synthesized by the moderator from the final POSITIONs in `team/positions/`. Labe
 - **[MOD]**: the moderator's own synthesis, not a coach's source.
 - **[INF-x]**: an inference flagged by coach x.
 
+## Revision 2026-11-18 (overnight, pending athlete review)
+Made by the moderator under the CEO's overnight delegation. Coaches were represented from their profiles and positions only. Each change can be reversed on its own.
+1. **Battery:** Kong is King is replaced by Jason Cunningham, and Launchpad is dropped with no replacement. Every other test stays. The coverage matrix and reasons are in §A1 [MOD].
+2. **This round:** Sat 11/21 is now Cunningham (was Kong) and Sat 11/28 is now rest (was Launchpad) (§A2) [MOD].
+3. **Hard-session cap:** §C already settles it. The cap counts every non-easy session in any modality, metcons included (Seiler FINAL #metcons; accepted in the FIRST, Hinshaw, Wendler and Glassman FINAL positions). The wording is clarified; nothing else changes.
+4. **Holiday weeks 3 and 4:** Christmas and New Year's Day are off. Friday's session moves to Thursday, Thursday's easy session moves to Wednesday, and that week's Quality A is skipped, not doubled (§C) [MOD, under §H3 (FIRST)].
+5. **Run-time base:** a holiday-shortened week does not lower the base for the weekly +10% rule (§F) [MOD].
+6. **Retest, weeks 16–17:** with Launchpad out, the battery takes 11 test days plus 1 rest day, so it fits the 12 days available. In week 17 the rest day moves from Thursday to Friday to keep Fran and Diane ≥48h apart (§A3) [MOD].
+7. **Encoding gaps closed:** Quality B order is Bombolini in weeks 2 and 10, ladder in weeks 6 and 14. The odd-week bike family is whichever pathway Monday didn't use (§C) [MOD].
+8. **Open questions:** the athlete's Nov 16 decisions answer double days, the HR monitor and Amanda. Item 1 settles Kong and Launchpad. One question remains in `open-questions.md`.
+
 Athlete decisions (Nov 16):
 - The long session is run first, then deadlift (~70–75 min); after review it moves from Thursday to Friday (Bare's fix).
 - Has a wrist HR watch; RPE is used as a cross-check.
 - Amanda is tested at the rec center.
 - A 1-mile time trial is added.
 
-## A. Retest window: rest of this round (Nov 16–30, 2026)
+## A. Benchmark battery and test windows
+
+### A1. Battery and coverage (revised 2026-11-18)
+The columns use the coaches' own taxonomies:
+- **Run, Bike, Row, G, W:** Glassman's M/G/W modalities (§5, Template Table 2). Run, bike and row stay separate because "every movement is unique" (Hinshaw §3).
+- **Str:** the CFT lifts (Wendler §6).
+- **Phos, Glyc, Oxid:** phosphagen under ~10 s, glycolytic up to ~2 min, oxidative beyond several minutes (Glassman §4.4).
+- **Z1, Z2, Z3:** Seiler's three zones (Seiler §5). They line up with FIRST's long, tempo and speed paces (FIRST §5) and with Hinshaw's aerobic-threshold, LT and VO2max stimuli (Hinshaw §5).
+- **FF:** the 400 + mile pair (Hinshaw §6).
+
+History is the number of rows in `data/normalized/results.jsonl` (some are one test logged in two sources) and the latest date.
+
+| Test | History | Run | Bike | Row | G | W | Str | Phos | Glyc | Oxid | Z1 | Z2 | Z3 | FF | Decision |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| CrossFit Total | 10; 2026-11 | | | | | ● | ● | ● | | | | | | | Keep |
+| Strict pull-ups | 7; 2026-11 | | | | ● | | | | | | | | | | Keep |
+| Max L-sit | 5; 2025-08 | | | | ● | | | | | | | | | | Keep |
+| Max ring dips | new 11/17 | | | | ● | | | | | | | | | | Keep (Glassman ladder) |
+| 30-min submax run | new 11/17 | ● | | | | | | | | ● | ● | | | | Keep (Seiler) |
+| 400 m | 4; 2024-02 | ● | | | | | | | ● | | | | | ● | Keep |
+| Mile TT | new | ● | | | | | | | | | | | ● | ● | Keep (athlete, Nov 16) |
+| 10k | 5; 2025-08 | ● | | | | | | | | ● | | ● | | | Keep |
+| 2-mile assault bike | 3; 2025-08 | | ● | | | | | | ● | | | | ● | | Keep |
+| Row 5k | 4; 2023-08 | | | ● | | | | | | ● | | ● | | | Keep |
+| Grace | 7; 2024-02 | | | | | ● | | | ● | | | | | | Keep |
+| Fran | 2; 2025-08 | | | | ● | ● | | | ● | | | | | | Keep |
+| Diane | 4; 2024-02 | | | | ● | ● | | | ● | | | | | | Keep |
+| Amanda | 2; 2024-02 | | | | ● | ● | | | ● | | | | | | Keep (rec center) |
+| Cindy | 5; 2023-08 | | | | ● | | | | | ● | | | | | Keep |
+| Kong is King | 1; definition lost | ? | ? | ? | ? | ? | | | | ● | | | | | **Replace** with Cunningham |
+| Jason Cunningham | 2; 2023-08 | ● | | | ● | ● | | | | ● | | | | | **Add** in Kong's place |
+| Launchpad | 3; not comparable | | | | ● | | | | ● | | | | | | **Drop** |
+| Body comp | new 11/17 | | | | | | | | | | | | | | Keep (Bare §4.11; a measure, not a modality) |
+
+After the change, every column still has at least one test.
+- **Zones:** the zone marks for max-effort tests are [MOD], read from their duration. Two have a source: the 10k's last-20-min HR is the threshold proxy (Seiler #benchmarks, [INFERENCE]), and the submax is Z1 (Seiler).
+- **400 m:** Glassman's #benchmarks list puts the 400 under phosphagen. At ~65 s it is glycolytic by his own §4.4 durations, so the matrix follows §4.4 [MOD]. Phosphagen therefore rests on the CFT alone.
+- **Kong is King → Jason Cunningham** [MOD].
+  - Kong's definition is lost (REPORT, 2026-11-17).
+  - Oxidative is still covered by the 10k, row 5k and Cindy. Without Kong, though, no test puts load (W) at the long end of the curve. Glassman defines fitness as work capacity "across broad time and modal domains" and says to "blur distinctions between 'cardio' and strength training" (Glassman §4.1, §4.11). The reading that this needs a long loaded test is [MOD].
+  - Cunningham has a full definition and two results (38:00 → 36:40, 2023). It can be done at home, and it was already done inside the Aug 2023 test window (08-11).
+  - Cost: a hero WOD the athlete does once a year becomes twice a year. If that's unwanted, the fallback is Benchmark Anaerobic (6 results, 45-min AMRAP) with its 800 m on the treadmill, so the course is fixed.
+- **Launchpad dropped, not replaced** [MOD].
+  - Its version was never fixed, and REPORT says its three results aren't comparable, so it has no usable history.
+  - Its cell (bodyweight G, glycolytic) is covered by Cindy, Fran and Amanda.
+  - Nothing comparable is lost, and dropping it frees the day the retest needs (§A3).
+- **Not added:** Bare's own test, a half-marathon TT in his 16-week plan (Bare §6, [SECONDARY]). His position asks only to keep the battery and add body comp, and the 10k already covers long running with five results.
+
+### A2. This round (Nov 16–30, 2026)
 Spacing rules applied:
 - ≥48h between the 400, mile, 10k and row 5k
 - 400 and mile on separate days; mile ≥48h before the 10k
 - Girls ≥48h apart
 - Diane not adjacent to the 10k or bike test
-- 10k and Kong ≥2 days after the CFT
+- 10k and Cunningham ≥2 days after the CFT
 - submax test first and fresh
 - Thanksgiving (Thu Nov 26) is a rest day
 - session RPE logged every test day
@@ -28,16 +87,32 @@ Spacing rules applied:
 | Wed 11/18 | 400 m (track/treadmill, same surface as before; record peak HR) → ≥20 min → Grace |
 | Thu 11/19 | 2-mile assault bike (peak HR) |
 | Fri 11/20 | 1-mile TT (peak HR) → ≥20 min → Cindy |
-| Sat 11/21 | Kong is King |
+| Sat 11/21 | Jason Cunningham, 115 lb (replaces Kong is King) |
 | Mon 11/23 | 10k (avg HR of last 20 min = threshold-HR proxy) |
 | Tue 11/24 | Rec center: Amanda |
 | Wed 11/25 | Rec center: Row 5k |
 | Thu 11/26 | REST (Thanksgiving) |
 | Fri 11/27 | Fran |
-| Sat 11/28 | Launchpad (version/scoring to be fixed by the athlete) |
+| Sat 11/28 | REST (Launchpad dropped) |
 | Mon 11/30 | Diane |
 
-Week 0 (Dec 1–5): 4 Z1 runs, ~135 min total, plus mobility (see §C). **Week 1 starts Mon Dec 7.** Week 3 contains Christmas and week 4 contains New Year's Day: shift days within those weeks as needed.
+Week 0 (Dec 1–5): 4 Z1 runs, ~135 min total, plus mobility (see §C). **Week 1 starts Mon Dec 7.** Holiday weeks 3 and 4: see §C.
+
+### A3. Retest (weeks 16–17, Mar 22 – Apr 3, 2027)
+Same tests, same spacing rules and same order as §A2 [MOD]. §A2 runs over 15 calendar days because Thanksgiving falls inside it. Weeks 16–17 have 12 training days, which hold the 11 test days plus 1 rest day.
+
+| Day | Week 16 | Week 17 |
+|---|---|---|
+| Mon | CFT + strict pull-ups | 10k |
+| Tue | Body comp; submax; max L-sit; max ring dips | Rec center: Amanda |
+| Wed | 400 m → ≥20 min → Grace | Rec center: Row 5k |
+| Thu | 2-mile assault bike | Fran |
+| Fri | Mile TT → ≥20 min → Cindy | REST |
+| Sat | Jason Cunningham | Diane |
+
+- Week 17 moves the rest day from Thursday to Friday. That keeps Fran and Diane ≥48h apart, since Sunday is never a training day.
+- Two tests change context: Fran comes the day after the row 5k instead of after a rest day, and Diane moves from Monday to Saturday. Read those two comparisons with that in mind.
+- The §C hard-session cap doesn't apply in test windows. The spacing rules above govern them [MOD].
 
 ## B. Derived inputs (live formulas in the sheet)
 **Lifts**
@@ -56,7 +131,7 @@ Week 0 (Dec 1–5): 4 Z1 runs, ~135 min total, plus mobility (see §C). **Week 1
 - P_bike = T2mi / 2 per mile, for hard bike intervals only (Hinshaw).
 
 ## C. Weekly template (Mon–Sat; Sunday always off) — REVISED after review (Bare's fix)
-At most 3 non-easy sessions per week, scored by session RPE 30 min after: 1–4 easy, 5–6 Z2, 7+ hard (Seiler). Hard days are Mon/Wed/Fri, each followed by an easy day. There are 4 runs every week.
+At most 3 non-easy sessions per week, scored by session RPE 30 min after: 1–4 easy, 5–6 Z2, 7+ hard (Seiler). The cap counts every session in any modality: runs, metcons, bike intervals. Each session counts once (Seiler FINAL #metcons; accepted by FIRST, Hinshaw, Wendler and Glassman). Hard days are Mon/Wed/Fri, each followed by an easy day. There are 4 runs every week.
 
 **Even weeks are "B-weeks"** (they hold the speed run and the mile retests in weeks 4/8/12). **Odd weeks are "bike weeks".**
 
@@ -66,11 +141,18 @@ At most 3 non-easy sessions per week, scored by session RPE 30 min after: 1–4 
 | Tue | 10–15 jumps or plyo push-ups → **Press** 5/3/1 + FSL → G skill (L-sit accumulation, handstand/HSPU, ring dips) → **Z1 run** 25–35 min | – |
 | Wed | **Quality A run**. Odd weeks: 3×10 min / 2 min @ P10+15..20 s/mi, ceiling 85–90% HRmax. Even weeks: 4×8 min / 2 min @ P10+0..15, rep-1 pace held through rep 4, ~90% HRmax. Then pull-up sets. | 2 |
 | Thu | Easy only, since DL follows [INF-wendler]. B-weeks: Z1 flow at RPE ≤4 (assault bike + easy calisthenics) + G skill + weekly strict pull-up AMRAP. Bike weeks: **Z1 run** 25–35 min (the 4th run) + G skill + pull-up AMRAP. | – |
-| Fri, B-weeks | **Quality B run first**: Bombolini or Froning ladder, alternating; weeks 4/8/12 are a mile TT instead. Then **Deadlift** 5/3/1 + **FSL 3×5**, with lower-body assistance cut. The long session (~70–75 min). | 3 |
-| Fri, bike weeks | 10–15 jumps → **Deadlift** 5/3/1 + FSL (5×5 Leader / 3×5 Anchor) → **bike intervals after the lift** (Wendler): phosphagen 10–30 s at 1:3 or glycolytic 30–120 s at 1:2, distance targets from P_bike → hinge/glute assistance if time allows | 3 |
+| Fri, B-weeks | **Quality B run first**: Bombolini in weeks 2 and 10, Froning ladder in weeks 6 and 14 [MOD order]; weeks 4/8/12 are a mile TT instead. Then **Deadlift** 5/3/1 + **FSL 3×5**, with lower-body assistance cut. The long session (~70–75 min). | 3 |
+| Fri, bike weeks | 10–15 jumps → **Deadlift** 5/3/1 + FSL (5×5 Leader / 3×5 Anchor) → **bike intervals after the lift** (Wendler): phosphagen 10–30 s at 1:3 or glycolytic 30–120 s at 1:2, distance targets from P_bike. The bike family is the pathway Monday didn't use: phosphagen in weeks 3/7/11/15 (Monday glycolytic), glycolytic in weeks 1/5/9/13 (Monday couplet) [MOD: keeps both interval pathways in each bike week, Glassman §4.4] → hinge/glute assistance if time allows | 3 |
 | Sat | **Long Z1 run** at ≥ P10+75, HR <75% HRmax / RPE ≤3. Hinge day sits nearest the long run (Bare). | – |
 
 Week 0 (Dec 1–5): 4 Z1 runs, ~135 min total, as the base for the weekly +10% rule (FIRST).
+
+**Holiday weeks** [MOD, under §H3]. Christmas (Fri Dec 25, week 3) and New Year's Day (Fri Jan 1, week 4) are off. In both weeks:
+- Friday's session moves to Thursday: DL + bike in week 3, mile TT + DL in week 4.
+- Thursday's easy session moves to Wednesday, so the day before the DL stays easy (§H2).
+- Wednesday's Quality A is skipped, not doubled (§H3, FIRST). Each week has 2 hard sessions (Mon, Thu) and 3 runs.
+
+Every other layout breaks a rule. DL on Thursday after Quality A on Wednesday breaks §H2. Quality A on Tuesday is a hard run the day after squat. Dropping the long run breaks the next week's Frandsen cap. If the athlete trains on the holiday, the normal template stands.
 
 ## D. Strength (Wendler, with Bare and Glassman accepted)
 **Cycle layout**
@@ -80,7 +162,7 @@ Week 0 (Dec 1–5): 4 Z1 runs, ~135 min total, as the base for the weekly +10% r
 - Week 11: TM test, 70/80/90% × 5, then 100% TM for reps. Fewer than 3 reps → TM −10%.
 - Anchor: weeks 12–14.
 - Week 15: deload, which opens the retest window.
-- Weeks 16–17: retest. It mirrors the 13-day window in §A, so Evo 5 is 17 weeks including the retest [MOD].
+- Weeks 16–17: retest, laid out in §A3. Evo 5 is 17 weeks including the retest [MOD].
 
 **Leader**
 - 5's PRO: wk1 65/75/85 × 5, wk2 70/80/90 × 5, wk3 75/85/95 × 5.
@@ -132,7 +214,7 @@ Four-week cycle; exercises vary within each family; home equipment only.
 ## F. Running progression
 - **Long run:** wk1 = MIN(60 min, 1.1 × 10k time), then +5 min/wk up to 90 min.
   - Each run ≤110% of the longest in the prior 30 days (Frandsen).
-  - Weekly run time ≤ +10% (Bare).
+  - Weekly run time ≤ +10% (Bare). A holiday-shortened week (§C) doesn't lower the base: the next week is capped against the last full week [MOD: the rule limits ramp-ups, and returning to a prior level isn't one].
   - Deload weeks: −20%.
 - **Speed paces:**
   - Bombolini = 3 × [500 m / 200 m jog / 100 m], no rest inside a set, 5 min between sets. 500 m = midpoint of 500 × Pmile and 500 × P400; 100 m ≤ 100 × P400.
