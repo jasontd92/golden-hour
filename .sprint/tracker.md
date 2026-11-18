@@ -307,7 +307,17 @@ Explicitly cut, so don't reintroduce:
   - previews can migrate and write production if they get the TURSO vars (a CEO env-scoping question)
 - WS5c closes the proof gaps.
 
-### WS5c — strengthen the no-loss proof — IN PROGRESS (ws5c-impl)
+### WS5c — strengthen the no-loss proof — MERGED (ws5c-impl)
+- PR #15 → `050bbf8` (head `0e180a2`), squash, branch deleted. Test and harness only: no production code or store API change.
+- CI: PR runs 44261905130, 44262308085, 44262651249 and the final head all green (typecheck, lint, unit, policy, e2e, evidence). Main run 44263624582 on `050bbf8` success; Vercel production success; `/` 200.
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws5c` after each rebase (last: 347 tests on `0e180a2` over `e775774`). `pnpm proof:sync`: EXIT 0 on every run (6 runs, 3 recorded in full on the PR): control passes, 8/8 mutants killed by a tagged assertion, changed-line counts asserted.
+- Property (`src/routes/api/sync/sync.spec.ts`, 2000 runs, ~2.4s in CI): new commands `partialSync` (commit and ack masks), `reload`, `reloadDuringSync` (after commit; the old page's sync never continues), two tabs on one IndexedDB plus `concurrentSync`. Every clean online sync must drain; a separate test drains 250 records in one `syncOutbox` (3 requests). Convergence assertions are tagged `[client] [duplicate] [server] [tombstone] [drain]`; `[server]` compares revision for revision; `[duplicate]` keys on the performed set (device, loggedAt, position, movement), not id. The vacuous id-count check is gone. 30000 runs passed once locally.
+- Mutants added: ack ignores accepted ids, sync returns after one batch, store forgets the outbox on reload, server assigns its own ids. A mutant counts only if every failing test failed on a tagged assertion; anything else is `crashed` and fails the proof. `scripts/sync-mutants.spec.ts` tests the classifier and that every mutant still applies.
+- Findings (no loss, not fixed): with two tabs syncing at once, the tab that acks second marks 0 and `syncOutbox` returns `failed` although everything is on the server; `startSyncLoop` then backs off and retries. Same after an in-flight undo when the batch is only that record. Cosmetic: a spurious "Not synced"/retry, never a loss.
+- Gotchas: fast-check needs `includeErrorInReport: true` or vitest's JSON report drops the assertion cause. The plain-insert mutant dies by `[drain]` (the 503 leaves the outbox full), which is an assertion, not a crash. The server-id mutant's shrunk counterexample fails `[server]` in the property; `[duplicate]` is what kills it in the scripted history.
+- Brief/tracker drift: the bullets below this heading, down to WS3c, are WS5a's handoff (misfiled under WS5c). Two-tab model was cheap and is in.
+- Status: MERGED. Verifier pending.
+- (WS5a handoff, misfiled here:)
 - Type: impl EM. Doc: ws-05-logging-sync.md (everything except the log UI and the UI e2e). Hold-the-line A.
 - PRs, all squash-merged, branches deleted:
   - #5 → `4fd9a0b` (head `b7ac9b1`): the main chunk.
