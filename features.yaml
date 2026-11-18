@@ -12,6 +12,12 @@
 - name: progress
   route: /progress
   e2e: e2e/progress.e2e.ts
+- name: benchmarks
+  route: /progress/benchmarks
+  e2e: e2e/progress.e2e.ts
+- name: lifts
+  route: /progress/lifts
+  e2e: e2e/progress.e2e.ts
 - name: benchmark-history
   route: /progress/benchmarks/[id]
   e2e: e2e/progress.e2e.ts

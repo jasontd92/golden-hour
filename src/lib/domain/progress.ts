@@ -1,3 +1,4 @@
+import { batteryRank } from './battery.ts';
 import type { LiftEvidence, LiftsFile, Result, Workout } from './history.ts';
 import { formatScore } from './score.ts';
 
@@ -68,21 +69,29 @@ function isComparable(workout: Workout): boolean {
 	return workout.score.better !== null && workout.definition_status === undefined;
 }
 
+export function isTopBenchmark(workout: Workout): boolean {
+	return workout.favorite === true || batteryRank(workout.id) !== undefined;
+}
+
 export function benchmarkWorkouts(workouts: readonly Workout[], results: readonly Result[]): Workout[] {
 	const count = new Map(workouts.map((w) => [w.id, resultCount(w, results)]));
 	const datedCount = (w: Workout) =>
 		results.filter((r) => r.workout === w.id && isScored(r) && r.date !== undefined).length;
-	const groups: ((w: Workout) => boolean)[] = [
-		(w) => w.favorite === true,
-		(w) => w.kind === 'test',
-		(w) => w.kind === 'girl' && datedCount(w) >= 2
+	const byCountThenName = (a: Workout, b: Workout) =>
+		(count.get(b.id) ?? 0) - (count.get(a.id) ?? 0) || a.name.localeCompare(b.name);
+	const batteryOrder = (a: Workout, b: Workout) => (batteryRank(a.id) ?? 0) - (batteryRank(b.id) ?? 0);
+	const groups: [inGroup: (w: Workout) => boolean, order: (a: Workout, b: Workout) => number][] = [
+		[(w) => w.favorite === true, byCountThenName],
+		[(w) => batteryRank(w.id) !== undefined, batteryOrder],
+		[(w) => w.kind === 'test', byCountThenName],
+		[(w) => w.kind === 'girl' && datedCount(w) >= 2, byCountThenName]
 	];
 	const chosen = new Set<string>();
 	const ordered: Workout[] = [];
-	for (const inGroup of groups) {
+	for (const [inGroup, order] of groups) {
 		const members = workouts
 			.filter((w) => !chosen.has(w.id) && isComparable(w) && (count.get(w.id) ?? 0) > 0 && inGroup(w))
-			.sort((a, b) => (count.get(b.id) ?? 0) - (count.get(a.id) ?? 0) || a.name.localeCompare(b.name));
+			.sort(order);
 		for (const w of members) {
 			chosen.add(w.id);
 			ordered.push(w);
@@ -97,6 +106,11 @@ export function benchmarkRows(workouts: readonly Workout[], results: readonly Re
 		if (!result) return [];
 		return [{ id: workout.id, name: workout.name, best: displayScore(result, workout), conflicted }];
 	});
+}
+
+export function topBenchmarkRows(workouts: readonly Workout[], results: readonly Result[]): ProgressRow[] {
+	const top = new Set(workouts.filter(isTopBenchmark).map((w) => w.id));
+	return benchmarkRows(workouts, results).filter((row) => top.has(row.id));
 }
 
 export function bestOneRepMax(evidence: readonly LiftEvidence[]): number | undefined {
@@ -117,6 +131,22 @@ export function liftRows(lifts: LiftsFile): ProgressRow[] {
 		})
 		.sort((a, b) => b.load - a.load || a.name.localeCompare(b.name))
 		.map(({ id, name, load }) => ({ id, name, best: String(load), conflicted: false }));
+}
+
+export const mainLifts: readonly string[] = ['back-squat', 'shoulder-press', 'deadlift', 'bench-press'];
+
+const recentYears = 3;
+
+export function isMainLift(id: string, evidence: readonly LiftEvidence[], today: string): boolean {
+	const since = `${Number(today.slice(0, 4)) - recentYears}${today.slice(4)}`;
+	return (
+		mainLifts.includes(id) ||
+		evidence.some((e) => e.reps === 1 && e.date !== null && e.date >= since)
+	);
+}
+
+export function mainLiftRows(lifts: LiftsFile, today: string): ProgressRow[] {
+	return liftRows(lifts).filter((row) => isMainLift(row.id, lifts[row.id] ?? [], today));
 }
 
 function dayLabel(iso: string): string {

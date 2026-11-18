@@ -9,4 +9,9 @@
 	<title>Progress · Golden Hour</title>
 </svelte:head>
 
-<Progress benchmarks={data.benchmarks} lifts={data.lifts} />
+<Progress
+	benchmarks={data.benchmarks}
+	lifts={data.lifts}
+	benchmarkCount={data.benchmarkCount}
+	liftCount={data.liftCount}
+/>
