@@ -12,8 +12,8 @@
 - Base health: green (main run 44211177511 on 36d5f7e).
 - Vercel: connected. Turso: DB created, credentials in Vercel env (CEO, 2026-11-17).
 - Codex review: CEO enabling async. Not a blocker.
-- Open PRs: see gh. Live subagents: ws2-verify; ws3-impl, ws4-impl, ws5a-impl (worktrees ../golden-hour-wt/<ws>).
-- Merged + verified: WS1 → d003a28 → PASS WITH GAPS 8/9 (HUMAN phone check pending). WS7 → c1d1bba → PASS WITH GAPS 3/3 + HUMAN. WS2 → 7156081 (verifier pending).
+- Open PRs: see gh. Live subagents: ws3-impl, ws4-impl, ws5a-impl (worktrees ../golden-hour-wt/<ws>).
+- Merged + verified: WS1 → d003a28 → PASS WITH GAPS 8/9 (HUMAN phone check pending). WS7 → c1d1bba → PASS WITH GAPS 3/3 + HUMAN. WS2 → 7156081 → PASS WITH GAPS 5/5 (one criterion superseded by the plan's 85% TM).
 - Production URL: https://golden-hour-iota-three.vercel.app/ (previews are behind Vercel SSO).
 - Parallel track (not an EM chunk): Evolution 5 coaches debate, PM-moderated with the CEO. Starts after WS2 merges, since its output is `PlanSession` JSON. First agenda items:
   1. Does the 2–3 hard-sessions cap apply to running quality only, or to metcons too? PM recommendation: running only.
@@ -177,6 +177,11 @@ Explicitly cut, so don't reintroduce:
   - `gitBranch` on subagent records is the PM checkout's branch (`main`), not the EM's worktree branch, so the branch can't come from the transcript; it comes from `gh pr view`.
   - `gh api graphql -F owner={owner} -F repo={repo}` placeholders work.
 - Brief errors: EM transcripts are not under the `-…-golden-hour*` project dirs. They live under the PM session's dir (`-Users-jason-Documents/<pm-session>/subagents/`), next to non-repo subagents, which is why discovery filters by cwd.
+
+### WS2 verdict
+- VERIFIER: PASS WITH GAPS 5/5.
+- Plan TMs (215/135/280) come from the 2026-11-16 CrossFit Total (255/160/335, in results.jsonl), not from lifts.json. lifts.json's all-time bests (295/165/365) would give 250/140/310. Plan sessions must carry explicit `trainingMax`; never derive it from lifts.json. WS6 should consider whether the 11/16 CFT lifts appear as lift evidence.
+- CI's vitest reporter prints only per-file counts. Verifiers take test names from local verbose runs.
 
 ### WS7 verdict
 - VERIFIER: PASS WITH GAPS 3/3 mechanical, HUMAN pending. Privacy of the scored set is proven by mutation. Gaps go to WS7b.
