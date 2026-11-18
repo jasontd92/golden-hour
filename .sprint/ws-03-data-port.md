@@ -14,7 +14,7 @@ Port `data/build.py` to `scripts/data-build.ts` (`pnpm data:build`). It produces
 - CI: a job runs `pnpm data:build` and fails if `git diff --exit-code data/normalized` is non-empty. Normalized output is always committed and current.
 
 ## Acceptance criteria
-- [ ] Parity: before deleting build.py, run both builds and diff all four outputs. Zero diff (mechanical; attach the command and output to the PR). Allowed exception: JSON key order or whitespace, only if normalized by a stated formatter and both outputs pass through it.
+- [x] Parity: before deleting build.py, run both builds and diff all four outputs. Zero diff (mechanical; attach the command and output to the PR). Allowed exception: JSON key order or whitespace, only if normalized by a stated formatter and both outputs pass through it. (per PM ruling in tracker §3 WS3 verdict; verified after WS3b 87fed7d)
   - Verifier: NOT ticked. Real inputs give zero diff (all four sha256 equal to committed). Adversarial curated inputs diverge:
     - integer-like object keys are reordered (`splits: {"run_5k","10","2","1"}` comes out as `1,2,10,run_5k`).
     - Unicode digits (`٧:١٠`, `１２`) parse in build.py but not in the port.
