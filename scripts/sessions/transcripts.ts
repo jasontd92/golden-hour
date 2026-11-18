@@ -1,6 +1,12 @@
-import { createReadStream, existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import * as nodeFs from 'node:fs';
 import path from 'node:path';
-import { createInterface } from 'node:readline';
+
+export type TranscriptFs = Pick<
+	typeof nodeFs,
+	'closeSync' | 'existsSync' | 'openSync' | 'readFileSync' | 'readSync' | 'readdirSync' | 'statSync'
+>;
+
+export const readChunkBytes = 4096;
 
 export interface ToolCall {
 	id: string;
@@ -30,6 +36,7 @@ export interface Transcript {
 	calls: ToolCall[];
 	results: Map<string, ToolResult>;
 	usage: Map<string, Usage>;
+	finished: boolean;
 }
 
 type JsonObject = Record<string, unknown>;
@@ -48,46 +55,65 @@ export function encodeProjectDir(dir: string): string {
 	return dir.replace(/[^A-Za-z0-9]/g, '-');
 }
 
-function jsonlFilesUnder(dir: string): string[] {
-	if (!existsSync(dir)) return [];
-	return readdirSync(dir, { recursive: true, encoding: 'utf8' })
+function jsonlFilesUnder(fs: TranscriptFs, dir: string): string[] {
+	if (!fs.existsSync(dir)) return [];
+	return fs
+		.readdirSync(dir, { recursive: true, encoding: 'utf8' })
 		.filter((entry) => entry.endsWith('.jsonl'))
 		.map((entry) => path.join(dir, entry))
-		.filter((file) => statSync(file).isFile());
+		.filter((file) => fs.statSync(file).isFile());
 }
 
-export function candidateTranscripts(projectsDir: string, root: string): string[] {
-	const encodedRoot = encodeProjectDir(root.replace(/\/+$/, ''));
-	if (!existsSync(projectsDir)) return [];
-	return readdirSync(projectsDir).flatMap((name) => {
+export function candidateTranscripts(projectsDir: string, root: string, fs: TranscriptFs = nodeFs): string[] {
+	const base = root.replace(/\/+$/, '');
+	const repoDir = encodeProjectDir(base);
+	const orchestratorDir = encodeProjectDir(path.dirname(base));
+	if (!fs.existsSync(projectsDir)) return [];
+	return fs.readdirSync(projectsDir, { encoding: 'utf8' }).flatMap((name) => {
+		const isRepoDir = name === repoDir || name.startsWith(`${repoDir}-wt-`);
+		if (!isRepoDir && name !== orchestratorDir) return [];
 		const dir = path.join(projectsDir, name);
-		if (!statSync(dir).isDirectory()) return [];
-		if (name.startsWith(encodedRoot)) return jsonlFilesUnder(dir);
-		if (encodedRoot !== name && !encodedRoot.startsWith(`${name}-`)) return [];
-		return readdirSync(dir).flatMap((session) => {
+		if (!fs.statSync(dir).isDirectory()) return [];
+		if (isRepoDir) return jsonlFilesUnder(fs, dir);
+		return fs.readdirSync(dir, { encoding: 'utf8' }).flatMap((session) => {
 			const subagents = path.join(dir, session, 'subagents');
-			return existsSync(subagents) ? jsonlFilesUnder(subagents) : [];
+			return fs.existsSync(subagents) ? jsonlFilesUnder(fs, subagents) : [];
 		});
 	});
 }
 
-async function* jsonRecords(file: string): AsyncGenerator<JsonObject> {
-	const input = createReadStream(file, { encoding: 'utf8' });
-	const lines = createInterface({ input, crlfDelay: Infinity });
+function* jsonLines(fs: TranscriptFs, file: string): Generator<string> {
+	const fd = fs.openSync(file, 'r');
 	try {
-		for await (const line of lines) {
-			if (!line.trim()) continue;
-			let record: unknown;
-			try {
-				record = JSON.parse(line);
-			} catch {
-				continue;
+		const chunk = Buffer.alloc(readChunkBytes);
+		let partial: Buffer[] = [];
+		for (let read = fs.readSync(fd, chunk); read > 0; read = fs.readSync(fd, chunk)) {
+			const bytes = Buffer.from(chunk.subarray(0, read));
+			let start = 0;
+			for (let newline = bytes.indexOf(0x0a); newline !== -1; newline = bytes.indexOf(0x0a, start)) {
+				partial.push(bytes.subarray(start, newline));
+				yield Buffer.concat(partial).toString('utf8');
+				partial = [];
+				start = newline + 1;
 			}
-			if (isObject(record)) yield record;
+			if (start < read) partial.push(bytes.subarray(start));
 		}
+		if (partial.length > 0) yield Buffer.concat(partial).toString('utf8');
 	} finally {
-		lines.close();
-		input.destroy();
+		fs.closeSync(fd);
+	}
+}
+
+function* jsonRecords(fs: TranscriptFs, file: string): Generator<JsonObject> {
+	for (const line of jsonLines(fs, file)) {
+		if (!line.trim()) continue;
+		let record: unknown;
+		try {
+			record = JSON.parse(line);
+		} catch {
+			continue;
+		}
+		if (isObject(record)) yield record;
 	}
 }
 
@@ -108,24 +134,28 @@ function gitOperationPrs(record: JsonObject): number[] {
 	return pr.action === 'created' || pr.action === 'merged' ? [pr.number] : [];
 }
 
-function sessionLabel(file: string): string {
+function sessionMeta(fs: TranscriptFs, file: string): { label: string; finished: boolean } {
 	const base = path.basename(file, '.jsonl');
+	const fallback = base.startsWith('agent-') ? base.slice(0, 14) : `session-${base.slice(0, 8)}`;
 	const metaFile = file.replace(/\.jsonl$/, '.meta.json');
-	if (existsSync(metaFile)) {
-		try {
-			const meta: unknown = JSON.parse(readFileSync(metaFile, 'utf8'));
-			if (isObject(meta) && typeof meta.name === 'string' && meta.name) return meta.name;
-		} catch {
-			return base.slice(0, 14);
-		}
+	if (!fs.existsSync(metaFile)) return { label: fallback, finished: false };
+	try {
+		const meta: unknown = JSON.parse(fs.readFileSync(metaFile, 'utf8'));
+		if (!isObject(meta)) return { label: fallback, finished: false };
+		return {
+			label: typeof meta.name === 'string' && meta.name ? meta.name : fallback,
+			finished: meta.finished === true
+		};
+	} catch {
+		return { label: fallback, finished: false };
 	}
-	return base.startsWith('agent-') ? base.slice(0, 14) : `session-${base.slice(0, 8)}`;
 }
 
-export async function readRepoTranscript(
+export function readRepoTranscript(
 	file: string,
-	isRepoCwd: (cwd: string) => boolean
-): Promise<Transcript | null> {
+	isRepoCwd: (cwd: string) => boolean,
+	fs: TranscriptFs = nodeFs
+): Transcript | null {
 	const transcript: Transcript = {
 		file,
 		label: '',
@@ -133,12 +163,13 @@ export async function readRepoTranscript(
 		end: null,
 		calls: [],
 		results: new Map(),
-		usage: new Map()
+		usage: new Map(),
+		finished: false
 	};
 	const seenCalls = new Set<string>();
 	let decided = false;
 
-	for await (const record of jsonRecords(file)) {
+	for (const record of jsonRecords(fs, file)) {
 		if (typeof record.cwd === 'string') {
 			if (!decided && !isRepoCwd(record.cwd)) return null;
 			decided = true;
@@ -192,6 +223,8 @@ export async function readRepoTranscript(
 	}
 
 	if (!decided) return null;
-	transcript.label = sessionLabel(file);
+	const meta = sessionMeta(fs, file);
+	transcript.label = meta.label;
+	transcript.finished = meta.finished;
 	return transcript;
 }
