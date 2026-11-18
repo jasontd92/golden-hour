@@ -9,8 +9,8 @@ export const budgets = {
 	firstLoadJsGzipBytes: 90_000,
 	precacheRawBytes: 44_000_000,
 	precacheGzipBytes: 5_800_000,
-	propertySuiteMs: 30_000,
-	syncProofMs: 300_000
+	propertySuiteMs: 15_000,
+	syncProofMs: 110_000
 };
 
 export type Budget = keyof typeof budgets;
