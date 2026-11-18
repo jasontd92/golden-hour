@@ -516,6 +516,27 @@ Explicitly cut, so don't reintroduce:
 - Brief errors: none.
 - Status: MERGED. Verifier pending.
 - VERIFIER: WS7b — PASS 5/5. Instrumented fs on the real projects dir: only the projects root, `-Users-jason-Documents` and `-Users-jason-Documents-golden-hour` touched (no `-Users-jason`, `-Users-jason-Documents-Developer` etc.); a fixture tree confirms `-wt-*` read, `-other`/`hourwt-` lookalikes and `-Users-jason` never statted or opened, parent top-level sessions never opened. 10 rejected files: max 8192 B, at most 3190 B past the first cwd record. gh: 13/13 PR sessions have commits; no gh: 0. Running sessions labelled and excluded (totals = finished-only sum). Mutants ancestor scope, bounded read, totals exclusion, commits-from-PR reproduced, all killed.
+### WS9 — Evolution 5 plan generator — MERGED
+- Type: impl EM (ws9-impl). Source: team/draft-plan.md (Revision 2026-11-18).
+- PR #18, squash-merged as `f7d982a`. Head `6cac5dc`. Branch deleted.
+- CI: PR runs 44265796051, 44266339021 and 44266846025 (final head) all green: typecheck, lint, unit 391, policy incl. step "plan matches a fresh generate", e2e 38/38, evidence (today-week-1 and today-week-4 inline). Main run 44267305518 success; Vercel success on `f7d982a`.
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws9` at `6cac5dc` after the final rebase onto `528f5e7`. Logs are PR comments.
+- Reviews: none, 0 threads.
+- Public API:
+  - `plan/inputs.json` (`PlanInputs`): firstMonday, TMs, `trainingMaxChanges` (week 4/7/11/12/15 × lift → raise|hold|cut; the planned default is raise, and hold at 12), submax pace, tests `{value,date,provisional}` or null.
+  - `#lib/domain/evolution.ts`: weekLayout, sessionDate, liftWeek, mainSets, supplementalSets, trainingMaxesFor, mondayFamily/mondayGirl, bikeFamily, qualityB, conditioningScale, longRunMinutes, weeklyRunCap, pullUpSetReps, lSitAccumulation, holiday/retest/checkpoint/deload week sets.
+  - `scripts/plan-sessions.ts` `generatePlan(inputs)` → PlanWeek[]; `pnpm plan:generate` writes `plan/week-NN.json` (compact JSON). `loadPlan` globs `/plan/week-*.json`. `plan:check` requires all 17 weeks with names that match their week.
+  - The today renderer shows whole minutes as `10 min`, whole mi/km as `1 mi`/`10 km`, and drops the header on a single unrested interval.
+- Decisions:
+  - Provisional inputs: 10k 53:13, 400 65.42 s, bike 5:06, L-sit 25 s. Null inputs: mile, ring dips, HR max. Their notes use relative text ("half your max", "75% max", "midway between mile and 400 pace").
+  - Z1 run minutes are sized so weekly run time is ≤ 1.1 × the last full week (week 0 = 135). Holiday, deload and retest weeks don't reset the base. Tested.
+  - Long run: floor(1.1 × 10k) capped at 60, then +5/wk to 90. Deload weeks are 0.8 × the prior week, and the progression resumes after them.
+  - The ½ conditioning scale (weeks 1, 2, 7, 11, 15) also applies to Friday bike intervals. Week 11: no FSL. Body comp appears only at the retest (in the submax note), not monthly.
+  - Retest: max-effort tests are hard. Body comp and the submax are not.
+  - No freeText in work blocks.
+- Gotchas: `liftWeek` anchor mapping was caught by a test (weeks 12–14 must be cycle weeks 1–3). Dates are UTC (`addDays`).
+- Brief errors: none material. The brief's "test blocks are hard" is applied to max efforts only (see Decisions). ws8-impl asked for a `test?` label on PlanSession; I declined because it is a WS2 contract change that needs PM sign-off.
+
 ### WS8 — desktop planning view — NOT STARTED (needs CEO approval of Pass 3; after WS4, and WS5b/WS6 for review data)
 
 ### CLOSE — Stage 5′ — NOT STARTED
