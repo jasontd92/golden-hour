@@ -1,5 +1,5 @@
 import { ESLint } from 'eslint';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 const eslint = new ESLint();
 
@@ -7,6 +7,16 @@ async function messages(file: string, code: string) {
 	const [result] = await eslint.lintText(code, { filePath: file });
 	return (result?.messages ?? []).map((m) => `${m.ruleId}: ${m.message}`);
 }
+
+const coldStartMs = 30_000;
+
+// why: the first lintText loads the config, svelte parser and TS program; pay that once here, not in whichever test runs first
+beforeAll(async () => {
+	await Promise.all([
+		messages('src/lib/features/today/Warm.svelte', '<script lang="ts">\n\tlet a = 1;\n</script>\n\n<p>{a}</p>\n'),
+		messages('src/lib/domain/warm.ts', 'export const a = 1;\n')
+	]);
+}, coldStartMs);
 
 const effect = '<script lang="ts">\n\tlet a = $state(0);\n\t$effect(() => {\n\t\tdocument.title = String(a);\n\t});\n</script>\n\n<p>{a}</p>\n';
 const effectRule = "no-restricted-syntax: derive with $derived or move side effects to the feature's effects.svelte.ts";
