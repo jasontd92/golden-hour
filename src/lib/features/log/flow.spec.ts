@@ -172,7 +172,7 @@ describe('LogFlow', () => {
 
 		const store = await h.store;
 		expect(await store.entries()).toEqual([]);
-		expect(await store.sessions()).toEqual([
+		expect([...(await store.sessions()).values()]).toEqual([
 			{
 				kind: 'session',
 				id: flow.savedSession?.id,
@@ -190,7 +190,7 @@ describe('LogFlow', () => {
 		await reopened.resume();
 		expect(reopened.savedSession?.id).toBe(flow.savedSession?.id);
 		await reopened.undo();
-		expect(await store.sessions()).toEqual([]);
+		expect([...(await store.sessions()).values()]).toEqual([]);
 		expect(reopened.savedSession).toBeUndefined();
 		expect(reopened.onSession).toBe(true);
 	});
@@ -218,7 +218,7 @@ describe('LogFlow', () => {
 		flow.score = '4:05';
 		expect(flow.scoreInvalid).toBe(false);
 		await flow.done();
-		const [saved] = await (await h.store).sessions();
+		const [saved] = (await (await h.store).sessions()).values();
 		expect(saved).toMatchObject({ rpe: 7, score: { blockIndex: 1, prescriptionIndex: 0, type: 'time', value: 245 } });
 
 		const reopened = h.flow();
@@ -246,4 +246,47 @@ describe('LogFlow', () => {
 		expect(reopened.onSession).toBe(true);
 		expect(reopened.savedSession).toBeUndefined();
 	});
+
+	it('logging a session again pre-fills the Session step and replaces the record', async () => {
+		const h = harness(pullUpsThenFran);
+		const first = h.flow();
+		await first.resume();
+		await first.done();
+		first.advance();
+		await first.done();
+		first.advance();
+		first.harder();
+		first.score = '4:05';
+		first.note = 'paced it';
+		await first.done();
+		const id = first.savedSession?.id;
+		await first.undo();
+		expect([first.sessionRpe, first.score, first.note]).toEqual([8, '4:05', 'paced it']);
+
+		h.tick(3_600_000);
+		const again = h.flow();
+		await again.resume();
+		expect(again.onSession).toBe(true);
+		expect(again.savedSession).toBeUndefined();
+		expect([again.sessionRpe, again.score, again.note]).toEqual([8, '4:05', 'paced it']);
+		again.harder();
+		again.score = '3:58';
+		await again.done();
+
+		expect([...(await (await h.store).sessions()).values()]).toEqual([
+			{
+				kind: 'session',
+				id,
+				sessionDate: '2026-12-09',
+				rpe: 9,
+				score: { blockIndex: 1, prescriptionIndex: 0, type: 'time', value: 238 },
+				note: 'paced it',
+				loggedAt: new Date(t0 + 3_600_000).toISOString(),
+				deviceId: 'device-1',
+				revision: 3
+			}
+		]);
+		expect(again.savedSession?.id).toBe(id);
+	});
 });
+

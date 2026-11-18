@@ -225,6 +225,37 @@ test('a session with no sets is started from Today, logged offline with its RPE,
 	expect(row).toMatchObject({ id: logged!.id, session_date: date, rpe, note: 'Easy legs', revision: 1, deleted_at: null, score_type: null });
 });
 
+test('logging a session twice on a day keeps one record with the second values', async ({ page }, testInfo) => {
+	await openOn(page, logDate, '/sync');
+	await saveToken(page);
+	const day = (await logDays(page)).find((d) => !d.sets);
+	expect(day, 'the first plan week has a session without sets').toBeDefined();
+	await page.goto(`/log/${day!.date}`);
+
+	const first = await sessionStep(page);
+	await page.getByRole('button', { name: 'Done' }).click();
+	await expect(page.getByTestId('saved')).toContainText(`RPE ${first.rpe}`);
+	const [logged] = await localRecords(page);
+	await expect.poll(async () => (await localRecords(page)).map((r) => r.pending)).toEqual([0]);
+
+	await page.getByRole('button', { name: 'Undo' }).click();
+	await page.reload();
+	await expect(stepTitle(page)).toHaveText('Session');
+	await expect(sessionRpe(page)).toHaveText(String(first.rpe));
+	await settled(page.locator('.session-fields'));
+	await captureEvidence(page, testInfo, 'session-prefilled');
+	const second = await sessionStep(page);
+	await page.getByRole('button', { name: 'Done' }).click();
+	await expect(page.getByTestId('saved')).toContainText(`RPE ${second.rpe}`);
+
+	await expect.poll(async () => (await localRecords(page)).map((r) => [r.id, r.pending, r.record.rpe, r.record.revision, r.record.deletedAt])).toEqual([
+		[logged!.id, 0, second.rpe, 3, undefined]
+	]);
+	await expect.poll(async () => (await serverRows('session_logs', [logged!.id])).map((row) => [row.rpe, row.revision, row.deleted_at])).toEqual([
+		[second.rpe, 3, null]
+	]);
+});
+
 test('a session with sets ends with one Session step after the last set', async ({ page }, testInfo) => {
 	await openOn(page, logDate, '/');
 	const day = (await logDays(page)).find((d) => d.sets);

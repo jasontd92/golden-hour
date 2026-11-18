@@ -89,12 +89,15 @@ const sessionFields = fc.record({
 	),
 	note: fc.option(fc.constantFrom('legs heavy', 'paced it'), { nil: undefined })
 });
+type SessionFields = typeof sessionFields extends fc.Arbitrary<infer F> ? F : never;
+const sessionDate = fc.constantFrom('2026-12-07', '2026-12-08');
 const tab = fc.integer({ min: 0, max: 1 });
 const mask = fc.array(fc.boolean(), { minLength: 1, maxLength: 4 });
 
 const command = fc.oneof(
 	{ weight: 4, arbitrary: fc.record({ kind: fc.constant('log' as const), tab, set: setFields }) },
-	{ weight: 2, arbitrary: fc.record({ kind: fc.constant('logSession' as const), tab, session: sessionFields }) },
+	{ weight: 2, arbitrary: fc.record({ kind: fc.constant('logSession' as const), tab, date: sessionDate, session: sessionFields }) },
+	{ weight: 2, arbitrary: fc.record({ kind: fc.constant('resaveSession' as const), tab, pick: fc.nat(), session: sessionFields, duringSync: fc.boolean() }) },
 	{ weight: 2, arbitrary: fc.record({ kind: fc.constant('undo' as const), tab, pick: fc.nat() }) },
 	{ weight: 1, arbitrary: fc.record({ kind: fc.constant('amend' as const), tab, pick: fc.nat(), rpe: fc.integer({ min: 2, max: 20 }).map((half) => half / 2) }) },
 	{ weight: 1, arbitrary: fc.constant({ kind: 'offline' as const }) },
@@ -142,6 +145,7 @@ async function play(commands: Command[]) {
 	const network = new Network();
 	const live = new Map<string, Logged>();
 	const undone = new Set<string>();
+	const sessionIds = new Map<string, string>();
 	const pickLive = (pick: number) => [...live.keys()][pick % live.size];
 	const undo = async (store: LogStore, id: string) => {
 		await onThePhone(`undo ${id}`, store.undo(id, new Date(Date.UTC(2026, 11, 7, 18))));
@@ -179,6 +183,31 @@ async function play(commands: Command[]) {
 		expectSucceeded(outcomes);
 	};
 	let clock = Date.UTC(2026, 11, 7, 17);
+	const logSession = async (store: LogStore, date: string, fields: SessionFields) => {
+		clock += 1000;
+		const session: SessionLog = withoutUndefined({
+			kind: 'session',
+			id: v7({ msecs: clock, seq: 0 }),
+			sessionDate: date,
+			...fields,
+			loggedAt: new Date(clock).toISOString(),
+			deviceId: 'phone-1'
+		});
+		await store.saveSession(session);
+		const id = sessionIds.get(date) ?? session.id;
+		sessionIds.set(date, id);
+		live.set(id, { ...session, id });
+		undone.delete(id);
+	};
+	const resaveSession = async (store: LogStore, date: string, fields: SessionFields) => {
+		const before = await store.sessionOn(date);
+		await logSession(store, date, fields);
+		const after = await store.sessionOn(date);
+		expect(
+			[after?.id, after?.revision, after?.deletedAt],
+			`[replace] re-saving the ${date} session edits its record: same id, next revision`
+		).toStrictEqual([before?.id, before!.revision + 1, undefined]);
+	};
 
 	for (const step of commands) {
 		if (step.kind === 'log') {
@@ -197,17 +226,19 @@ async function play(commands: Command[]) {
 			await tabs[step.tab]!.save(entry);
 			live.set(entry.id, entry);
 		} else if (step.kind === 'logSession') {
-			clock += 1000;
-			const session: SessionLog = withoutUndefined({
-				kind: 'session',
-				id: v7({ msecs: clock, seq: 0 }),
-				sessionDate: '2026-12-07',
-				...step.session,
-				loggedAt: new Date(clock).toISOString(),
-				deviceId: 'phone-1'
-			});
-			await tabs[step.tab]!.saveSession(session);
-			live.set(session.id, session);
+			await logSession(tabs[step.tab]!, step.date, step.session);
+		} else if (step.kind === 'resaveSession' && sessionIds.size > 0) {
+			const date = [...sessionIds.keys()][step.pick % sessionIds.size]!;
+			const resave = () => resaveSession(tabs[step.pick % 2]!, date, step.session);
+			if (!step.duringSync) await resave();
+			else {
+				network.inFlight = resave;
+				const outcome = await sync(step.tab);
+				await expectHonest([outcome]);
+				expectSucceeded([outcome]);
+				if (network.inFlight) await network.inFlight();
+				network.inFlight = undefined;
+			}
 		} else if (step.kind === 'undo' && live.size > 0) {
 			await undo(tabs[step.tab]!, pickLive(step.pick)!);
 		} else if (step.kind === 'amend' && live.size > 0) {
@@ -260,7 +291,7 @@ async function play(commands: Command[]) {
 	await expectDrained([await sync(0)]);
 
 	const server: SyncRecord[] = [...(await allLogRecords(db)), ...(await allSessionRecords(db))];
-	const client: SyncRecord[] = [...(await tabs[0]!.entries()), ...(await tabs[0]!.sessions())].sort(byId);
+	const client: SyncRecord[] = [...(await tabs[0]!.entries()), ...(await tabs[0]!.sessions()).values()].sort(byId);
 	for (const store of tabs) store.close();
 	return {
 		expected: [...live.values()].sort(byId),
@@ -295,7 +326,7 @@ describe('hold-the-line A: no log entry is ever lost', () => {
 		const fran = { rpe: 9, score: { blockIndex: 2 as const, prescriptionIndex: 0 as const, type: 'time' as const, value: 245 }, note: 'paced it' as const };
 		const result = await play([
 			{ kind: 'log', tab: 0, set },
-			{ kind: 'logSession', tab: 1, session: run },
+			{ kind: 'logSession', tab: 1, date: '2026-12-07', session: run },
 			{ kind: 'interruptedSync', tab: 0 },
 			{ kind: 'log', tab: 1, set },
 			{ kind: 'log', tab: 0, set },
@@ -307,9 +338,12 @@ describe('hold-the-line A: no log entry is ever lost', () => {
 			{ kind: 'log', tab: 1, set },
 			{ kind: 'reload', tab: 1 },
 			{ kind: 'amend', tab: 0, pick: 1, rpe: 8 },
-			{ kind: 'logSession', tab: 0, session: fran },
+			{ kind: 'logSession', tab: 0, date: '2026-12-08', session: fran },
+			{ kind: 'resaveSession', tab: 1, pick: 1, session: { ...fran, rpe: 8 }, duringSync: false },
 			{ kind: 'online' },
-			{ kind: 'concurrentSync' }
+			{ kind: 'concurrentSync' },
+			{ kind: 'resaveSession', tab: 0, pick: 0, session: { ...run, rpe: 5 }, duringSync: false },
+			{ kind: 'resaveSession', tab: 0, pick: 1, session: { ...fran, score: undefined }, duringSync: true }
 		]);
 		expect(result.expected.filter((logged) => 'kind' in logged)).toHaveLength(2);
 		expect(result.expected).toHaveLength(5);
@@ -326,7 +360,7 @@ describe('hold-the-line A: no log entry is ever lost', () => {
 		for (let i = 0; i < 250; i++) {
 			const at = { id: v7({ msecs: start + i, seq: 0 }), sessionDate: '2026-12-07', loggedAt: new Date(start + i).toISOString(), deviceId: 'phone-1' };
 			if (i % 5 === 0) {
-				await store.saveSession({ kind: 'session', ...at, rpe: 7 });
+				await store.saveSession({ kind: 'session', ...at, sessionDate: new Date(start + i * 86_400_000).toISOString().slice(0, 10), rpe: 7 });
 				continue;
 			}
 			await store.save({ ...at, blockIndex: 1, prescriptionIndex: 0, setIndex: i, movement: 'pull_up', reps: 5 });

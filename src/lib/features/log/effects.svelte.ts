@@ -30,7 +30,7 @@ export function trackLoggedSessions(): void {
 		let stopped = false;
 		const refresh = () => {
 			void localLog()
-				.then(async (store) => [...(await store.entries()), ...(await store.sessions())])
+				.then(async (store) => [...(await store.entries()), ...(await store.sessions()).values()])
 				.then((found) => {
 					if (!stopped) records = found;
 				})

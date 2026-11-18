@@ -66,12 +66,12 @@ describe('openLogStore', () => {
 		const saved = await store.saveSession(session);
 		expect(saved).toEqual({ ...session, revision: 1 });
 		expect(await store.entries()).toEqual([{ ...entry, revision: 1 }]);
-		expect(await store.sessions()).toEqual([saved]);
+		expect([...(await store.sessions()).values()]).toEqual([saved]);
 		expect(await store.pendingCount()).toBe(2);
 		await expect(store.saveSession({ ...session, id: '019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e61', rpe: 7.5 })).rejects.toThrow();
 		await expect(store.amend(session.id, { rpe: 6.5 })).rejects.toThrow();
 		await store.undo(session.id, new Date('2026-12-08T15:00:00.000Z'));
-		expect(await store.sessions()).toEqual([]);
+		expect([...(await store.sessions()).values()]).toEqual([]);
 		expect(await store.pending(10)).toContainEqual({ ...session, revision: 2, deletedAt: '2026-12-08T15:00:00.000Z' });
 	});
 
@@ -83,5 +83,42 @@ describe('openLogStore', () => {
 		expect(await store.stillPending(sent)).toBe(1);
 		await store.acknowledge(sent, [entry.id]);
 		expect(await store.stillPending(sent)).toBe(0);
+	});
+
+	it('saving a session for a date that has one edits that record through the outbox', async () => {
+		const store = await fresh();
+		const first = await store.saveSession({ ...session, score: { blockIndex: 2, prescriptionIndex: 0, type: 'time', value: 245 }, note: 'paced it' });
+		const again = { ...session, id: '019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e61', rpe: 8, loggedAt: '2026-12-08T19:00:00.000-07:00' };
+
+		const pendingEdit = await store.saveSession(again);
+		expect(pendingEdit).toEqual({ ...again, id: session.id, revision: 2 });
+		expect(await store.pending(10)).toEqual([pendingEdit]);
+		expect(await store.acknowledge([first], [session.id])).toBe(0);
+
+		expect(await store.acknowledge([pendingEdit], [session.id])).toBe(1);
+		const syncedEdit = await store.saveSession({ ...again, rpe: 9 });
+		expect(syncedEdit).toMatchObject({ id: session.id, rpe: 9, revision: 3 });
+		expect(await store.pending(10)).toEqual([syncedEdit]);
+		expect(await store.sessions()).toEqual(new Map([[session.sessionDate, syncedEdit]]));
+	});
+
+	it('a session saved after an undo brings the undone record back', async () => {
+		const store = await fresh();
+		await store.saveSession(session);
+		await store.undo(session.id, new Date('2026-12-08T15:00:00.000Z'));
+		expect(await store.sessionOn(session.sessionDate)).toMatchObject({ id: session.id, deletedAt: '2026-12-08T15:00:00.000Z' });
+		const back = await store.saveSession({ ...session, id: '019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e61', rpe: 5 });
+		expect(back).toEqual({ ...session, rpe: 5, revision: 3 });
+		expect(await store.pending(10)).toEqual([back]);
+	});
+
+	it('two tabs saving the same session at once still leave one record', async () => {
+		const name = `store-spec-${n++}`;
+		const [a, b] = [await openLogStore(name), await openLogStore(name)];
+		await Promise.all([a.saveSession(session), b.saveSession({ ...session, id: '019a8f3e-7c2b-7d41-9a6e-3f2b1c0d4e61', rpe: 6 })]);
+		expect([...(await a.sessions()).values()]).toEqual([{ ...session, rpe: 6, revision: 2 }]);
+		expect(await a.pendingCount()).toBe(1);
+		a.close();
+		b.close();
 	});
 });
