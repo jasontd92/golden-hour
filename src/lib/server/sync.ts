@@ -1,11 +1,11 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { SyncRequest, type SyncResponse } from '#lib/domain/log.ts';
-import type { Db } from './db/client.ts';
+import type { Database } from './db/ready.ts';
 import { logEntriesReadable, upsertLogRecords } from './db/log-entries.ts';
 
 export interface SyncDeps {
 	token: string | undefined;
-	db: () => Db | undefined;
+	database: () => Promise<Database>;
 }
 
 const digest = (value: string) => createHash('sha256').update(value).digest();
@@ -17,13 +17,18 @@ export function bearerMatches(header: string | null, token: string): boolean {
 
 const failure = (status: number, error: string) => Response.json({ error }, { status });
 
+const notReady = {
+	unconfigured: 'TURSO_DATABASE_URL is not set on this deployment.',
+	unmigrated: 'The log database could not be migrated; nothing was stored.'
+};
+
 export async function handleSync(request: Request, deps: SyncDeps): Promise<Response> {
 	if (!deps.token) return failure(503, 'SYNC_TOKEN is not set on this deployment.');
-	const db = deps.db();
-	if (!db) return failure(503, 'TURSO_DATABASE_URL is not set on this deployment.');
 	if (!bearerMatches(request.headers.get('authorization'), deps.token)) {
 		return failure(401, 'Wrong or missing sync token.');
 	}
+	const database = await deps.database();
+	if (database.status !== 'ready') return failure(503, notReady[database.status]);
 	let body: unknown;
 	try {
 		body = await request.json();
@@ -32,14 +37,14 @@ export async function handleSync(request: Request, deps: SyncDeps): Promise<Resp
 	}
 	const parsed = SyncRequest.safeParse(body);
 	if (!parsed.success) return failure(400, parsed.error.message);
-	await upsertLogRecords(db, parsed.data.records, new Date().toISOString());
+	await upsertLogRecords(database.db, parsed.data.records, new Date().toISOString());
 	const response: SyncResponse = { accepted: parsed.data.records.map((record) => record.id) };
 	return Response.json(response);
 }
 
 export async function syncHealth(deps: SyncDeps): Promise<Response> {
-	const db = deps.db();
-	const database = !db ? 'unconfigured' : (await logEntriesReadable(db)) ? 'ready' : 'unmigrated';
+	const database = await deps.database();
+	const status = database.status === 'ready' && !(await logEntriesReadable(database.db)) ? 'unmigrated' : database.status;
 	const token = Boolean(deps.token);
-	return Response.json({ token, database }, { status: token && database === 'ready' ? 200 : 503 });
+	return Response.json({ token, database: status }, { status: token && status === 'ready' ? 200 : 503 });
 }

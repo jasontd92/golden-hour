@@ -1,15 +1,12 @@
 import { SYNC_TOKEN, TURSO_AUTH_TOKEN, TURSO_DATABASE_URL } from '$app/env/private';
-import { openDb, type Db } from './db/client.ts';
+import { openDb } from './db/client.ts';
+import { migratedOnFirstUse } from './db/ready.ts';
 import type { SyncDeps } from './sync.ts';
 
-let db: Db | undefined;
-
-export function syncDb(): Db | undefined {
-	if (!TURSO_DATABASE_URL) return undefined;
-	db ??= openDb(TURSO_DATABASE_URL, TURSO_AUTH_TOKEN);
-	return db;
-}
+export const syncDatabase = migratedOnFirstUse(() =>
+	TURSO_DATABASE_URL ? openDb(TURSO_DATABASE_URL, TURSO_AUTH_TOKEN) : undefined
+);
 
 export function syncDeps(): SyncDeps {
-	return { token: SYNC_TOKEN, db: syncDb };
+	return { token: SYNC_TOKEN, database: syncDatabase };
 }

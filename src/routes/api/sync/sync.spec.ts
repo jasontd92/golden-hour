@@ -5,16 +5,21 @@ import { beforeAll, describe, expect, it, vi } from 'vitest';
 import type { LogEntry, LogRecord, SyncRequest } from '#lib/domain/log.ts';
 import { openLogStore } from '#lib/features/log/store.ts';
 import { syncOutbox, type Transport } from '#lib/features/log/sync.ts';
-import { migrateDb } from '#lib/server/db/client.ts';
+import type { Db } from '#lib/server/db/client.ts';
 import { allLogRecords } from '#lib/server/db/log-entries.ts';
 import { logEntries } from '#lib/server/db/schema.ts';
-import { syncDb } from '#lib/server/sync-env.ts';
-import { POST } from './+server.ts';
+import { syncDatabase } from '#lib/server/sync-env.ts';
+import { GET, POST } from './+server.ts';
 
 vi.mock('$app/env/private', () => ({ SYNC_TOKEN: 'test-token', TURSO_DATABASE_URL: ':memory:', TURSO_AUTH_TOKEN: undefined }));
 
-const db = syncDb()!;
-beforeAll(() => migrateDb(db));
+let db: Db;
+beforeAll(async () => {
+	expect((await (await GET({} as Parameters<typeof GET>[0])).json())).toEqual({ token: true, database: 'ready' });
+	const database = await syncDatabase();
+	if (database.status !== 'ready') throw new Error(`database is ${database.status}`);
+	db = database.db;
+});
 
 const post = (body: string, token = 'test-token') =>
 	POST({

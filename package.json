@@ -12,7 +12,7 @@
 	},
 	"scripts": {
 		"dev": "vite dev",
-		"build": "node scripts/db-migrate.ts && vite build",
+		"build": "vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "pnpm typecheck && pnpm lint && pnpm policy && pnpm test:unit",
@@ -26,7 +26,6 @@
 		"plan:check": "node scripts/plan-check.ts",
 		"data:build": "node scripts/data-build.ts",
 		"db:generate": "drizzle-kit generate",
-		"db:migrate": "node scripts/db-migrate.ts",
 		"proof:sync": "node scripts/sync-mutants.ts"
 	},
 	"devDependencies": {
