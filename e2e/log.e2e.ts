@@ -12,8 +12,10 @@ interface StoredRecord {
 
 const logDate = '2026-12-07';
 
-const localRecords = (page: Page) =>
-	page.evaluate(
+const bySet = (a: StoredRecord, b: StoredRecord) => a.record.setIndex - b.record.setIndex;
+
+const localRecords = async (page: Page) =>
+	(await page.evaluate(
 		() =>
 			new Promise<StoredRecord[]>((resolve, reject) => {
 				const open = indexedDB.open('golden-hour-log');
@@ -28,7 +30,7 @@ const localRecords = (page: Page) =>
 					};
 				};
 			})
-	);
+	)).toSorted(bySet);
 
 async function untilServiceWorkerControls(page: Page): Promise<void> {
 	await page.evaluate(async () => {
