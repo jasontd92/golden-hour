@@ -538,6 +538,39 @@ Explicitly cut, so don't reintroduce:
 - Brief errors: none material. The brief's "test blocks are hard" is applied to max efforts only (see Decisions). ws8-impl asked for a `test?` label on PlanSession; I declined because it is a WS2 contract change that needs PM sign-off.
 - VERIFIER: WS9 — PASS WITH GAPS. Independent script (no app imports): all main-lift sets wks 1–15 (TM 215/135/280 → +10/+5/+10 at wks 4/7/11/15, hold at 12; 5's PRO, Anchor 5+/3+/1+, deload 40/50/60, TM test 70/80/90 + 100%×3+; FSL 5×5 Leader, 3×5 Anchor and B-week Fridays, none at deload/TM test), long run, weekly run cap, hard days, calendar, retest table, Girl/Cunningham loads: 0 diffs; the app's rendered loads equal the script's byte for byte. Fresh clone: `plan:generate` diff clean, `pnpm check` 0 (391 tests); main run 44267305518 green; Vercel success on f7d982a; prod `/`, `/week`, `/day/2026-12-07` serve the real plan. Mutants deload %, press step, wk-12 hold, B-week FSL, AMRAP flag all killed. Gaps: §G monthly body comp (wks 1/5/9/13) and wk 4/8/12 ring-dip/L-sit/push-up max checkpoints are not encoded; holiday wks 3–4 lose the pull-up sets with Quality A; set loads round to nearest 5 (WS2 rule; doc only fixes TM FLOOR); deload wks cut run time ~10% (7) and ~12% (15), not 20% (Z1 runs grow to 35); warm-up jogs aren't counted in the +10% rule.
 
+### WS5d — session-level record — MERGED
+- Type: impl EM (ws5d-impl). Doc: ws-05-logging-sync.md § WS5d (criteria added unticked). CEO-approved 2026-11-18.
+- PR #19, squash-merged as `2534b12`. Head `a4de69d`. Branch deleted.
+- CI: PR runs 44307030658 and 44309253156 (final head) all green (typecheck, lint, unit 404, policy, e2e, evidence with session-step, session-score and session-no-sets inline). Main 44309887544 success; Vercel success; `/` 200. Health is unchanged: 503 `URL_SCHEME_NOT_SUPPORTED` (CEO env).
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws5d` at `a4de69d` over `1020121` (404 tests). `pnpm proof:sync`: EXIT 0 on 4 runs: control passes, 13/13 mutants killed by tagged assertions. Logs are PR comments.
+- Reviews: none, 0 threads.
+- Public API:
+  - `#lib/domain/log.ts`: `SessionLog` (`kind: 'session'`, id, sessionDate, `rpe` int 1–10, optional `score {blockIndex, prescriptionIndex, type, value}`, optional note, loggedAt, deviceId), `SessionRecord` (+revision, deletedAt), `SyncRecord = LogRecord | SessionRecord`, `isSessionRecord`. `SyncRequest.records` is `SyncRecord[]`. Schemas are `session-log.json` and `session-record.json`.
+  - Store: `saveSession`, `sessions()` (live session records), `stillPending(sent)`. `entries()` still returns only sets. One IDB object store, with no version bump.
+  - Server: `session_logs` (`drizzle/0001_session_logs.sql`, CREATE TABLE only), `#lib/server/db/session-logs.ts` (upsert, newer revision wins). Health also requires `session_logs` to be readable.
+  - `features/log/session-step.ts`: `scoredPrescription` (the first amrap → rounds_reps, or forTime → time), `defaultSessionRpe` (7 if hard, else 4), `readScore` (parseScore plus rejects seconds ≥60 and reps ≥1000), `clockDigits` (fills m:ss from the right, 4 digits max), `scoreField`.
+  - `LogFlow` is now `new LogFlow(session, deps)`. `onSession` means index === steps.length. Adds `sessionRpe`, `easier`/`harder`, `score`, `scoreInvalid`, `savedSession`. The last set's Next reads "Session".
+  - Today `startable` is now a boolean: Start shows on every session.
+- Decisions:
+  - WS5c race fix: an ack that marks 0 is a failure only if a sent record is still pending at its sent revision. `synced` is still returned only when `pending()` is empty.
+  - Property: `logSession` commands; `[outcome]` tag (synced ⇒ nothing pending; clean online, concurrent and online undo-during-sync all report synced). `size: 'max'` raises the mean history from 4.9 to 19.3 (max 10 before, 40 now); numRuns goes 2000 → 1000; CI is 6.4s for sync.spec.
+  - Mutants added: zero-mark ack is a failure; stillPending ignores revision; the server never stores sessions; a session plain insert; session overwrites a newer revision.
+  - Score keyboards: time is `inputmode=numeric` with the digits mask (no colon key on phone keypads); rounds+reps is `inputmode=tel` (for the `+`). Invalid input gets aria-invalid, a muted one-line hint and a disabled Done.
+  - Set RPE select: `appearance: none` + glass bg/border, 16px (fixes WebKit's grey).
+  - Today/Week logged indicator: none, because no mockup has one (WS8 owns the desktop fill).
+  - /sync copy: "N entries waiting to sync" (sessions count too).
+  - e2e: the preview server uses a `file:` libSQL DB in a temp dir (`GOLDEN_HOUR_E2E_DB`, set in `e2e/sync-env.ts` before workers fork). `e2e/server-db.ts` reads rows back with `@libsql/client`; set rows and session rows are both asserted. Session tests discover days by structure over the 6 days from `logDate`.
+- Gotchas:
+  - Local Docker e2e: piping a macOS `tar` adds `._*` AppleDouble files to static/, and the SW precache 404s on them, which shows up as a "SW never controls" timeout. Use `COPYFILE_DISABLE=1` (or `git archive`).
+  - `fc.record` objects have a null prototype, and `toStrictEqual` fails on them after a round trip; spread them.
+  - `save` was a sync arrow; a ZodError then threw instead of rejecting, so keep store methods async.
+  - progress/week WebKit e2e flaked once under local parallel load and passed in isolation; CI was green.
+- Brief errors:
+  - "distance" isn't a `ScoreType`, so score types are the numeric ScoreTypes (time, rounds_reps, reps, load_lb, seconds, points).
+  - The plan has no per-session RPE target, so RPE defaults from `isHardSession` (Seiler bands).
+  - Week 8 (ws9 plan) has no scored session without sets, so the score e2e reaches the score field through the sets (Squat + Fran).
+- Status: MERGED. Verifier pending. ws8-impl is notified (it derives logged days from `entries()` + `sessions()`).
+
 ### WS8 — desktop planning view — NOT STARTED (needs CEO approval of Pass 3; after WS4, and WS5b/WS6 for review data)
 
 ### CLOSE — Stage 5′ — NOT STARTED
