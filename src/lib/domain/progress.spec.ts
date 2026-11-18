@@ -8,6 +8,7 @@ import {
 	dateLabel,
 	liftHistory,
 	isMainLift,
+	latestLiftDate,
 	liftRows,
 	mainLiftRows,
 	resultHistory,
@@ -184,7 +185,7 @@ describe('mainLiftRows', () => {
 	const today = '2026-11-18';
 
 	it('shows the four main lifts on the normalized data', () => {
-		expect(mainLiftRows(lifts, today).map((r) => [r.name, r.best])).toEqual([
+		expect(mainLiftRows(lifts).map((r) => [r.name, r.best])).toEqual([
 			['Deadlift', '365'],
 			['Back squat', '295'],
 			['Bench press', '275'],
@@ -199,6 +200,15 @@ describe('mainLiftRows', () => {
 		expect(isMainLift('thruster', at(null), today)).toBe(false);
 		expect(isMainLift('thruster', at('2026-01-01', 3), today)).toBe(false);
 		expect(isMainLift('bench-press', [], today)).toBe(true);
+	});
+
+	it('measures the window from the newest dated lift in the data, so a rebuild years later lists the same lifts', () => {
+		expect(latestLiftDate(lifts)).toBe('2026-11-16');
+		const withThruster = { ...lifts, thruster: [{ date: '2023-11-16', load: 135, reps: 1, source: 'x' }] };
+		expect(mainLiftRows(withThruster).map((r) => r.id)).toContain('thruster');
+		const older = { ...lifts, thruster: [{ date: '2023-11-15', load: 135, reps: 1, source: 'x' }] };
+		expect(mainLiftRows(older).map((r) => r.id)).not.toContain('thruster');
+		expect(mainLiftRows({ 'bench-press': [{ date: null, load: 275, reps: 1, source: 'x' }] }).map((r) => r.id)).toEqual(['bench-press']);
 	});
 
 	it('keeps every lift for the full list', () => {

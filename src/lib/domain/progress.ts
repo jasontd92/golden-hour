@@ -137,16 +137,22 @@ export const mainLifts: readonly string[] = ['back-squat', 'shoulder-press', 'de
 
 const recentYears = 3;
 
-export function isMainLift(id: string, evidence: readonly LiftEvidence[], today: string): boolean {
-	const since = `${Number(today.slice(0, 4)) - recentYears}${today.slice(4)}`;
+export function isMainLift(id: string, evidence: readonly LiftEvidence[], asOf: string): boolean {
+	const since = `${Number(asOf.slice(0, 4)) - recentYears}${asOf.slice(4)}`;
 	return (
 		mainLifts.includes(id) ||
 		evidence.some((e) => e.reps === 1 && e.date !== null && e.date >= since)
 	);
 }
 
-export function mainLiftRows(lifts: LiftsFile, today: string): ProgressRow[] {
-	return liftRows(lifts).filter((row) => isMainLift(row.id, lifts[row.id] ?? [], today));
+export function latestLiftDate(lifts: LiftsFile): string | undefined {
+	const dates = Object.values(lifts).flatMap((evidence) => evidence.flatMap((e) => (e.date === null ? [] : [e.date])));
+	return dates.reduce<string | undefined>((latest, date) => (latest === undefined || date > latest ? date : latest), undefined);
+}
+
+export function mainLiftRows(lifts: LiftsFile): ProgressRow[] {
+	const asOf = latestLiftDate(lifts);
+	return liftRows(lifts).filter((row) => mainLifts.includes(row.id) || (asOf !== undefined && isMainLift(row.id, lifts[row.id] ?? [], asOf)));
 }
 
 function dayLabel(iso: string): string {

@@ -14,6 +14,9 @@ export const testBattery: readonly string[] = [
 	'jason-cunningham'
 ];
 
+export const testsOutsideCatalog = ['max-ring-dips', 'submax-run', 'mile-time-trial', 'body-comp'] as const;
+export type TestOutsideCatalog = (typeof testsOutsideCatalog)[number];
+
 const rank = new Map<string, number>(testBattery.map((id, index) => [id, index]));
 
 export function batteryRank(id: string): number | undefined {

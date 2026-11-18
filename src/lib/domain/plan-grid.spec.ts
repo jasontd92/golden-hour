@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { PlanWeek, type PlanSession } from './plan.ts';
 import {
 	attemptDates,
+	testIds,
 	columnHeader,
 	columnNames,
 	loggedDates,
@@ -12,6 +13,8 @@ import {
 	weekSummary
 } from './plan-grid.ts';
 import { planSessions } from './schedule.ts';
+import { testBattery, testsOutsideCatalog } from './battery.ts';
+import { WorkoutsFile } from './history.ts';
 
 const plan: PlanSession[] = planSessions(
 	readdirSync('plan')
@@ -141,5 +144,25 @@ describe('loggedDates', () => {
 			'2026-12-07',
 			'2026-12-09'
 		]);
+	});
+});
+
+describe("the plan's tests", () => {
+	const catalog = new Set(WorkoutsFile.parse(JSON.parse(readFileSync('data/normalized/workouts.json', 'utf8'))).map((w) => w.id));
+	const retest = plan.filter((s) => s.week >= 16);
+	const workBlocks = (s: PlanSession) => s.blocks.filter((b) => b.kind !== 'warmup' && b.kind !== 'cooldown');
+
+	it('are each either in the battery or on the typed list of tests outside the catalog', () => {
+		const named = new Set(plan.flatMap(testIds));
+		expect([...named].sort()).toEqual([...testBattery, ...testsOutsideCatalog].sort());
+	});
+
+	it('name a test for every retest session, at least one per test block', () => {
+		for (const session of retest) expect(testIds(session).length, session.title).toBeGreaterThanOrEqual(workBlocks(session).length);
+	});
+
+	it('keep the battery to catalog workouts, and move a test into it once it becomes one', () => {
+		expect(testBattery.filter((id) => !catalog.has(id))).toEqual([]);
+		expect(testsOutsideCatalog.filter((id) => catalog.has(id))).toEqual([]);
 	});
 });
