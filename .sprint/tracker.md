@@ -317,7 +317,25 @@ Explicitly cut, so don't reintroduce:
 - Gotchas: fast-check needs `includeErrorInReport: true` or vitest's JSON report drops the assertion cause. The plain-insert mutant dies by `[drain]` (the 503 leaves the outbox full), which is an assertion, not a crash. The server-id mutant's shrunk counterexample fails `[server]` in the property; `[duplicate]` is what kills it in the scripted history.
 - Brief/tracker drift: the bullets below this heading, down to WS3c, are WS5a's handoff (misfiled under WS5c). Two-tab model was cheap and is in.
 - Status: MERGED. Verifier pending.
-- (WS5a handoff, misfiled here:)
+- VERIFIER: WS5c — PASS WITH GAPS (fresh clone of `050bbf8`).
+  - Reproduced: `pnpm check` EXIT 0 (347 tests); `pnpm proof:sync` EXIT 0 (control passes, 8/8 killed by tagged assertions); main run 44263624582 green; Vercel success on `050bbf8`; the diff touches only `sync.spec.ts` and `scripts/sync-mutants*`.
+  - Harness: a kill requires every failing test to fail on a tagged assertion. An injected throw in `acknowledge` came back `crashed`, and the proof exited 1.
+  - Verifier mutants: all killed by `[server]` (property plus scripted or batch-limit):
+    - undo doesn't bump the revision
+    - the server acks all ids but commits only the first 2
+    - an undo or amend of a synced record isn't re-queued
+  - Reach per 2000 runs:
+    - partial commit dropped: 136
+    - committed but not acked: 82
+    - reload during an in-flight sync: 130
+    - two tabs both sending: 124
+    - reload with pending records: 160
+    - drain checks: 821 plus the final ones
+  - Two-tab finding reproduced: tab B returns `failed` (200) with 0 pending and the server holding everything. It happened in 124/124 concurrent sends. No loss.
+  - Gaps:
+    - `maxLength: 40` is really at most 10 commands (fast-check default size; mean 4.8, about 10% empty), so longer interleavings are never generated.
+    - The CI property time on main is 3.2s, not 2.4s.
+
 - Type: impl EM. Doc: ws-05-logging-sync.md (everything except the log UI and the UI e2e). Hold-the-line A.
 - PRs, all squash-merged, branches deleted:
   - #5 → `4fd9a0b` (head `b7ac9b1`): the main chunk.
