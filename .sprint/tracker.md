@@ -147,8 +147,26 @@ Explicitly cut, so don't reintroduce:
   - Ajv runs with `validateFormats: false`; zod also emits `pattern`, so dates and uuids are still checked.
 - Drift from WS doc: the fixture keeps the mockup (squat TM 265, `225×5+`, AMRAP 12, hard on Mon/Thu/Sat). The plan has squat TM 215, week-1 Leader 5's PRO with no AMRAP set, and a Mon couplet of 2–10 min. Wed and Fri use the plan's TMs (press 135, DL 280) and 5's PRO. data/README lists `date_precision` as day|month|unknown and `format` as 7 values, but the data also has `approx`, `max_hold` and `other`, and one `score.better` is null; the schemas follow the data.
 
-### WS3 — data build port — NOT STARTED
+### WS3 — data build port — MERGED
 - Depends: WS2. Hold-the-line B. Doc: ws-03-data-port.md.
+- PR #4, squash-merged as `c8494f3`. Head `830e215`. Branch deleted.
+- CI: PR runs 44225400229 and 44226044061 green (typecheck, lint, unit 190 tests, policy incl. step "normalized data matches a fresh build", e2e, evidence). Main run 44226742954 success; Vercel success on `c8494f3`; production 200.
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws3` at `830e215` (up to date with origin/main). Logs are PR comments.
+- Parity (B): before deletion, `python3 -I build.py` and `node scripts/data-build.ts <dir>` ran from the same inputs into temp dirs. `diff -r` exit 0, all 4 files with identical sha256, and also equal to the committed `data/normalized`. A perturbed-input probe (integral-float literal `235.0`, `1:00.0`, `53:13:00`, unparsable score, emoji, quotes) also gave zero diff. The drift proof: in a scratch clone, editing `curated/results.json` made `pnpm data:build && git diff --exit-code data/normalized` exit 1. All three are PR comments.
+- Reviews: none, 0 threads (Codex still has never posted).
+- Public API:
+  - `#lib/domain/movements.ts` gains `Modality`, `MovementDefinition`, `MovementVocabulary` (the movements.json schema), `compileMatchPattern`, `movementTaggers`, `tagMovements(text, taggers)` and `summarizeTags(ids, vocabulary)` → `{ patterns, modality, homeOk }`.
+  - `pnpm data:build [outDir]` defaults to `data/normalized`; it validates against WS2 zod before writing.
+  - `scripts/python-json.ts`: `pythonJsonDumps`, `pythonRepr`, `parsePythonJson`, `PyFloat`. `scripts/csv.ts` is a csv.DictReader equivalent.
+- Decisions:
+  - The drift check is a step in the policy job, not a new job, to avoid another setup.
+  - `data-build.spec.ts` also asserts committed == fresh build, so `pnpm check` catches drift locally.
+  - The output keeps Python's int/float distinction. A time with no fraction is an int; every other parsed value is a float. Float literals in input JSON stay floats, via the `JSON.parse` reviver `context.source` (Node 26).
+- Gotchas:
+  - movements.json patterns are Python `re`: `compileMatchPattern` turns `\b`/`\d`/`\w` into Unicode-aware forms (`Thrusterä` tags nothing, as in Python) and throws on escapes it can't translate (e.g. `\s`), so new patterns fail loudly.
+  - `canonical` keeps unit `s` on unparsed time scores, which `parseScore` alone loses. The load path uses `best_result_raw`. Time falls back to the digits in `best_result_raw`.
+  - The build reads `data/` relative to the cwd.
+- Drift from brief: none found. Committed normalized output already matched a fresh build.py run. The score.spec describe names no longer mention build.py.
 
 ### WS4 — shell, PWA, Today, Week — NOT STARTED
 - Depends: WS2. Doc: ws-04-shell-today-week.md.
