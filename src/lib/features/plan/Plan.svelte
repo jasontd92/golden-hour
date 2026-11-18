@@ -293,7 +293,8 @@
 	.column {
 		padding: 0 10px;
 		display: flex;
-		gap: 6px;
+		flex-direction: column;
+		line-height: 1.25;
 		min-width: 0;
 	}
 
