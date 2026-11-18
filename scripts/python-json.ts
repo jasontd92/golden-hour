@@ -18,13 +18,25 @@ export function pythonFloat(text: string): PyFloat {
 
 const integerLikeKey = /^\d+$/;
 
+function reviveNumber(value: number, source: string, origin: string): PyNumber {
+	if (!Number.isFinite(value)) throw new Error(`${origin}: number ${source} is not finite`);
+	if (/[.eE]/.test(source)) return new PyFloat(value);
+	if (!Number.isSafeInteger(value)) throw new Error(`${origin}: integer ${source} is outside the exact range`);
+	return value;
+}
+
 export function parsePythonJson(text: string, origin: string): unknown {
-	return JSON.parse(text, function (this: unknown, key: string, value: unknown, context?: { source?: string }) {
-		if (!Array.isArray(this) && integerLikeKey.test(key)) {
-			throw new Error(`${origin}: object key ${JSON.stringify(key)} is integer-like, which JS reorders; rename it`);
-		}
-		return typeof value === 'number' && /[.eE]/.test(context?.source ?? '') ? new PyFloat(value) : value;
-	});
+	try {
+		return JSON.parse(text, function (this: unknown, key: string, value: unknown, context?: { source?: string }) {
+			if (!Array.isArray(this) && integerLikeKey.test(key)) {
+				throw new Error(`${origin}: object key ${JSON.stringify(key)} is integer-like, which JS reorders; rename it`);
+			}
+			return typeof value === 'number' ? reviveNumber(value, context?.source ?? String(value), origin) : value;
+		});
+	} catch (error) {
+		if (error instanceof SyntaxError) throw new Error(`${origin}: ${error.message}`, { cause: error });
+		throw error;
+	}
 }
 
 export function floatRepr(n: number): string {

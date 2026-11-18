@@ -92,18 +92,21 @@ function guessKind(id: string, row: Record<string, string>): string {
 	return 'class_wod';
 }
 
-const sugarwodScoreType: Record<string, ScoreType> = {
-	Load: 'load_lb',
-	'Rounds + Reps': 'rounds_reps',
-	Reps: 'reps',
-	'Other / Text': 'text',
-	Checkbox: 'checkbox',
-	'': 'time'
-};
+const sugarwodScoreType = new Map<string, ScoreType>([
+	['Load', 'load_lb'],
+	['Rounds + Reps', 'rounds_reps'],
+	['Reps', 'reps'],
+	['Other / Text', 'text'],
+	['Checkbox', 'checkbox'],
+	['', 'time']
+]);
 
 const outsidePrintableAscii = /[^ -~]/u;
 
 function plainScore<T extends string | null | undefined>(score: T, record: string): T {
+	if (score !== null && score !== undefined && typeof score !== 'string') {
+		throw new Error(`${record}: score ${JSON.stringify(score)} is a ${typeof score}; scores must be strings`);
+	}
 	const offending = score && outsidePrintableAscii.exec(score)?.[0];
 	if (offending) {
 		const codePoint = `U+${(offending.codePointAt(0) ?? 0).toString(16).toUpperCase().padStart(4, '0')}`;
@@ -126,14 +129,22 @@ function canonical(score: string | null | undefined, type: ScoreType): { value: 
 	return { value: new PyFloat(parsed.value), unit: parsed.unit ?? null };
 }
 
-function isoDate(usDate: string): string {
+function isoDate(usDate: string, record: string): string {
 	const match = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(usDate);
 	const [, month = '', day = '', year = ''] = match ?? [];
 	const date = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
 	if (!match || date.getUTCMonth() !== Number(month) - 1 || date.getUTCDate() !== Number(day)) {
-		throw new Error(`not a m/d/Y date: ${usDate}`);
+		throw new Error(`${record}: ${JSON.stringify(usDate)} is not a m/d/Y date`);
 	}
 	return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+}
+
+function setDetails(text: string, origin: string): Json[] {
+	const sets = parsePythonJson(text, origin);
+	if (!Array.isArray(sets)) throw new Error(`${origin}: expected a JSON array of sets, got ${text}`);
+	const notSet = sets.findIndex((set) => typeof set !== 'object' || set === null || Array.isArray(set) || set instanceof PyFloat);
+	if (notSet !== -1) throw new Error(`${origin}: set ${notSet} is not an object`);
+	return sets as Json[];
 }
 
 const isEmpty = (value: unknown) =>
@@ -182,8 +193,8 @@ export function buildNormalized(root = dataDir): NormalizedFiles {
 	rows.forEach((row, index) => {
 		const source = `sugarwod#row${index + 2}`;
 		const id = resolve(row.title ?? '');
-		const sets = row.set_details ? (parsePythonJson(row.set_details, `${source} set_details`) as Json[]) : [];
-		let scoreType = sugarwodScoreType[row.score_type ?? ''] ?? 'text';
+		const sets = row.set_details ? setDetails(row.set_details, `${source} set_details`) : [];
+		let scoreType = sugarwodScoreType.get(row.score_type ?? '') ?? 'text';
 		const first = sets[0];
 		const hasClock = first !== undefined && ('mins' in first || 'secs' in first);
 		if (scoreType === 'time' && !hasClock && row.score_type === '' && sets.length === 0) scoreType = 'text';
@@ -219,7 +230,7 @@ export function buildNormalized(root = dataDir): NormalizedFiles {
 		}
 		results.push({
 			workout: id,
-			date: isoDate(row.date ?? ''),
+			date: isoDate(row.date ?? '', `${source} date`),
 			date_precision: 'day',
 			score_display: row.best_result_display ?? '',
 			value,
