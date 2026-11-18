@@ -5,14 +5,14 @@
 > **PM resuming after a compaction:** load the `sprint` skill, then read this file §1–§3, then README.md. Don't re-ask the CEO anything recorded here.
 
 ## §1 Active state
-- Stage: 1 complete (tracker bootstrapped). Next: Stage 3, dispatch WS1.
+- Stage: 3 in progress. 2026-11-17: CEO "go for the sprint, complete end to end"; Turso credentials are saved in Vercel env.
 - Shape: INDEPENDENT PRs to `main`. All work is additive; a half-shipped state is survivable.
 - Ground truth: GitHub PR state (`gh pr view --json state,mergeStateStatus,statusCheckRollup`) plus GraphQL review-thread counts.
 - Repo: github.com/jasontd92/golden-hour (private). Base `origin/main`; re-query the tip with `git rev-parse origin/main`.
 - Base health: no CI yet (WS1 creates it).
-- Vercel: connected. Turso: CEO to create the DB and env vars before WS5 deploys (not a blocker for code).
+- Vercel: connected. Turso: DB created, credentials in Vercel env (CEO, 2026-11-17).
 - Codex review: CEO enabling async. Not a blocker.
-- Open PRs: none. Live worktrees: none. Live subagents: none.
+- Open PRs: none. Live worktrees: none. Live subagents: ws1-impl (impl EM, main checkout branch).
 - Merged + verified: none.
 - Parallel track (not an EM chunk): Evolution 5 coaches debate, PM-moderated with the CEO. Starts after WS2 merges, since its output is `PlanSession` JSON. First agenda items:
   1. Does the 2–3 hard-sessions cap apply to running quality only, or to metcons too? PM recommendation: running only.
