@@ -15,10 +15,10 @@
 - Week: seven rows, today highlighted, tap a row for that day's session view.
 
 ## Acceptance criteria
-- [ ] e2e on both mobile projects: Today renders the session title from the fixture; tapping a block expands its prescription; tapping again collapses it (mechanical, with screenshots).
-- [ ] e2e: with offline set (`context.setOffline(true)`) after the first load, a reload still renders Today (mechanical).
-- [ ] Lighthouse PWA installability passes, or the manifest and service worker are present and valid (mechanical: run Lighthouse CI or assert the manifest fields).
-- [ ] `features.yaml` has today and week entries (mechanical: check-features).
+- [x] e2e on both mobile projects: Today renders the session title from the fixture; tapping a block expands its prescription; tapping again collapses it (mechanical, with screenshots).
+- [x] e2e: with offline set (`context.setOffline(true)`) after the first load, a reload still renders Today (mechanical).
+- [x] Lighthouse PWA installability passes, or the manifest and service worker are present and valid (mechanical: run Lighthouse CI or assert the manifest fields).
+- [x] `features.yaml` has today and week entries (mechanical: check-features).
 - [ ] HUMAN: CEO installs to the iPhone home screen. It opens full screen, and the status bar matches.
 
 ## Risks
