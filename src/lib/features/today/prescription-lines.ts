@@ -92,6 +92,8 @@ function prescriptionLines(p: Prescription, blockName: string, prescriptionIndex
 			const text = `${capitalize(label(p.movement, p.reps))} ${p.sets} × ${p.reps}${load}`;
 			return [{ ...plain(text), at: { prescriptionIndex, setIndexes: indexes(p.sets) } }];
 		}
+		case 'maxReps':
+			return [{ ...plain(`Max ${label(p.movement, 2)}`), at: { prescriptionIndex, setIndexes: [0] } }];
 		case 'steady':
 			return [plain(`${p.minutes} min ${movementLabels[p.movement][0]}`)];
 		case 'freeText':

@@ -54,6 +54,14 @@ describe('blockLines', () => {
 		expect(linesOf(hold).map((l) => l.text)).toEqual(['25 s L-sit']);
 	});
 
+	it('lists the ring-dip max beside the other checkpoint maxes, with its logged reps', () => {
+		const maxes = blockNamed('08', '2027-01-26', 'Gymnastics maxes');
+		if (!maxes) throw new Error('no maxes block');
+		expect(linesOf(maxes).map((l) => l.text).slice(0, 3)).toEqual(['25 s L-sit', 'Max dips', 'Push-ups 1 × 50']);
+		const log = dayLog([set(3, 0, 11, 0, 1)], '2026-12-07');
+		expect(blockLines(maxes).map((line) => loggedText(line, 3, log)).slice(0, 3)).toEqual([undefined, '✓ 11', undefined]);
+	});
+
 	it('keeps free text quiet', () => {
 		expect(linesOf(blockNamed('01', '2026-12-07', 'Cool-down'))).toEqual([{ text: 'Easy walk · stretch', tone: 'quiet' }]);
 	});

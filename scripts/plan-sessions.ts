@@ -260,7 +260,7 @@ function gymnasticsMaxes(inputs: PlanInputs, pushUps: boolean): Prescription[] {
 	const dips = inputs.tests.ringDips;
 	return [
 		intervals(1, 0, [{ movement: 'l_sit', seconds: inputs.tests.lSitSeconds.value }]),
-		...(dips ? [fixed('dip', 1, dips.value)] : []),
+		dips ? fixed('dip', 1, dips.value) : { kind: 'maxReps', movement: 'dip' },
 		...(pushUps ? [fixed('push_up', 1, pushUpLadder[0])] : [])
 	];
 }

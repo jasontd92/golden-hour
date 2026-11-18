@@ -12,7 +12,7 @@
 	nav {
 		height: 56px;
 		flex: none;
-		padding: 0 48px;
+		padding: 0 clamp(24px, 10vw - 96px, 48px);
 		display: flex;
 		align-items: center;
 		gap: 28px;

@@ -4,46 +4,36 @@
 	import HardDot from '#lib/ui/HardDot.svelte';
 	import { blockLines, loggedText } from './prescription-lines.ts';
 
-	let {
-		block,
-		blockIndex,
-		log,
-		id,
-		open,
-		ontoggle
-	}: { block: Block; blockIndex: number; log?: DayLog; id: string; open: boolean; ontoggle: () => void } = $props();
+	let { block, blockIndex, log, group }: { block: Block; blockIndex: number; log?: DayLog; group: string } = $props();
 </script>
 
-<div class="block">
-	<button type="button" aria-expanded={open} aria-controls={id} onclick={ontoggle}>
+<details class="block" name={group}>
+	<summary>
 		<span class="name">{block.name}</span>
 		{#if block.hard}<HardDot />{/if}
 		<span class="minutes num">{block.minutes}</span>
-	</button>
-	{#if open}
-		<div class="lines" {id}>
-			{#each blockLines(block) as line, i (i)}
-				{@const logged = log ? loggedText(line, blockIndex, log) : undefined}
-				{#if logged}
-					<p class="{line.tone} with-log">
-						<span>{line.text}</span>
-						<span class="logged num">{logged}</span>
-					</p>
-				{:else}
-					<p class={line.tone}>{line.text}</p>
-				{/if}
-			{/each}
-		</div>
-	{/if}
-</div>
+	</summary>
+	<div class="lines">
+		{#each blockLines(block) as line, i (i)}
+			{@const logged = log ? loggedText(line, blockIndex, log) : undefined}
+			{#if logged}
+				<p class="{line.tone} with-log">
+					<span>{line.text}</span>
+					<span class="logged num">{logged}</span>
+				</p>
+			{:else}
+				<p class={line.tone}>{line.text}</p>
+			{/if}
+		{/each}
+	</div>
+</details>
 
 <style>
 	.block {
 		border-top: 1px solid var(--border-glass);
 	}
 
-	button {
-		width: 100%;
+	summary {
 		min-height: 60px;
 		padding: 0 8px;
 		display: flex;
@@ -51,8 +41,13 @@
 		gap: 10px;
 		background: transparent;
 		border: 0;
+		list-style: none;
 		font-size: 17px;
 		text-align: left;
+	}
+
+	summary::-webkit-details-marker {
+		display: none;
 	}
 
 	.name {
@@ -69,11 +64,14 @@
 		display: flex;
 		flex-direction: column;
 		gap: 6px;
-		transition:
-			opacity 200ms var(--ease-out),
-			translate 200ms var(--ease-out);
+	}
 
-		@starting-style {
+	[open] .lines {
+		animation: reveal 200ms var(--ease-out);
+	}
+
+	@keyframes reveal {
+		from {
 			opacity: 0;
 			translate: 0 -4px;
 		}
@@ -109,7 +107,7 @@
 	}
 
 	@media (hover: hover) and (pointer: fine) {
-		button:hover {
+		summary:hover {
 			background: var(--bg-glass);
 		}
 	}

@@ -6,7 +6,7 @@ import { LogFlow } from './flow.svelte.ts';
 import type { Rest } from './rest.ts';
 import { openLogStore, type LogStore } from './store.ts';
 
-const [monday] = PlanWeek.parse(week);
+const [monday, checkpoint] = PlanWeek.parse(week);
 const t0 = Date.parse('2027-01-25T09:00:00Z');
 let dbCount = 0;
 
@@ -69,6 +69,22 @@ describe('LogFlow', () => {
 		expect(flow.reps).toBe(0);
 		flow.more();
 		expect(flow.reps).toBe(1);
+	});
+
+	it('records a ring-dip max set with no target as the reps counted up from zero', async () => {
+		const h = harness(checkpoint);
+		const flow = h.flow();
+		await flow.resume();
+		while (flow.step?.movement !== 'dip') {
+			await flow.done();
+			flow.advance();
+		}
+		expect(flow.reps).toBe(0);
+		for (let i = 0; i < 9; i++) flow.more();
+		await flow.done();
+		const dips = (await (await h.store).entries()).filter((r) => r.movement === 'dip');
+		expect(dips).toMatchObject([{ blockIndex: 3, prescriptionIndex: 1, setIndex: 0, reps: 9 }]);
+		expect(dips[0]).not.toHaveProperty('load');
 	});
 
 	it('Done writes the set locally first, starts a wall-clock rest and asks for a sync', async () => {

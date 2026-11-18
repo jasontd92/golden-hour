@@ -1,4 +1,4 @@
-import { test as base, type Page, type Response } from '@playwright/test';
+import { test as base, type Locator, type Page, type Response } from '@playwright/test';
 
 export { expect } from '@playwright/test';
 
@@ -12,11 +12,16 @@ async function untilHydrated(page: Page, response: Response | null): Promise<Res
 	return response;
 }
 
+export const disclosure = (scope: Page | Locator, name: string | RegExp) => scope.locator('summary').filter({ hasText: name });
+
 export const test = base.extend({
-	page: async ({ page }, use) => {
+	page: async ({ page, javaScriptEnabled }, use) => {
 		const goto = page.goto.bind(page);
 		const reload = page.reload.bind(page);
-		page.goto = async (...args) => untilHydrated(page, await goto(...args));
+		page.goto = async (url, options) => {
+			const response = await goto(url, options);
+			return javaScriptEnabled === false || options?.waitUntil === 'commit' ? response : untilHydrated(page, response);
+		};
 		page.reload = async (...args) => untilHydrated(page, await reload(...args));
 		await use(page);
 	}

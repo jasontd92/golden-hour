@@ -152,6 +152,7 @@
 							{ "movement": "l_sit", "seconds": 25 }
 						]
 					},
+					{ "kind": "maxReps", "movement": "dip" },
 					{ "kind": "fixedSets", "movement": "push_up", "sets": 1, "reps": 50 }
 				],
 				"notes": "One max L-sit hold, then max unbroken ring dips, then max push-ups · ladders: push-ups 50/75/100, L-hold to 3:00"

@@ -9,7 +9,7 @@ export const prerender = true;
 
 export const load: PageServerLoad = () => {
 	const benchmarks = topBenchmarkRows(workouts, results);
-	const mainLifts = mainLiftRows(lifts, localIsoDate(Date.now()));
+	const mainLifts = mainLiftRows(lifts);
 	const firstMonday = mondayOf(loadPlan()[0]?.date ?? localIsoDate(Date.now()));
 	return {
 		benchmarks,

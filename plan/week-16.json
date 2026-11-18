@@ -78,7 +78,8 @@
 						"movements": [
 							{ "movement": "l_sit", "seconds": 25 }
 						]
-					}
+					},
+					{ "kind": "maxReps", "movement": "dip" }
 				],
 				"notes": "One max L-sit hold, then max unbroken ring dips"
 			}

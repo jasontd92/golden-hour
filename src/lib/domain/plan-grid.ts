@@ -12,6 +12,7 @@ import {
 	type LiftWeek,
 	type Slot
 } from './evolution.ts';
+import type { TestOutsideCatalog } from './battery.ts';
 import { isHardSession, type PlanSession } from './plan.ts';
 
 export interface GridDay {
@@ -54,20 +55,22 @@ interface Test {
 	label: string;
 	benchmarks: readonly string[];
 	lifts: readonly string[];
+	outsideCatalog: readonly TestOutsideCatalog[];
 }
 
-const test = (label: string, benchmarks: readonly string[] = [], lifts: readonly string[] = []): Test => ({
-	label,
-	benchmarks,
-	lifts
-});
+const test = (
+	label: string,
+	benchmarks: readonly string[] = [],
+	lifts: readonly string[] = [],
+	outsideCatalog: readonly TestOutsideCatalog[] = []
+): Test => ({ label, benchmarks, lifts, outsideCatalog });
 
 const retestTests: Partial<Record<Slot, Test>> = {
 	crossfitTotal: test('CFT', ['crossfit-total', 'strict-pullups-max'], ['back-squat', 'shoulder-press', 'deadlift']),
-	submaxAndGymnastics: test('Submax', ['max-l-sit']),
+	submaxAndGymnastics: test('Submax', ['max-l-sit'], [], ['body-comp', 'submax-run', 'max-ring-dips']),
 	run400Grace: test('400 m, Grace', ['run-400m', 'grace']),
 	bike2Mile: test('Bike 2 mi', ['assault-bike-2mi']),
-	mileCindy: test('Mile, Cindy', ['cindy']),
+	mileCindy: test('Mile, Cindy', ['cindy'], [], ['mile-time-trial']),
 	cunningham: test('Cunningham', ['jason-cunningham']),
 	run10k: test('10k', ['run-10k']),
 	amanda: test('Amanda', ['amanda']),
@@ -86,12 +89,17 @@ function sessionTest(session: PlanSession): Test | undefined {
 	if (retest) return retest;
 	const girl = mondayGirl(week);
 	if (slot === 'squat' && girl) return test(capitalize(girl), [girl]);
-	if (slot === 'press' && checkpointWeeks.has(week)) return test('Submax', ['max-l-sit']);
-	if (slot === 'friday' && qualityB(week) === 'mileTimeTrial') return test('Mile TT');
+	if (slot === 'press' && checkpointWeeks.has(week)) return test('Submax', ['max-l-sit'], [], ['submax-run', 'max-ring-dips']);
+	if (slot === 'friday' && qualityB(week) === 'mileTimeTrial') return test('Mile TT', [], [], ['mile-time-trial']);
 	return undefined;
 }
 
 export const testLabel = (session: PlanSession) => sessionTest(session)?.label;
+
+export function testIds(session: PlanSession): string[] {
+	const found = sessionTest(session);
+	return found ? [...found.benchmarks, ...found.outsideCatalog] : [];
+}
 
 export function attemptDates(plan: readonly PlanSession[], kind: 'benchmark' | 'lift', id: string): PlanSession[] {
 	return plan.filter((session) => {
