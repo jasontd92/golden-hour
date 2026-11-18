@@ -3,6 +3,7 @@
 	import '@fontsource-variable/geist-mono';
 	import '#lib/ui/tokens.css';
 	import { page } from '$app/state';
+	import { keepSyncing } from '#lib/features/log/effects.svelte.ts';
 	import { trackToday } from '#lib/ui/clock.svelte.ts';
 	import { appUpdate, watchServiceWorker } from '#lib/ui/service-worker.svelte.ts';
 	import TabBar from '#lib/ui/TabBar.svelte';
@@ -13,13 +14,14 @@
 
 	trackToday();
 	watchServiceWorker();
+	keepSyncing();
 
 	const midSession = $derived(page.url.pathname.startsWith('/log'));
 </script>
 
-<div class="shell">
+<div class="shell" class:mid-session={midSession}>
 	{@render children()}
-	<TabBar />
+	{#if !midSession}<TabBar />{/if}
 	{#if appUpdate.ready && !midSession}<UpdatePrompt />{/if}
 </div>
 
@@ -34,6 +36,10 @@
 		padding-bottom: calc(var(--tab-bar-height) + 12px);
 		display: flex;
 		flex-direction: column;
+	}
+
+	.mid-session {
+		padding-bottom: 0;
 	}
 
 	@media (min-width: 768px) {

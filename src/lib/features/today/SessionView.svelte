@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { sessionMinutes, type PlanSession } from '#lib/domain/plan.ts';
 	import BlockRow from './BlockRow.svelte';
 
-	let { session, dayLabel, startHref }: { session: PlanSession; dayLabel: string; startHref?: string } = $props();
+	let { session, dayLabel, startable = false }: { session: PlanSession; dayLabel: string; startable?: boolean } = $props();
 
 	let openBlock = $state<number | undefined>();
 	let whyOpen = $state(false);
@@ -29,10 +30,9 @@
 		</button>
 		{#if whyOpen}<p class="why-text" id="why">{session.why}</p>{/if}
 	</main>
-	{#if startHref}
+	{#if startable}
 		<div class="start">
-			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- why: the log route ships in WS5b, and resolve() cannot type a route that does not exist yet -->
-			<a href={startHref}>Start</a>
+			<a href={resolve('/log/[date]', { date: session.date })}>Start</a>
 		</div>
 	{/if}
 </div>

@@ -10,7 +10,7 @@ test('before the plan starts, Today shows the first session with its date', asyn
 	await expect(page.getByText('Monday, Dec 7')).toBeVisible();
 	await expect(page.getByText('50 min')).toBeVisible();
 	await expect(page.getByRole('img', { name: 'Hard effort' })).toHaveCount(1);
-	await expect(page.getByRole('link', { name: 'Start' })).toHaveCount(0);
+	await expect(page.getByRole('link', { name: 'Start' })).toHaveAttribute('href', '/log/2026-12-07');
 	await expect(page.getByRole('link', { name: 'Today' })).toHaveAttribute('aria-current', 'page');
 	await captureEvidence(page, testInfo, 'today');
 });

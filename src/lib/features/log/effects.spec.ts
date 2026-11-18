@@ -65,3 +65,27 @@ describe('startSyncLoop', () => {
 		expect(idle).not.toHaveBeenCalled();
 	});
 });
+
+describe('persistLocalLog', () => {
+	const freshModule = async () => {
+		vi.resetModules();
+		return (await import('./effects.ts')).persistLocalLog;
+	};
+
+	it('asks the browser once per app load to keep the local log from eviction', async () => {
+		const persistLocalLog = await freshModule();
+		const persist = vi.fn(() => Promise.resolve(false));
+		persistLocalLog({ persist });
+		persistLocalLog({ persist });
+		expect(persist).toHaveBeenCalledTimes(1);
+	});
+
+	it('does nothing where the Storage API is missing, and a rejection stays silent', async () => {
+		const persistLocalLog = await freshModule();
+		expect(() => persistLocalLog(undefined)).not.toThrow();
+		const persist = vi.fn(() => Promise.reject(new Error('denied')));
+		persistLocalLog({ persist });
+		await Promise.resolve();
+		expect(persist).toHaveBeenCalledTimes(1);
+	});
+});

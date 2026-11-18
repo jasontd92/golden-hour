@@ -7,8 +7,8 @@
 	let {
 		plan,
 		today,
-		startHref
-	}: { plan: PlanSession[]; today: string; startHref?: (date: string) => string } = $props();
+		startable
+	}: { plan: PlanSession[]; today: string; startable?: (session: PlanSession) => boolean } = $props();
 
 	const pick = $derived(pickToday(plan, today));
 </script>
@@ -19,7 +19,7 @@
 		<SessionView
 			session={pick.session}
 			dayLabel={pick.beforePlan ? `${weekdayName(date)}, ${monthDay(date)}` : weekdayName(date)}
-			startHref={startHref?.(date)}
+			startable={startable?.(pick.session) ?? false}
 		/>
 	{/key}
 {:else}
