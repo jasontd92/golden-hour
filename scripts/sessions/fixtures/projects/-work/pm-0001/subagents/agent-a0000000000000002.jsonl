@@ -1,0 +1,2 @@
+{"type": "user", "cwd": "/work/other", "timestamp": "2030-01-01T10:40:00.000Z", "sessionId": "s", "uuid": "u", "message": {"role": "user", "content": "foreign"}}
+{"type": "assistant", "cwd": "/work/golden-hour", "timestamp": "2030-01-01T10:41:00.000Z", "sessionId": "s", "uuid": "u", "message": {"id": "msg_f1", "role": "assistant", "content": [{"type": "tool_use", "id": "f1", "name": "Bash", "input": {"command": "echo hidden"}}], "usage": {"input_tokens": 1, "output_tokens": 1, "cache_read_input_tokens": 1, "cache_creation_input_tokens": 1}}}

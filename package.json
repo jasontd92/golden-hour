@@ -20,7 +20,8 @@
 		"lint": "eslint . --max-warnings 0",
 		"policy": "node scripts/check-md.ts && node scripts/check-features.ts",
 		"test:unit": "vitest --run",
-		"test:e2e": "playwright test"
+		"test:e2e": "playwright test",
+		"sessions:score": "node scripts/score-sessions.ts"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
