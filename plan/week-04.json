@@ -85,8 +85,8 @@
 	{
 		"date": "2026-12-29",
 		"week": 4,
-		"title": "Press + submax test",
-		"why": "Press and gymnastics, then the submax checkpoint at November’s pace: a lower HR means aerobic gain.",
+		"title": "Press + checkpoint tests",
+		"why": "Press, then the checkpoint: the submax at November’s pace (a lower HR means aerobic gain) and gymnastics maxes against the ladders.",
 		"location": "home",
 		"blocks": [
 			{
@@ -129,23 +129,6 @@
 				]
 			},
 			{
-				"name": "Gymnastics",
-				"kind": "skill",
-				"minutes": 8,
-				"hard": false,
-				"prescriptions": [
-					{
-						"kind": "intervals",
-						"rounds": 5,
-						"restSeconds": 30,
-						"movements": [
-							{ "movement": "l_sit", "seconds": 15 }
-						]
-					}
-				],
-				"notes": "Then ring dips: 4 sets of half your max"
-			},
-			{
 				"name": "Submax run",
 				"kind": "conditioning",
 				"minutes": 30,
@@ -154,6 +137,24 @@
 					{ "kind": "steady", "movement": "run", "minutes": 30 }
 				],
 				"notes": "Treadmill 1% · 9:49/mi fixed · log avg HR and RPE"
+			},
+			{
+				"name": "Gymnastics maxes",
+				"kind": "skill",
+				"minutes": 8,
+				"hard": false,
+				"prescriptions": [
+					{
+						"kind": "intervals",
+						"rounds": 1,
+						"restSeconds": 0,
+						"movements": [
+							{ "movement": "l_sit", "seconds": 25 }
+						]
+					},
+					{ "kind": "fixedSets", "movement": "push_up", "sets": 1, "reps": 50 }
+				],
+				"notes": "One max L-sit hold, then max unbroken ring dips, then max push-ups · ladders: push-ups 50/75/100, L-hold to 3:00"
 			}
 		]
 	},
@@ -161,7 +162,7 @@
 		"date": "2026-12-30",
 		"week": 4,
 		"title": "Z1 bike + gymnastics",
-		"why": "Thursday’s easy session, a day early for the holiday, so the day before the deadlift stays easy. Quality A is skipped this week, not doubled.",
+		"why": "Thursday’s easy session, a day early for the holiday, so the day before the deadlift stays easy. Quality A is skipped, not doubled; its pull-up sets move here, after the max set.",
 		"location": "home",
 		"blocks": [
 			{
@@ -193,6 +194,17 @@
 					{ "kind": "fixedSets", "movement": "pull_up", "sets": 1, "reps": 13 }
 				],
 				"notes": "One unbroken strict set to failure"
+			},
+			{
+				"name": "Pull-ups",
+				"kind": "strength",
+				"minutes": 10,
+				"hard": false,
+				"prescriptions": [
+					{ "kind": "fixedSets", "movement": "pull_up", "sets": 5, "reps": 6 },
+					{ "kind": "fixedSets", "movement": "ring_row", "sets": 2, "reps": 10 }
+				],
+				"notes": "Strict, from a dead hang"
 			}
 		]
 	},

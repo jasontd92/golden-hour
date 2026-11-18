@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
 	bikeFamily,
+	bodyCompWeeks,
+	bound,
+	checkpointWeeks,
+	clock,
 	conditioningScale,
 	liftWeek,
 	longRunMinutes,
@@ -159,5 +163,30 @@ describe('gymnastics', () => {
 	it('accumulates 3 × max L-sit in sets of about 0.6 × max', () => {
 		expect(lSitAccumulation(25)).toEqual({ rounds: 5, seconds: 15 });
 		expect(lSitAccumulation(30)).toEqual({ rounds: 5, seconds: 18 });
+	});
+});
+
+describe('checkpoints', () => {
+	it('measures body comp monthly in weeks 1/5/9/13 and tests in weeks 4/8/12 (§G)', () => {
+		expect(weeks.filter((w) => bodyCompWeeks.has(w))).toEqual([1, 5, 9, 13]);
+		expect(weeks.filter((w) => checkpointWeeks.has(w))).toEqual([4, 8, 12]);
+	});
+});
+
+describe('pace and HR bounds', () => {
+	it('rounds in the named direction and never moves an exact value', () => {
+		expect([bound(142.5, 'down'), bound(161.5, 'up'), bound(171, 'down')]).toEqual([142, 162, 171]);
+		expect(bound(0.39216, 'up', 0.01)).toBeCloseTo(0.4);
+		expect(bound(16.4, 'up', 0.1)).toBeCloseTo(16.4);
+	});
+
+	it('keeps tenths under a minute, so a "no faster than" 16.36 s reads 0:16.4, not 0:16', () => {
+		expect(clock(16.355, 'up')).toBe('0:16.4');
+		expect(clock(16.355, 'down')).toBe('0:16.3');
+		expect(clock(37.94, 'up')).toBe('0:38.0');
+		expect(clock(59.97, 'up')).toBe('1:00');
+		expect(clock(528.84, 'up')).toBe('8:49');
+		expect(clock(533.84, 'down')).toBe('8:53');
+		expect(clock(92.16, 'up')).toBe('1:33');
 	});
 });

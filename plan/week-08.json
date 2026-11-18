@@ -89,8 +89,8 @@
 	{
 		"date": "2027-01-26",
 		"week": 8,
-		"title": "Press + submax test",
-		"why": "Press and gymnastics, then the submax checkpoint at November’s pace: a lower HR means aerobic gain.",
+		"title": "Press + checkpoint tests",
+		"why": "Press, then the checkpoint: the submax at November’s pace (a lower HR means aerobic gain) and gymnastics maxes against the ladders.",
 		"location": "home",
 		"blocks": [
 			{
@@ -132,23 +132,6 @@
 				"notes": "PR set: stop a rep before a grind"
 			},
 			{
-				"name": "Gymnastics",
-				"kind": "skill",
-				"minutes": 8,
-				"hard": false,
-				"prescriptions": [
-					{
-						"kind": "intervals",
-						"rounds": 5,
-						"restSeconds": 30,
-						"movements": [
-							{ "movement": "l_sit", "seconds": 15 }
-						]
-					}
-				],
-				"notes": "Then ring dips: 4 sets of half your max"
-			},
-			{
 				"name": "Submax run",
 				"kind": "conditioning",
 				"minutes": 30,
@@ -157,6 +140,24 @@
 					{ "kind": "steady", "movement": "run", "minutes": 30 }
 				],
 				"notes": "Treadmill 1% · 9:49/mi fixed · log avg HR and RPE"
+			},
+			{
+				"name": "Gymnastics maxes",
+				"kind": "skill",
+				"minutes": 8,
+				"hard": false,
+				"prescriptions": [
+					{
+						"kind": "intervals",
+						"rounds": 1,
+						"restSeconds": 0,
+						"movements": [
+							{ "movement": "l_sit", "seconds": 25 }
+						]
+					},
+					{ "kind": "fixedSets", "movement": "push_up", "sets": 1, "reps": 50 }
+				],
+				"notes": "One max L-sit hold, then max unbroken ring dips, then max push-ups · ladders: push-ups 50/75/100, L-hold to 3:00"
 			}
 		]
 	},
@@ -191,7 +192,7 @@
 						]
 					}
 				],
-				"notes": "8:34–8:49/mi · hold rep 1’s pace through rep 4 · HR ~90% max"
+				"notes": "8:34–8:48/mi · hold rep 1’s pace through rep 4 · HR ~90% max"
 			},
 			{
 				"name": "Pull-ups",
