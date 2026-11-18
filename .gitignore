@@ -2,3 +2,10 @@
 __pycache__/
 *.pyc
 .env*
+node_modules
+/.svelte-kit
+/.vercel
+/build
+test-results
+playwright-report
+vite.config.ts.timestamp-*
