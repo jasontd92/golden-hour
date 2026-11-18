@@ -5,6 +5,7 @@ export type Run = (cmd: string, args: string[]) => string | null;
 export interface PrStats {
 	number: number;
 	files: string[];
+	commits: string[];
 	ciRunsToGreen: number | null;
 	ciRuns: number;
 	reviewThreads: number;
@@ -87,10 +88,13 @@ function reviewThreadCount(run: Run, pr: number): number {
 }
 
 export function prStats(run: Run, pr: number, reverts: string[][]): PrStats | null {
-	const view = parseJson(run('gh', ['pr', 'view', String(pr), '--json', 'headRefName,files']));
+	const view = parseJson(run('gh', ['pr', 'view', String(pr), '--json', 'headRefName,files,commits']));
 	if (!isObject(view) || typeof view.headRefName !== 'string') return null;
 	const files = Array.isArray(view.files)
 		? view.files.filter(isObject).flatMap((file) => (typeof file.path === 'string' ? [file.path] : []))
+		: [];
+	const commits = Array.isArray(view.commits)
+		? view.commits.filter(isObject).flatMap((commit) => (typeof commit.oid === 'string' ? [commit.oid] : []))
 		: [];
 	const runs = parseJson(
 		run('gh', [
@@ -110,6 +114,7 @@ export function prStats(run: Run, pr: number, reverts: string[][]): PrStats | nu
 	return {
 		number: pr,
 		files,
+		commits,
 		ciRunsToGreen: ci.toGreen,
 		ciRuns: ci.total,
 		reviewThreads: reviewThreadCount(run, pr),

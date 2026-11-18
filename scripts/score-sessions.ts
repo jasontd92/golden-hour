@@ -12,11 +12,20 @@ import {
 	type Run
 } from './sessions/github.ts';
 import { scoreTranscript, sessionCommits, sessionPrs, type SessionMetrics } from './sessions/metrics.ts';
-import { candidateTranscripts, readRepoTranscript, repoCwdMatcher, type Transcript } from './sessions/transcripts.ts';
+import {
+	candidateTranscripts,
+	readRepoTranscript,
+	repoCwdMatcher,
+	type Transcript,
+	type TranscriptFs
+} from './sessions/transcripts.ts';
 
 export interface ScoredSession extends SessionMetrics {
 	github: PrStats[];
+	running: boolean;
 }
+
+export const runningWindowMs = 30 * 60000;
 
 export interface Score {
 	githubAvailable: boolean;
@@ -29,20 +38,25 @@ export interface ScoreOptions {
 	projectsDir: string;
 	run: Run;
 	github: boolean;
+	now: number;
+	fs?: TranscriptFs;
 }
 
-export async function loadTranscripts(projectsDir: string, root: string): Promise<Transcript[]> {
+export function loadTranscripts(projectsDir: string, root: string, fs?: TranscriptFs): Transcript[] {
 	const isRepoCwd = repoCwdMatcher(root);
-	const transcripts: Transcript[] = [];
-	for (const file of candidateTranscripts(projectsDir, root)) {
-		const transcript = await readRepoTranscript(file, isRepoCwd);
-		if (transcript) transcripts.push(transcript);
-	}
-	return transcripts.sort((a, b) => (a.start ?? 0) - (b.start ?? 0));
+	return candidateTranscripts(projectsDir, root, fs)
+		.flatMap((file) => readRepoTranscript(file, isRepoCwd, fs) ?? [])
+		.sort((a, b) => (a.start ?? 0) - (b.start ?? 0));
 }
 
-export async function scoreSessions(options: ScoreOptions): Promise<Score> {
-	const { root, projectsDir, run } = options;
+export function isRunning(transcript: Transcript, now: number): boolean {
+	return !transcript.finished && transcript.end !== null && now - transcript.end < runningWindowMs;
+}
+
+const shortSha = (sha: string): string => sha.slice(0, 7);
+
+export function scoreSessions(options: ScoreOptions): Score {
+	const { root, projectsDir, run, now } = options;
 	const githubAvailable = options.github && ghAvailable(run);
 	const reverts = revertCommits(run);
 	const prCache = new Map<number, PrStats | null>();
@@ -51,13 +65,21 @@ export async function scoreSessions(options: ScoreOptions): Promise<Score> {
 		return prCache.get(pr) ?? null;
 	};
 
-	const sessions = (await loadTranscripts(projectsDir, root)).map((transcript): ScoredSession => {
+	const sessions = loadTranscripts(projectsDir, root, options.fs).map((transcript): ScoredSession => {
 		const github = sessionPrs(transcript).flatMap((pr) => statsFor(pr) ?? []);
+		const commits = [
+			...new Set([...sessionCommits(transcript), ...github.flatMap((pr) => pr.commits)].map(shortSha))
+		];
 		const relevant = new Set([
-			...sessionCommits(transcript).flatMap((sha) => commitFiles(run, sha)),
+			...commits.flatMap((sha) => commitFiles(run, sha)),
 			...github.flatMap((pr) => pr.files)
 		]);
-		return { ...scoreTranscript(transcript, root, relevant), github };
+		return {
+			...scoreTranscript(transcript, root, relevant),
+			commits,
+			github,
+			running: isRunning(transcript, now)
+		};
 	});
 
 	const totals: Score['totals'] = {
@@ -70,7 +92,7 @@ export async function scoreSessions(options: ScoreOptions): Promise<Score> {
 		repeatedSearches: 0,
 		retriedCommands: 0
 	};
-	for (const session of sessions) {
+	for (const session of sessions.filter((candidate) => !candidate.running)) {
 		totals.durationMs += session.durationMs;
 		totals.toolCalls += session.toolCalls;
 		for (const [tool, count] of Object.entries(session.byTool)) totals.byTool[tool] = (totals.byTool[tool] ?? 0) + count;
@@ -130,8 +152,9 @@ function githubCells(github: PrStats[], available: boolean): string[] {
 }
 
 export function formatTable(score: Score): string {
+	const finished = score.sessions.filter((session) => !session.running).length;
 	const rows = score.sessions.map((session) => [
-		session.label,
+		session.running ? `${session.label} (running)` : session.label,
 		duration(session.durationMs),
 		String(session.toolCalls),
 		count(session.tokens.input),
@@ -147,7 +170,7 @@ export function formatTable(score: Score): string {
 	]);
 	const { totals } = score;
 	rows.push([
-		`total (${score.sessions.length})`,
+		`total (${finished})`,
 		duration(totals.durationMs),
 		String(totals.toolCalls),
 		count(totals.tokens.input),
@@ -183,6 +206,7 @@ export function formatTable(score: Score): string {
 		'',
 		'tool calls by tool',
 		...tools,
+		...(finished < score.sessions.length ? ['', '(running): still in progress, partial, left out of the totals'] : []),
 		...(score.githubAvailable ? [] : ['', 'gh unavailable: PR, CI, review and revert columns are n/a'])
 	].join('\n');
 }
@@ -204,11 +228,12 @@ if (import.meta.main) {
 		}
 	});
 	const root = values.root ?? defaultRoot();
-	const score = await scoreSessions({
+	const score = scoreSessions({
 		root,
 		projectsDir: values.projects ?? path.join(os.homedir(), '.claude', 'projects'),
 		run: runCommand(root),
-		github: !values['no-github']
+		github: !values['no-github'],
+		now: Date.now()
 	});
 	console.log(values.json ? JSON.stringify(score, null, 2) : formatTable(score));
 }
