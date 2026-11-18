@@ -4,7 +4,7 @@ import { v7 } from 'uuid';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { isSessionRecord, type LogEntry, type SessionLog, type SyncRecord, type SyncRequest } from '#lib/domain/log.ts';
 import { openLogStore, type LogStore } from '#lib/features/log/store.ts';
-import { syncOutbox, type SyncOutcome, type Transport } from '#lib/features/log/sync.ts';
+import { syncOutbox, syncRoundLimit, type SyncOutcome, type Transport } from '#lib/features/log/sync.ts';
 import type { Db } from '#lib/server/db/client.ts';
 import { allLogRecords } from '#lib/server/db/log-entries.ts';
 import { logEntries, sessionLogs } from '#lib/server/db/schema.ts';
@@ -158,12 +158,13 @@ async function play(commands: Command[]) {
 	};
 	const sync = async (index: number) => {
 		const store = tabs[index]!;
-		const rounds = Math.ceil((await store.pendingCount()) / 3) + 2;
+		const batchSize = 3;
+		const rounds = syncRoundLimit(await store.pendingCount(), batchSize);
 		const batches: string[] = [];
 		const outcome = await syncOutbox(store, (request) => {
 			batches.push(JSON.stringify(request.records.map((record) => [record.id, record.revision])));
 			return network.transport(request);
-		}, 3);
+		}, batchSize);
 		expect(batches.length, `[terminates] a sync sends at most ${rounds} batches for its outbox (${JSON.stringify(outcome)})`).toBeLessThanOrEqual(rounds);
 		expect(batches.filter((batch, i) => batch === batches[i - 1]), '[terminates] a sync never resends the batch it just sent').toStrictEqual([]);
 		return outcome;

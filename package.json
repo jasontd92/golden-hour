@@ -21,6 +21,7 @@
 		"policy": "node scripts/check-md.ts && node scripts/check-features.ts && node scripts/plan-check.ts",
 		"test:unit": "vitest --run",
 		"test:e2e": "playwright test",
+		"e2e:local": "node scripts/e2e-local.ts",
 		"sessions:score": "node scripts/score-sessions.ts",
 		"schema:emit": "node scripts/schema-emit.ts",
 		"plan:check": "node scripts/plan-check.ts",

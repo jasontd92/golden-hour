@@ -10,7 +10,7 @@ const { ignoreCommand } = JSON.parse(readFileSync(path.resolve(import.meta.dirna
 
 let repo: string;
 
-function commit(files: Record<string, string>): void {
+function commit(files: Record<string, string>): string {
 	for (const [file, text] of Object.entries(files)) {
 		mkdirSync(path.dirname(path.join(repo, file)), { recursive: true });
 		writeFileSync(path.join(repo, file), text);
@@ -18,11 +18,13 @@ function commit(files: Record<string, string>): void {
 	const git = (...args: string[]) => execFileSync('git', args, { cwd: repo, stdio: 'ignore' });
 	git('add', '.');
 	git('-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '--no-gpg-sign', '-m', 'c');
+	return execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim();
 }
 
 // why: Vercel skips the build on exit 0 and builds on exit 1
-function vercelBuilds(): boolean {
-	const { status } = spawnSync('sh', ['-c', ignoreCommand], { cwd: repo });
+function vercelBuilds(previousSha?: string): boolean {
+	const env = { ...process.env, VERCEL_GIT_PREVIOUS_SHA: previousSha ?? '' };
+	const { status } = spawnSync('sh', ['-c', ignoreCommand], { cwd: repo, env });
 	expect([0, 1]).toContain(status);
 	return status === 1;
 }
@@ -30,10 +32,10 @@ function vercelBuilds(): boolean {
 describe('vercel ignoreCommand', () => {
 	afterEach(() => rmSync(repo, { recursive: true, force: true }));
 
-	function freshRepo(): void {
+	function freshRepo(): string {
 		repo = mkdtempSync(path.join(tmpdir(), 'vercel-ignore-'));
 		execFileSync('git', ['init', '-q'], { cwd: repo });
-		commit({ 'src/app.ts': 'a', '.sprint/tracker.md': 'a' });
+		return commit({ 'src/app.ts': 'a', '.sprint/tracker.md': 'a' });
 	}
 
 	it('skips a commit that only touches docs paths', () => {
@@ -52,5 +54,25 @@ describe('vercel ignoreCommand', () => {
 		freshRepo();
 		commit({ 'vercel.json': '{}' });
 		expect(vercelBuilds()).toBe(true);
+	});
+
+	it('builds a push of code then docs, diffing from the last deployed commit', () => {
+		const deployed = freshRepo();
+		commit({ 'src/app.ts': 'b' });
+		commit({ '.sprint/tracker.md': 'b' });
+		expect(vercelBuilds(deployed)).toBe(true);
+	});
+
+	it('skips a multi-commit push that only touches docs since the last deploy', () => {
+		const deployed = freshRepo();
+		commit({ '.sprint/tracker.md': 'b' });
+		commit({ 'team/x.md': 'b' });
+		expect(vercelBuilds(deployed)).toBe(false);
+	});
+
+	it('builds when the last deployed commit is outside the shallow clone', () => {
+		freshRepo();
+		commit({ '.sprint/tracker.md': 'b' });
+		expect(vercelBuilds('0123456789abcdef0123456789abcdef01234567')).toBe(true);
 	});
 });
