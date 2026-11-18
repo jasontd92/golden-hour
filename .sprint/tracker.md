@@ -41,6 +41,14 @@
   - P3Week is rejected as the default
 - SYNC_TOKEN (CEO, 2026-11-17): the PM may generate it; the CEO adds it in Vercel when they're ready to use the app. Not a blocker for the code.
 
+- CEO answers, 2026-11-18 (verbatim intent):
+  1. Cap the Progress lists: yes, per the PM recommendation (favorites + the test battery, the rest behind "All").
+  2. Add the 2026-11-16 CFT lifts (255/160/335) to lift evidence (a curated-data change, approved).
+  3. A session-level record (done + session RPE + score for sessions without sets): yes.
+  4. Benchmarks: "open to any being replaced; a new baseline is on the table, but not change for its own sake. The existing set has history to trend from. Benchmarks should cover the modalities and all the cardiovascular types the coaches and methodologies collectively represent."
+- SYNC_TOKEN is added in Vercel (CEO).
+- Overnight (CEO is away until 07:00 MT 2026-11-18): "I trust your judgement based on the design principles we've discussed." Stretch goal if everything closes early: explore what formal verification and other levels of verification beyond the codebase would look like, to test whether agents merge CORRECT code (functional, performant, efficient) without human supervision. A write-up only, no expectations.
+
 ### Prose and docs policy
 - Durable intent only. Semi-permanent design decisions, the why and the focus. Mostly the methodology side (`team/`, `profiles/`, `prompts/`).
 - No planning artifacts or prescriptive agent instructions that need upkeep. Code documents itself through function names, variable names and directories.
