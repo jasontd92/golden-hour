@@ -245,6 +245,25 @@ Explicitly cut, so don't reintroduce:
 - Drift from WS doc: none for values. Best Fran 4:43, back squat 1RM 295 and CFT 845 (non-conflicted) all verified against `data/normalized`. The README lists `date_precision` without `approx`; it's handled.
 - Recommendations: (1) The 2026-11-16 CFT lifts (255/160/335) are in `results.jsonl` `detail` only; adding them to lift evidence is a curated-data change for the CEO. (2) CEO: decide whether 21 benchmarks and 11 lifts is "short" enough, or whether to cap to main lifts / recurring tests. (3) `benchmark-anaerobic` (the only unknown-precision results) is not listed: it isn't a favorite, test or girl, and its course varies.
 
+### WS6b — progress caps + CFT lift evidence — MERGED
+- PR #17, squash-merged as `2cd5733`; head `9d8766a` (rebased on `dfebc02`). Branch deleted.
+- CI: PR runs 44264267511 (red: All-row text spacing), 44264769126 and 44265246102 green (typecheck, lint, unit 354, policy, e2e both mobile projects, evidence). Main run 44265640775 on `2cd5733` success; Vercel success; production `/progress/lifts` 200 and back-squat history serves "Nov 16, 2026".
+- `pnpm check`: EXIT 0 on `/Users/jason/Documents/golden-hour-wt/ws6b` at `9d8766a`; logs are PR comments. Reviews: none, 0 threads.
+- Public API:
+  - `#lib/domain/battery.ts`: `testBattery` (the team/draft-plan.md §A1 battery as of the 2026-11-18 revision, catalog ids only) and `batteryRank(id)`.
+  - `#lib/domain/progress.ts`: `isTopBenchmark`, `topBenchmarkRows`, `mainLifts`, `isMainLift(id, evidence, today)`, `mainLiftRows(lifts, today)`. `benchmarkRows` and `liftRows` are the full "All" lists.
+  - Routes: `/progress/benchmarks` and `/progress/lifts` (the full lists, prerendered). Components: `ProgressList`, `DetailHeader`, `ConflictMarker`.
+  - Data build: a curated result may carry `lifts: {slug: load}`, which becomes reps-1 evidence with the result's date and source and the workout name as the note.
+- Decisions:
+  - Top benchmarks = favorites (by result count) then the battery in plan order: 14 rows. The rest (ski 2000m, King Kong (women's Rx), 200m, 5k, Annie, Grettel, Helen) is behind All, which has 21. A list was unavoidable because the battery includes `kind: girl` workouts and excludes some `kind: test` ones. No exclusion for having fewer than 2 results.
+  - Main lifts = back squat, shoulder press, deadlift and bench, plus any lift with dated 1RM evidence ≥ today−3y, with today taken at build time. On today's data that is 4 rows, since every snapshot 1RM is undated.
+  - The All row is muted and shows the full count. There are no group labels. The conflict ring stays on the list, keeping its title and sr text, and is now also drawn next to the conflict note on the history page.
+  - "King Kong (women's Rx)" comes from curated data, so it was not renamed.
+  - CFT 2026-11-16 → back squat 255, shoulder press 160, deadlift 335 (`google-sheet/tests`). Bests stay 295/165/365. `results.jsonl` is unchanged and lifts.json has 89 entries.
+- Gotchas: Svelte drops a leading space inside an element (`<span> text</span>`), so put the space outside the span.
+- Brief errors: no "WS6 verdict" section existed in the tracker; I used the brief's summary of the verifier notes. The worktree didn't exist and was created.
+- Follow-ups: the new battery tests (ring dips, 30-min submax, mile TT, body comp) aren't catalog workouts yet. Add their ids to `testBattery` when they are.
+
 ### WS7 — agent-session scorer — VERIFIED
 - Type: impl EM. Doc: ws-07-session-scorer.md.
 - PR #2, squash-merged as `c1d1bba`. Head `cde061d`. Branch deleted.
