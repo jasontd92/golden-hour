@@ -103,7 +103,7 @@ export function formatScore(score: RunScore): string {
 		`caught: ${named('caught').join(', ') || 'none'}`,
 		`missed: ${named('missed').join(', ') || 'none'}`,
 		`caught by machine: ${named('caught-by-machine').join(', ') || 'none'}`,
-		...(score.verdictParsed ? [] : ['verdict had no parseable findings block: every planted bug counts as missed']),
+		...(score.verdictParsed || score.recall.overall.planted === 0 ? [] : ['verdict had no parseable findings block: every planted bug counts as missed']),
 		`other findings (not matched to a plant): ${score.otherFindings}`
 	].join('\n');
 }

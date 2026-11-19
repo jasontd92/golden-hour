@@ -70,12 +70,24 @@ export const gates = [
 	['pnpm', 'proof:sync']
 ] as const;
 
-export function runGates(dir: string): { ok: true } | { ok: false; gate: string; tail: string } {
+export function gateSummary(output: string): string {
+	const lines = output.split('\n');
+	const telling = lines.filter((line) => /NOT KILLED|crashed|positive control|FAIL|×|Error|error TS|problem/.test(line)).slice(0, 40);
+	return [...telling, '…', ...lines.slice(-15)].join('\n');
+}
+
+export function runGates(dir: string): { ok: true; flaky: string[] } | { ok: false; gate: string; summary: string } {
+	const flaky: string[] = [];
 	for (const [cmd, ...args] of gates) {
-		const result = sh(dir, cmd, args, { timeoutMs: 30 * 60000 });
-		if (!result.ok) return { ok: false, gate: `${cmd} ${args.join(' ')}`, tail: result.output.split('\n').slice(-40).join('\n') };
+		const gate = `${cmd} ${args.join(' ')}`;
+		const first = sh(dir, cmd, args, { timeoutMs: 30 * 60000 });
+		if (first.ok) continue;
+		// why: the sync proof is randomised, so a single red run is not proof that the plant caused it
+		const second = sh(dir, cmd, args, { timeoutMs: 30 * 60000 });
+		if (!second.ok) return { ok: false, gate: `${gate} (failed twice)`, summary: gateSummary(second.output) };
+		flaky.push(gate);
 	}
-	return { ok: true };
+	return { ok: true, flaky };
 }
 
 export function workingDiff(dir: string): string {

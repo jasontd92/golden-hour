@@ -96,7 +96,11 @@ function plantOne(bugClass: BugClass, dir: string, avoid: string[], opts: Option
 	}
 	log(`${bugClass.id}: planted in ${files.join(', ')}; running the mechanical gates`);
 	const gates = runGates(dir);
-	return gates.ok ? plant : { ...plant, status: 'caught-by-machine', reason: gates.gate, gateLog: gates.tail };
+	if (gates.ok) {
+		if (gates.flaky.length > 0) log(`${bugClass.id}: ${gates.flaky.join(', ')} failed once and passed on a rerun; counted as passing`);
+		return plant;
+	}
+	return { ...plant, status: 'caught-by-machine', reason: gates.gate, gateLog: gates.summary };
 }
 
 function usageLines(usage: Usage[], wallMs: number): string[] {
@@ -151,7 +155,7 @@ function main(): number {
 		log('positive control: running the mechanical gates on the unplanted base');
 		const control = runGates(plantDir);
 		if (!control.ok) {
-			console.error(`base is red before planting (${control.gate}):\n${control.tail}`);
+			console.error(`base is red before planting (${control.gate}):\n${control.summary}`);
 			return 1;
 		}
 		const pool = opts.dryRun ? catalog.filter((bugClass) => bugClass.id in mechanicalPlanters) : catalog;
