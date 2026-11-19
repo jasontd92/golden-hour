@@ -65,7 +65,7 @@ function percentSetLines(trainingMax: number, sets: PercentSet[], prescriptionIn
 	});
 }
 
-function schemeHeader(p: Prescription): string | undefined {
+function schemeHeader(p: Extract<Prescription, { kind: 'amrap' | 'emom' | 'forTime' | 'intervals' }>): string | undefined {
 	switch (p.kind) {
 		case 'amrap':
 			return `AMRAP ${p.minutes}`;
@@ -78,8 +78,6 @@ function schemeHeader(p: Prescription): string | undefined {
 		case 'intervals':
 			if (p.restSeconds === 0) return p.rounds === 1 ? undefined : `${p.rounds} rounds`;
 			return `${p.rounds} rounds · ${duration(p.restSeconds)} rest`;
-		default:
-			return undefined;
 	}
 }
 

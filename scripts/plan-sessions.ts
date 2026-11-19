@@ -33,6 +33,7 @@ import {
 	type LiftWeek,
 	type MainLift,
 	type PlanInputs,
+	type RetestSlot,
 	type Rounding,
 	type Slot
 } from '#lib/domain/evolution.ts';
@@ -216,7 +217,8 @@ function mondayMetcon(week: number, inputs: PlanInputs): Metcon {
 			return intervalMetcon('Intervals', week, glycolyticDesigns[occurrence]!, 'Hold the same output every round');
 		case 'girl':
 			return girlMetcons[mondayGirl(week)!];
-		default:
+		case 'couplet':
+		case undefined:
 			return couplet(week, inputs);
 	}
 }
@@ -390,7 +392,8 @@ function speedRun({ week, inputs }: Week): Block {
 				hard: true,
 				notes: `Rest 2:00/1:30/1:00/0:30 · 800 m jog between rounds · no faster than ${pMile === undefined ? '0.925 × mile pace' : [600, 400, 300, 200].map((m) => clock(m * 0.925 * pMile, 'up')).join('/')}`
 			});
-		default:
+		case 'mileTimeTrial':
+		case undefined:
 			return block('Mile time trial', 'conditioning', 10, [forTime([{ movement: 'run', meters: 1609 }])], {
 				hard: true,
 				notes: 'Even effort, all out · log peak HR'
@@ -440,7 +443,7 @@ function longRunDay({ week, inputs }: Week): SessionBody {
 }
 
 const testWarmUp = warmUp('General warm-up · build to test effort', 15);
-function retestDay(slot: Slot, inputs: PlanInputs): SessionBody {
+function retestDay(slot: RetestSlot, inputs: PlanInputs): SessionBody {
 	const test = (name: string, minutes: number, prescriptions: Prescription[], notes?: string, kind: BlockKind = 'metcon') =>
 		block(name, kind, minutes, prescriptions, { hard: true, notes });
 	switch (slot) {
@@ -545,8 +548,6 @@ function retestDay(slot: Slot, inputs: PlanInputs): SessionBody {
 				why: 'Diane moves to Saturday this time: read the comparison with that in mind.',
 				blocks: [testWarmUp, test('Diane', 12, [girlMetcons.diane.prescription], sameAsBefore), coolDown()]
 			};
-		default:
-			throw new Error(`${slot} is not a retest slot`);
 	}
 }
 
@@ -564,7 +565,17 @@ function trainingDay(slot: Slot, ctx: Week): SessionBody {
 			return fridayDay(ctx);
 		case 'longRun':
 			return longRunDay(ctx);
-		default:
+		case 'crossfitTotal':
+		case 'submaxAndGymnastics':
+		case 'run400Grace':
+		case 'bike2Mile':
+		case 'mileCindy':
+		case 'cunningham':
+		case 'run10k':
+		case 'amanda':
+		case 'row5k':
+		case 'fran':
+		case 'diane':
 			return retestDay(slot, ctx.inputs);
 	}
 }
