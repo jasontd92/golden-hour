@@ -18,7 +18,7 @@
 		"check": "pnpm typecheck && pnpm lint && pnpm policy && pnpm test:unit",
 		"typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --fail-on-warnings && tsc -p src/service-worker",
 		"lint": "eslint . --max-warnings 0",
-		"policy": "node scripts/check-md.ts && node scripts/check-features.ts && node scripts/plan-check.ts",
+		"policy": "node scripts/check-md.ts && node scripts/check-features.ts && node scripts/plan-check.ts && node scripts/bench/leak-check.ts",
 		"test:unit": "vitest --run",
 		"test:e2e": "playwright test",
 		"e2e:local": "node scripts/e2e-local.ts",
@@ -28,7 +28,9 @@
 		"plan:generate": "node scripts/plan-generate.ts",
 		"data:build": "node scripts/data-build.ts",
 		"db:generate": "drizzle-kit generate",
-		"proof:sync": "node scripts/sync-mutants.ts"
+		"proof:sync": "node scripts/sync-mutants.ts",
+		"bench:verifiers": "node scripts/bench/bench.ts",
+		"bench:escapes": "node scripts/bench/escapes.ts"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
