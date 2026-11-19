@@ -2,8 +2,16 @@ name: ci
 
 on:
   pull_request:
+    paths-ignore: &docs-only
+      - '.sprint/**'
+      - 'team/**'
+      - 'profiles/**'
+      - 'prompts/**'
+      - 'README.md'
+      - 'data/README.md'
   push:
     branches: [main]
+    paths-ignore: *docs-only
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -13,41 +21,30 @@ permissions:
   contents: read
 
 jobs:
-  typecheck:
+  checks:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
-      - uses: ./.github/actions/setup
-      - run: pnpm typecheck
-
-  lint:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v7
-      - uses: ./.github/actions/setup
-      - run: pnpm lint
-
-  unit:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v7
-      - uses: ./.github/actions/setup
-      - run: pnpm test:unit
-
-  policy:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v7
-      - uses: ./.github/actions/setup
-      - run: pnpm policy
+      - id: setup
+        uses: ./.github/actions/setup
+      - name: typecheck
+        run: pnpm typecheck
+      - name: lint
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
+        run: pnpm lint
+      - name: policy
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
+        run: pnpm policy
       - name: normalized data matches a fresh build
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: pnpm data:build && git diff --exit-code data/normalized
       - name: plan matches a fresh generate
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: pnpm plan:generate && git diff --exit-code plan
+      - name: unit
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
+        run: pnpm test:unit
 
   e2e:
     runs-on: ubuntu-latest

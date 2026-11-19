@@ -48,6 +48,18 @@ describe('vercel ignoreCommand', () => {
 		expect(vercelBuilds()).toBe(false);
 	});
 
+	it('skips a commit that only touches the hand-written READMEs', () => {
+		freshRepo();
+		commit({ 'README.md': 'b', 'data/README.md': 'b' });
+		expect(vercelBuilds()).toBe(false);
+	});
+
+	it('builds a commit that touches generated markdown such as the data report', () => {
+		freshRepo();
+		commit({ 'data/normalized/REPORT.md': 'b' });
+		expect(vercelBuilds()).toBe(true);
+	});
+
 	it('builds a commit that touches code, even alongside docs', () => {
 		freshRepo();
 		commit({ 'src/app.ts': 'b', '.sprint/tracker.md': 'b' });
