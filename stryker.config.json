@@ -12,6 +12,8 @@
 		"scripts/python-json.ts",
 		"!**/*.spec.ts"
 	],
+	"timeoutMS": 30000,
+	"timeoutFactor": 3,
 	"incremental": true,
 	"incrementalFile": "reports/stryker-incremental.json",
 	"reporters": ["clear-text", "progress", "html", "json"],
