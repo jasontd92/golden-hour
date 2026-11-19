@@ -19,7 +19,7 @@ export function pinnedPnpm(packageJson: string): string {
 
 const containerOnly = ['node_modules', '.svelte-kit', '.vercel', 'build'];
 
-export function dockerArgs(image: string, pnpm: string, repo: string, tty: boolean): string[] {
+export function dockerArgs(image: string, pnpm: string, repo: string, tty: boolean, playwrightArgs: string[] = []): string[] {
 	return [
 		'run',
 		'--rm',
@@ -37,8 +37,14 @@ export function dockerArgs(image: string, pnpm: string, repo: string, tty: boole
 		image,
 		'sh',
 		'-c',
-		`npm install -g --silent ${pnpm} && pnpm install --frozen-lockfile && pnpm test:e2e`
+		`npm install -g --silent ${pnpm} && pnpm install --frozen-lockfile && pnpm test:e2e "$@"`,
+		'sh',
+		...playwrightArgs
 	];
+}
+
+export function forwardedArgs(argv: string[]): string[] {
+	return argv[0] === '--' ? argv.slice(1) : argv;
 }
 
 if (import.meta.main) {
@@ -49,6 +55,6 @@ if (import.meta.main) {
 	const image = ciPlaywrightImage(readFileSync(path.join(root, '.github/workflows/ci.yml'), 'utf8'));
 	const pnpm = pinnedPnpm(readFileSync(path.join(root, 'package.json'), 'utf8'));
 	console.log(`e2e:local: ${image}, ${pnpm}`);
-	const { status } = spawnSync('docker', dockerArgs(image, pnpm, root, Boolean(process.stdout.isTTY)), { stdio: 'inherit' });
+	const { status } = spawnSync('docker', dockerArgs(image, pnpm, root, Boolean(process.stdout.isTTY), forwardedArgs(process.argv.slice(2))), { stdio: 'inherit' });
 	process.exit(status ?? 1);
 }
