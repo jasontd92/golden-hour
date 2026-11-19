@@ -3,7 +3,7 @@ name: canary
 on:
   status:
   schedule:
-    - cron: '23 * * * *'
+    - cron: '23 */6 * * *'
   workflow_dispatch:
   pull_request:
     paths:
