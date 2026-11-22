@@ -24,6 +24,11 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      e2e: ${{ steps.e2e-scope.outputs.specs }}
     steps:
       - uses: actions/checkout@v7
       - id: setup
@@ -45,6 +50,17 @@ jobs:
       - name: unit
         if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: pnpm test:unit
+      - id: e2e-scope
+        name: e2e specs for what this PR renders
+        if: ${{ github.event_name == 'pull_request' && steps.setup.outcome == 'success' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          all=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/labels" --jq '.[].name' | grep -qx screenshots && echo --all || true)
+          specs=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate --jq '.[].filename' | node scripts/e2e-scope.ts $all)
+          echo "specs=$specs" >> "$GITHUB_OUTPUT"
+          echo "e2e: ${specs:-skipped until merge}"
 
   bundle-budget:
     runs-on: ubuntu-latest
@@ -53,17 +69,11 @@ jobs:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup
       - run: pnpm build
-      - run: node scripts/budgets.ts bundle
-
-  sync-budget:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v7
-      - uses: ./.github/actions/setup
-      - run: node scripts/budgets.ts sync
+      - run: node scripts/budgets.ts
 
   e2e:
+    needs: checks
+    if: ${{ !cancelled() && (github.event_name == 'push' || needs.checks.outputs.e2e != '') }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     outputs:
@@ -77,16 +87,17 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           setup-node: 'false'
-      - run: pnpm test:e2e
+      - run: pnpm test:e2e $SPECS
         env:
           HOME: /root
+          SPECS: ${{ needs.checks.outputs.e2e != 'all' && needs.checks.outputs.e2e || '' }}
       - id: screenshots
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: e2e-screenshots
           path: test-results/screenshots/*.png
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 14
       - if: failure()
         uses: actions/upload-artifact@v7

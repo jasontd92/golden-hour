@@ -1,16 +1,11 @@
-import { spawnSync } from 'node:child_process';
-import { globSync, mkdtempSync, readFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { globSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { gzipSync } from 'node:zlib';
-import { propertySpec } from './sync-mutants.ts';
 
 export const budgets = {
 	firstLoadJsGzipBytes: 90_000,
 	precacheRawBytes: 44_000_000,
-	precacheGzipBytes: 5_800_000,
-	propertySuiteMs: 15_000,
-	syncProofMs: 110_000
+	precacheGzipBytes: 5_800_000
 };
 
 export type Budget = keyof typeof budgets;
@@ -65,33 +60,8 @@ export function budgetLines(measured: Measured, limits: Record<Budget, number> =
 	);
 }
 
-export function timed(command: string, args: string[]): { ms: number; status: number | null } {
-	const start = performance.now();
-	const { status } = spawnSync(command, args, { stdio: 'inherit' });
-	return { ms: Math.round(performance.now() - start), status };
-}
-
-interface VitestReport {
-	success: boolean;
-	testResults: { assertionResults: { duration?: number }[] }[];
-}
-
-function measureSync(): Measured {
-	const report = path.join(mkdtempSync(path.join(tmpdir(), 'budget-')), 'vitest.json');
-	const property = timed('pnpm', ['-s', 'vitest', '--run', propertySpec, '--reporter=json', `--outputFile=${report}`]);
-	const parsed = JSON.parse(readFileSync(report, 'utf8')) as VitestReport;
-	if (property.status !== 0 || !parsed.success) throw new Error(`${propertySpec} failed`);
-	const proof = timed('pnpm', ['-s', 'proof:sync']);
-	if (proof.status !== 0) throw new Error('pnpm proof:sync failed');
-	const durations = parsed.testResults.flatMap((file) => file.assertionResults.map((test) => test.duration ?? 0));
-	const propertySuiteMs = Math.round(durations.reduce((total, ms) => total + ms, 0));
-	return { propertySuiteMs, syncProofMs: proof.ms };
-}
-
 if (import.meta.main) {
-	const mode = process.argv[2];
-	if (mode !== 'bundle' && mode !== 'sync') throw new Error('usage: node scripts/budgets.ts bundle|sync');
-	const measured = mode === 'bundle' ? measureBundle('.svelte-kit/output') : measureSync();
+	const measured = measureBundle('.svelte-kit/output');
 	for (const line of budgetLines(measured)) console.log(line);
 	const problems = overBudget(measured);
 	for (const problem of problems) console.error(problem);

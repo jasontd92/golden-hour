@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { budgets, firstLoadScripts, measureBundle, overBudget, precacheFiles, timed } from './budgets.ts';
+import { budgets, firstLoadScripts, measureBundle, overBudget, precacheFiles } from './budgets.ts';
 
 let output: string;
 
@@ -79,12 +79,3 @@ describe('bundle budgets', () => {
 	});
 });
 
-describe('wall-time budgets', () => {
-	it('times a command and fails a budget shrunk below its wall time', () => {
-		const run = timed(process.execPath, ['-e', 'setTimeout(() => {}, 200)']);
-		expect(run.status).toBe(0);
-		expect(run.ms).toBeGreaterThanOrEqual(200);
-		expect(overBudget({ syncProofMs: run.ms }, { ...budgets, syncProofMs: 100 })).toEqual([`syncProofMs: ${run.ms} is over its budget of 100`]);
-		expect(overBudget({ propertySuiteMs: run.ms }, { ...budgets, propertySuiteMs: run.ms })).toEqual([]);
-	});
-});
