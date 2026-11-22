@@ -1,5 +1,5 @@
 import { execFileSync, spawnSync } from 'node:child_process';
-import { chmodSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, globSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
@@ -79,9 +79,10 @@ describe('guard hook (stdin JSON, exit 2 blocks with the reason on stderr)', () 
 	writeFileSync(path.join(bin, 'gh'), `#!/bin/sh\necho "$@" > "${dir}/gh-args"\ncat "${dir}/gh-out"\n`);
 	chmodSync(path.join(bin, 'gh'), 0o755);
 
-	const hook = (command: string, env: Record<string, string | undefined> = {}) => {
+	const hook = (command: string, env: Record<string, string | undefined> = {}, cwd?: string) => {
 		const { ROLE: _role, ...rest } = process.env;
 		return spawnSync('node', [path.resolve('scripts/hooks/guard.ts')], {
+			cwd,
 			input: JSON.stringify({ cwd: repo, hook_event_name: 'PreToolUse', tool_name: 'Bash', tool_input: { command } }),
 			encoding: 'utf8',
 			env: { ...rest, PATH: `${bin}:${process.env.PATH}`, ...env }
@@ -129,6 +130,45 @@ describe('guard hook (stdin JSON, exit 2 blocks with the reason on stderr)', () 
 		expect(blocked.status).toBe(2);
 		expect(blocked.stderr).toContain('checks');
 		expect(readFileSync(path.join(dir, 'gh-args'), 'utf8')).toMatch(/\b35\b/);
+	});
+
+	const records = (root: string) => globSync(`${root}/verification/runs/*.json`).sort();
+
+	it('records each block as {by: guard, result: blocked, detail: the reason} in the repo of the input cwd, not the hook process cwd; rules out writing to the wrong repo or a vague detail', () => {
+		const elsewhere = path.join(dir, 'elsewhere');
+		execFileSync('mkdir', ['-p', elsewhere]);
+		execFileSync('git', ['init', '-q'], { cwd: elsewhere });
+		const before = records(repo);
+		writeFileSync(path.join(repo, 'scripts/a.spec.ts'), 'v\n');
+		git('add', 'scripts/a.spec.ts');
+		const blocked = hook('git commit -m "fix: tests"', {}, elsewhere);
+		expect(blocked.status).toBe(2);
+		const added = records(repo).filter((file) => !before.includes(file));
+		expect(added).toHaveLength(1);
+		const record = JSON.parse(readFileSync(added[0]!, 'utf8')) as Record<string, unknown>;
+		expect(record).toEqual({ at: expect.any(String), by: 'guard', result: 'blocked', detail: blocked.stderr.trim() });
+		expect(record.detail).toContain('scripts/a.spec.ts');
+		expect(path.basename(added[0]!)).toBe(`${(record.at as string).replace(/[:.]/g, '-')}-guard.json`);
+		expect(records(elsewhere)).toEqual([]);
+		reset();
+	});
+
+	it('records a blocked merge too, and records nothing for an allowed commit or merge; rules out recording every hook call', () => {
+		writeFileSync(path.join(dir, 'gh-out'), readFileSync(new URL('../fixtures/oracle/pr-checks-35.json', import.meta.url)));
+		let before = records(repo);
+		expect(hook('gh pr merge 35 --squash').status).toBe(2);
+		const added = records(repo).filter((file) => !before.includes(file));
+		expect(added).toHaveLength(1);
+		expect(JSON.parse(readFileSync(added[0]!, 'utf8'))).toMatchObject({ by: 'guard', result: 'blocked', detail: expect.stringContaining('checks') });
+		before = records(repo);
+		writeFileSync(path.join(dir, 'gh-out'), readFileSync(new URL('../fixtures/oracle/pr-checks-27.json', import.meta.url)));
+		expect(hook('gh pr merge 27 --squash').status).toBe(0);
+		writeFileSync(path.join(repo, 'scripts/a.ts'), 'u\n');
+		git('add', 'scripts/a.ts');
+		expect(hook('git commit -m "fix: a"').status).toBe(0);
+		expect(hook('git status').status).toBe(0);
+		expect(records(repo)).toEqual(before);
+		reset();
 	});
 
 	it('allows gh pr merge on real PR #27 checks, and blocks when gh reports none', () => {
