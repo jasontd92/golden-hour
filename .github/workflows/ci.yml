@@ -39,6 +39,7 @@ jobs:
         if: ${{ !cancelled() && github.event_name == 'pull_request' && steps.setup.outcome == 'success' }}
         run: node scripts/provenance.ts "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
       - name: typecheck
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: pnpm typecheck
       - name: lint
         if: ${{ !cancelled() && steps.setup.outcome == 'success' }}

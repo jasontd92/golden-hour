@@ -137,7 +137,13 @@ const flag = (args: string[], name: string) => {
 	const index = args.indexOf(`--${name}`);
 	return index >= 0 ? args[index + 1] : undefined;
 };
-const number = (value: string | undefined) => (value === undefined ? undefined : Number(value));
+const number = (args: string[], name: string) => {
+	const value = flag(args, name);
+	if (value === undefined && !args.includes(`--${name}`)) return undefined;
+	const parsed = Number(value);
+	if (value === undefined || value.trim() === '' || !Number.isFinite(parsed)) throw new Error(`--${name} needs a number, got ${JSON.stringify(value ?? '')}`);
+	return parsed;
+};
 
 function ciHistory(prs: number): { catches: Catch[]; costs: Cost[] } {
 	const numbers = gh('pr', 'list', '--state', 'merged', '--limit', String(prs), '--json', 'number', '-q', '.[].number').split('\n').filter(Boolean);
@@ -158,8 +164,9 @@ function ciHistory(prs: number): { catches: Catch[]; costs: Cost[] } {
 
 if (import.meta.main) {
 	const argv = process.argv.slice(2);
-	const mode = argv[0]?.startsWith('--') ? 'report' : argv[0];
-	const args = mode === 'report' ? argv : argv.slice(1);
+	const mode = argv[0] === undefined || argv[0].startsWith('--') ? 'report' : argv[0];
+	const args = mode === 'report' && argv[0] !== 'report' ? argv : argv.slice(1);
+	if (!['run', 'agent', 'escape', 'report'].includes(mode)) throw new Error(`unknown mode "${mode}": use run, agent, escape or report`);
 	const root = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).trim();
 	const at = new Date().toISOString();
 	if (mode === 'run') {
@@ -175,14 +182,14 @@ if (import.meta.main) {
 	} else if (mode === 'agent') {
 		const [by] = args;
 		if (!by) throw new Error('usage: node scripts/ledger.ts agent <name> --tokens N [--caught N] [--usd X] [--minutes M] [--pr N] [--detail "..."]');
-		const record: RunRecord = { at, by, result: 'pass', caught: number(flag(args, 'caught')), tokens: number(flag(args, 'tokens')), usd: number(flag(args, 'usd')), minutes: number(flag(args, 'minutes')), pr: number(flag(args, 'pr')), detail: flag(args, 'detail') };
+		const record: RunRecord = { at, by, result: 'pass', caught: number(args, 'caught'), tokens: number(args, 'tokens'), usd: number(args, 'usd'), minutes: number(args, 'minutes'), pr: number(args, 'pr'), detail: flag(args, 'detail') };
 		console.log(`recorded ${path.relative(root, writeRecord(root, JSON.parse(JSON.stringify(record)) as RunRecord))}`);
 	} else if (mode === 'escape') {
 		const [what] = args;
 		const foundBy = flag(args, 'found-by');
 		const shouldHave = flag(args, 'should-have-caught');
 		if (!what || !foundBy || !shouldHave) throw new Error('usage: node scripts/ledger.ts escape "<what>" --found-by <who> --should-have-caught <check> [--introduced-in <pr>]');
-		const escape: Escape = { at, what, found_by: foundBy, should_have_caught: shouldHave, ...(flag(args, 'introduced-in') ? { introduced_in: Number(flag(args, 'introduced-in')) } : {}) };
+		const escape: Escape = { at, what, found_by: foundBy, should_have_caught: shouldHave, ...(args.includes('--introduced-in') ? { introduced_in: number(args, 'introduced-in') } : {}) };
 		const file = path.join(root, escapesDir, `${stamp(at)}.json`);
 		mkdirSync(path.dirname(file), { recursive: true });
 		writeFileSync(file, JSON.stringify(escape, null, '\t') + '\n');

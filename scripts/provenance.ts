@@ -1,9 +1,12 @@
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 
-export const testPaths = ['**/*.spec.ts', '**/*.e2e.ts'];
+// why: a test is only as honest as its data and its runner's config, so those belong to the oracle too
+export const testPaths = ['**/*.spec.ts', '**/*.e2e.ts', '**/fixtures/**', 'vite.config.ts', 'playwright.config.ts', 'stryker.config.json'];
 export const oracleTrailer = 'Verified-by: oracle';
-export const isTestPath = (file: string) => !file.endsWith('.local.spec.ts') && testPaths.some((glob) => path.posix.matchesGlob(file, glob));
+export const isLocalCheck = (file: string) => file.endsWith('.local.spec.ts');
+export const isTestPath = (file: string) => !isLocalCheck(file) && testPaths.some((glob) => path.posix.matchesGlob(file, glob));
+export const hasOracleTrailer = (message: string) => message.split('\n').some((line) => line.trim() === oracleTrailer);
 
 export interface Commit {
 	sha: string;
@@ -12,11 +15,14 @@ export interface Commit {
 	files: string[];
 }
 
-// why: the agent that implements a change must not write or weaken the tests that judge it; merges only carry other PRs' commits.
+// why: the agent that implements a change must not write or weaken the tests that judge it; a merge's files are only what its conflict resolution changed, and an implementer's own checks are never committed.
 export function provenanceProblems(commits: Commit[]): string[] {
-	return commits
-		.filter((commit) => commit.parents < 2 && !commit.message.split('\n').some((line) => line.trim() === oracleTrailer))
-		.flatMap((commit) => commit.files.filter(isTestPath).map((file) => `${commit.sha.slice(0, 7)} changes ${file} without a "${oracleTrailer}" trailer`));
+	return commits.flatMap((commit) => {
+		const sha = commit.sha.slice(0, 7);
+		const local = commit.files.filter(isLocalCheck).map((file) => `${sha} commits ${file}; *.local.spec.ts checks stay uncommitted`);
+		const tests = hasOracleTrailer(commit.message) ? [] : commit.files.filter(isTestPath).map((file) => `${sha} changes ${file} without a "${oracleTrailer}" trailer`);
+		return [...local, ...tests];
+	});
 }
 
 const git = (...args: string[]) => execFileSync('git', args, { encoding: 'utf8' });
@@ -25,12 +31,12 @@ export function commitsIn(range: string): Commit[] {
 	return git('rev-list', '--reverse', range)
 		.split('\n')
 		.filter(Boolean)
-		.map((sha) => ({
-			sha,
-			parents: git('rev-list', '--parents', '-n1', sha).trim().split(' ').length - 1,
-			message: git('show', '-s', '--format=%B', sha),
-			files: git('diff-tree', '--no-commit-id', '--name-only', '-r', '--root', sha).split('\n').filter(Boolean)
-		}));
+		.map((sha) => {
+			const parents = git('rev-list', '--parents', '-n1', sha).trim().split(' ').length - 1;
+			// why: --remerge-diff shows only what a merge changed beyond git's own automatic merge, which is the hand-resolved part
+			const files = parents > 1 ? git('show', '--remerge-diff', '--format=', '--name-only', sha) : git('diff-tree', '--no-commit-id', '--name-only', '-r', '--root', sha);
+			return { sha, parents, message: git('show', '-s', '--format=%B', sha), files: files.split('\n').filter(Boolean) };
+		});
 }
 
 if (import.meta.main) {
