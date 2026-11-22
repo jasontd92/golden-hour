@@ -1,0 +1,20 @@
+{
+	"pr": 35,
+	"title": "ci: show only screenshots of the pages a PR touched",
+	"catches": [
+		{
+			"by": "implementer-local",
+			"kind": "agent",
+			"real": true,
+			"what": "a Plan feature change picked the mobile Today screenshots, because / renders today, log and plan; found by running the picker on the real CI screenshots"
+		},
+		{
+			"by": "oracle",
+			"kind": "agent",
+			"real": true,
+			"what": "#37's verification.yaml did not parse as YAML (unquoted ': ' and leading quotes); fixed in the oracle commit"
+		}
+	],
+	"costs": [{ "by": "oracle", "runs": 1, "tokens": 1922451, "usd": 1.4, "minutes": 6 }],
+	"notes": "Self-written tests from the first version were removed; the oracle kept the changesRendering cases and added 20. It ran Stryker unprompted: 9 survivors, all order, equivalent anchors or CLI-only."
+}
