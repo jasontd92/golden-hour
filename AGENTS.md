@@ -4,11 +4,11 @@ The agent that implements a change does not write, choose or weaken the tests th
 
 ## Roles
 - **Implementer.** Writes code. May check its own work as much as it likes, but only in `*.local.spec.ts` files, which git ignores. Its own checks are never committed and never the final word.
-- **Oracle.** A separate session: `pnpm oracle "<brief>"`, which runs `.claude/agents/oracle.md` with `ROLE=oracle`. Gets the intent, not a tour of the code. Writes `verification.yaml` and the committed tests, in commits with the trailer `Verified-by: oracle`.
-- **Verifier / reviewer.** Fresh, after the implementation. Runs the manifest and judges the gaps. Never the implementer.
+- **Oracle.** A separate session: `pnpm oracle "<brief>"`, which runs `.claude/agents/oracle.md` with `ROLE=oracle`. Gets the intent, not a tour of the code. Writes the committed tests, named for the claim each proves, in commits with the trailer `Verified-by: oracle`.
+- **Verifier / reviewer.** Fresh, after the implementation. Runs the tests and judges the gaps. Never the implementer.
 
 ## Enforced
-- The `.claude/settings.json` hook refuses a commit that stages tests (`*.spec.ts`, `*.e2e.ts`, `verification.yaml`) outside the oracle session. It also refuses `gh pr merge` unless every check is green.
+- The `.claude/settings.json` hook refuses a commit that stages tests (`*.spec.ts`, `*.e2e.ts`) outside the oracle session. It also refuses `gh pr merge` unless every check is green.
 - CI's "tests come from the oracle" step fails a PR whose non-merge commits change tests without the oracle trailer.
 
 ## What needs an oracle (for briefs and PR review)
@@ -20,7 +20,7 @@ A reviewer flags a behaviour change that skipped the oracle, and tests that woul
 
 ## Record what each check catches
 Every PR gets `verification/ledger/<pr>.json`: what caught each mistake, whether it was real, and what verification cost. `pnpm ledger` summarizes it.
-- **Programmatic** (CI, budgets, mutation, e2e): `pnpm ledger draft <pr>` adds every check that failed on one commit and passed on a later one.
+- **Programmatic** (CI, budgets, mutation, e2e): `pnpm ledger draft <pr>` adds one catch per bug: a run of failing commits for a check, ended by a later commit where it passes. A re-run that passes counts as a flake.
 - **Agent and human** (oracle tests, verifier, reviewer, Codex, you): whoever catches it adds `{"by", "kind", "what", "real"}`.
 - Mark each catch `"real": true` (a real mistake) or `false` (a flake or a false alarm).
 - Costs are per check: the draft adds CI minutes per check run; each agent role adds `{"by": "oracle", "runs", "tokens"}` from its session's output.

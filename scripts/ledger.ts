@@ -25,36 +25,26 @@ export interface Entry {
 
 export const ledgerDir = 'verification/ledger';
 
-// why: a check that failed on one commit of a PR and passed on its last commit caught something; a human or agent then marks whether it was real or a flake.
-export interface Run {
-	commit: string;
-	name: string;
-	conclusion: string;
-	minutes: number;
-}
-
-// why: a check must earn its cost; GitHub bills each job rounded up to a whole minute
-export function programmaticCosts(runs: Run[]): Cost[] {
-	const costs = new Map<string, Cost>();
-	for (const { name, conclusion, minutes } of runs) {
-		if (conclusion === 'skipped') continue;
-		const cost = costs.get(name) ?? { by: name, runs: 0, minutes: 0 };
-		cost.runs++;
-		cost.minutes! += Math.ceil(minutes);
-		costs.set(name, cost);
-	}
-	return [...costs.values()].sort((a, b) => a.by.localeCompare(b.by));
-}
-
+// why: one catch per bug: a run of consecutive commits where a check failed, ended by a later commit where it passed.
+// A failure that passes on a re-run of the same commit is a flake, not a fix, so it counts as a pass.
 export function programmaticCatches(runs: Run[]): Catch[] {
 	const commits = [...new Set(runs.map(({ commit }) => commit))];
-	const last = commits.at(-1);
-	const passedAtEnd = new Set(runs.filter(({ commit, conclusion }) => commit === last && conclusion === 'success').map(({ name }) => name));
-	const seen = new Set<string>();
-	return runs
-		.filter(({ name, conclusion, commit }) => conclusion === 'failure' && commit !== last && passedAtEnd.has(name))
-		.filter(({ name, commit }) => !seen.has(name + commit) && seen.add(name + commit))
-		.map(({ name, commit }) => ({ by: name, kind: 'programmatic', what: `failed at ${commit.slice(0, 7)}, passed by the last commit`, real: null, commit }));
+	const names = [...new Set(runs.map(({ name }) => name))];
+	const catches: Catch[] = [];
+	for (const name of names) {
+		let streak: string[] = [];
+		for (const commit of commits) {
+			const results = runs.filter((run) => run.name === name && run.commit === commit).map(({ conclusion }) => conclusion);
+			if (results.includes('success')) {
+				if (streak.length > 0) {
+					const span = streak.length > 1 ? `${streak[0]!.slice(0, 7)}..${streak.at(-1)!.slice(0, 7)}` : streak[0]!.slice(0, 7);
+					catches.push({ by: name, kind: 'programmatic', what: `failed at ${span}, passed at ${commit.slice(0, 7)}`, real: null, commit: streak[0]! });
+				}
+				streak = [];
+			} else if (results.includes('failure')) streak.push(commit);
+		}
+	}
+	return catches;
 }
 
 export interface Tally {

@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 
-export const testPaths = ['**/*.spec.ts', '**/*.e2e.ts', 'verification.yaml'];
+export const testPaths = ['**/*.spec.ts', '**/*.e2e.ts'];
 export const oracleTrailer = 'Verified-by: oracle';
 export const isTestPath = (file: string) => !file.endsWith('.local.spec.ts') && testPaths.some((glob) => path.posix.matchesGlob(file, glob));
 
