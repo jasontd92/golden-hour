@@ -330,6 +330,24 @@ describe('ledger CLI', () => {
 			expect(JSON.parse(text)).toEqual({ at: expect.any(String), by: 'codex', result: 'pass', tokens: 1200 });
 			expect(text).not.toContain('null');
 		});
+
+		it.each([
+			['--tokens', ['--tokens', '']],
+			['--tokens', ['--tokens', 'abc']],
+			['--tokens', ['--tokens', '12k']],
+			['--tokens', ['--tokens']],
+			['--tokens', ['--tokens', '--caught', '3']],
+			['--caught', ['--tokens', '10', '--caught', 'two']],
+			['--usd', ['--tokens', '10', '--usd', '$0.42']],
+			['--minutes', ['--tokens', '10', '--minutes', ' ']],
+			['--pr', ['--tokens', '10', '--pr', '#35']]
+		] as const)('throws on %s present but empty or non-numeric (%j), naming the flag and writing no record; rules out recording NaN, null or a dropped field', (name, flags) => {
+			const root = repo();
+			const result = ledger(root, 'agent', 'code-review', ...flags);
+			expect(result.status).not.toBe(0);
+			expect(result.stderr).toContain(name);
+			expect(existsSync(path.join(root, 'verification/runs'))).toBe(false);
+		});
 	});
 
 	describe('ledger escape "<what>" --found-by X --should-have-caught Y', () => {
@@ -347,6 +365,14 @@ describe('ledger CLI', () => {
 			const root = repo();
 			ledger(root, 'escape', 'stale tile', '--found-by', 'jason', '--should-have-caught', 'e2e');
 			expect(jsonIn<Escape>(path.join(root, 'verification/escapes'))[0]!.data).toEqual({ at: expect.any(String), what: 'stale tile', found_by: 'jason', should_have_caught: 'e2e' });
+		});
+
+		it.each([[['--introduced-in', '']], [['--introduced-in', 'PR35']], [['--introduced-in']]])('throws on --introduced-in present but empty or non-numeric (%j), writing no escape; rules out dropping the flag silently or storing NaN', (flags) => {
+			const root = repo();
+			const result = ledger(root, 'escape', 'stale tile', '--found-by', 'jason', '--should-have-caught', 'e2e', ...flags);
+			expect(result.status).not.toBe(0);
+			expect(result.stderr).toContain('--introduced-in');
+			expect(existsSync(path.join(root, 'verification/escapes'))).toBe(false);
 		});
 	});
 
@@ -398,6 +424,26 @@ else if (/commits\\/([0-9a-f]+)\\/check-runs/.test(api)) {
 			expect(row('evidence')).toMatchObject({ catches: '1', runs: '3' });
 			expect(row('e2e')).toMatchObject({ catches: '0', runs: '3', escapes: '1' });
 			expect(readFileSync(ghLog, 'utf8')).toContain('"pr","list"');
+		});
+
+		it('reports for an explicit "report" mode, still honouring --prs after it; rules out treating "report" as unknown, or dropping the flags after it', () => {
+			rmSync(ghLog, { force: true });
+			const result = ledger(root, 'report', '--prs', '7');
+			expect(result.status, result.stderr).toBe(0);
+			expect(table(result.stdout).map((row) => row.check)).toContain('code-review');
+			const list = readFileSync(ghLog, 'utf8').split('\n').filter(Boolean).map((line) => JSON.parse(line) as string[]).find((args) => args[0] === 'pr')!;
+			expect(list[list.indexOf('--limit') + 1]).toBe('7');
+		});
+
+		it.each(['agnet', 'escapes', 'Report', 'runs'])('throws on the unknown mode %j without printing the report, calling gh or writing anything; rules out a typo falling through to the report', (mode) => {
+			rmSync(ghLog, { force: true });
+			const fresh = repo();
+			const result = ledger(fresh, mode, 'code-review', '--tokens', '5');
+			expect(result.status).not.toBe(0);
+			expect(result.stderr).toContain(mode);
+			expect(result.stdout).not.toContain('|');
+			expect(existsSync(ghLog)).toBe(false);
+			expect(existsSync(path.join(fresh, 'verification'))).toBe(false);
 		});
 
 		it('passes --prs N to gh as the merged-PR limit; rules out ignoring the flag', () => {
