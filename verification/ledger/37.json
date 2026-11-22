@@ -1,0 +1,59 @@
+{
+	"pr": 37,
+	"title": "feat(verify): tests come from a separate oracle session",
+	"catches": [
+		{
+			"by": "checks",
+			"kind": "programmatic",
+			"what": "provenance step: fetch-depth `pull_request && 0 || 1` is 1 because 0 is falsy, so the checkout had no history. Not reachable by unit tests (CI wiring).",
+			"real": true,
+			"commit": "8b1b6ff1622e261b6a1c97141a93da0ca11d72a2"
+		},
+		{
+			"by": "checks",
+			"kind": "programmatic",
+			"what": "provenance step: fetch-depth `pull_request && 0 || 1` is 1 because 0 is falsy, so the checkout had no history. Not reachable by unit tests (CI wiring).",
+			"real": true,
+			"commit": "5b31962c8ee9ac2975d70fff86af95ab2c902be2"
+		},
+		{
+			"by": "checks",
+			"kind": "programmatic",
+			"what": "provenance step: the PR checkout has no origin/<base> ref, so git rev-list failed. Not reachable by unit tests (CI wiring).",
+			"real": true,
+			"commit": "f8226b9ca11c678cfa89e6c5b7e5d7d577185be7"
+		},
+		{
+			"by": "checks",
+			"kind": "programmatic",
+			"what": "provenance step: fetch-depth `pull_request && 0 || 1` is 1 because 0 is falsy, so the checkout had no history. Not reachable by unit tests (CI wiring).",
+			"real": true,
+			"commit": "e32ecae12d5d67567e026be5d8d5ae523942aeda"
+		}
+	],
+	"costs": [
+		{
+			"by": "bundle-budget",
+			"runs": 5,
+			"minutes": 5
+		},
+		{
+			"by": "checks",
+			"runs": 5,
+			"minutes": 6
+		},
+		{
+			"by": "Vercel Preview Comments",
+			"runs": 5,
+			"minutes": 0
+		},
+		{
+			"by": "oracle",
+			"runs": 1,
+			"tokens": 2707044,
+			"usd": 1.95,
+			"minutes": 9
+		}
+	],
+	"notes": "Implementer (main session) cost not measured. The oracle ran Stryker unprompted and added one test for a gap it found; no code bug."
+}
