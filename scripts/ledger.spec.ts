@@ -10,12 +10,17 @@ type CapturedRun = { commit: string; name: string; conclusion: string | null; st
 const captured = JSON.parse(readFileSync(new URL('./fixtures/oracle/check-runs.json', import.meta.url), 'utf8')) as Record<string, CapturedRun[]>;
 const runsOf = (pr: string): Run[] =>
 	captured[pr]!.filter((run) => run.completed_at).map(({ commit, name, conclusion, started_at, completed_at }) => ({ commit, name, conclusion: conclusion!, minutes: (Date.parse(completed_at!) - Date.parse(started_at)) / 60_000 }));
-// why: the six run records migrated from the hand-kept ledger, as committed in verification/runs/
-const migratedDir = new URL('../verification/runs/', import.meta.url);
-const migrated = readdirSync(migratedDir)
-	.filter((file) => file.endsWith('.json'))
-	.sort()
-	.map((file) => ({ file, record: JSON.parse(readFileSync(new URL(file, migratedDir), 'utf8')) as RunRecord }));
+// why: the six records migrated from the hand-kept ledger, frozen as committed in verification/runs/ at ff5aa50, since the live directory grows with every recorded run
+const recordsIn = (dir: URL) =>
+	readdirSync(dir)
+		.filter((file) => file.endsWith('.json'))
+		.sort()
+		.map((file) => ({ file, record: JSON.parse(readFileSync(new URL(file, dir), 'utf8')) as RunRecord }));
+const migratedDir = new URL('./fixtures/oracle/runs/', import.meta.url);
+const migrated = recordsIn(migratedDir);
+// why: the live records, which only grow; tests over them assert only what stays true as records are added
+const liveDir = new URL('../verification/runs/', import.meta.url);
+const live = recordsIn(liveDir);
 const byName = <T extends { by: string }>(list: T[]) => [...list].sort((a, b) => a.by.localeCompare(b.by));
 const run = (commit: string, name: string, conclusion: string, minutes = 1): Run => ({ commit, name, conclusion, minutes });
 
@@ -187,6 +192,13 @@ describe('summarize', () => {
 	it('returns nothing when there is nothing to report', () => {
 		expect(summarize([], [], [], [])).toEqual([]);
 	});
+
+	it('counts every live record in verification/runs/ as exactly one run and sums its caught, however many records exist; rules out dropping, double-counting or misreading a real recorded run', () => {
+		const tallies = summarize([], [], live.map(({ record }) => record), []);
+		expect(tallies.reduce((sum, { runs }) => sum + runs, 0)).toBe(live.length);
+		expect(tallies.reduce((sum, { catches }) => sum + catches, 0)).toBe(live.reduce((sum, { record }) => sum + (record.caught ?? 0), 0));
+		expect(new Set(tallies.map(({ by }) => by))).toEqual(new Set(live.map(({ record }) => record.by)));
+	});
 });
 
 describe('mutationScore (Stryker mutation.json)', () => {
@@ -220,6 +232,10 @@ describe('writeRecord', () => {
 		const written = writeRecord(root, record);
 		expect(written).toBe(path.join(root, 'verification/runs', file));
 		expect(JSON.parse(readFileSync(written, 'utf8'))).toEqual(record);
+	});
+
+	it.each(live)('names live record $file as writeRecord would name its own record; rules out a recorded run whose file name disagrees with its at/by', ({ file, record }) => {
+		expect(path.basename(writeRecord(repo(), record))).toBe(file);
 	});
 
 	it('replaces every : and . in the timestamp with -, so the name is safe on every filesystem; rules out replacing only the first', () => {
