@@ -172,3 +172,37 @@ jobs:
           else
             gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -F body=@body.md >/dev/null
           fi
+
+  comment-report:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR: ${{ github.event.pull_request.number }}
+      BASE: ${{ github.event.pull_request.base.sha }}
+      SHA: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - name: Report new why and developer-directed comments
+        run: |
+          set +e
+          node scripts/comment-report.ts "$BASE" "$SHA" > body.md
+          found=$?
+          set -e
+          [ "$found" -eq 0 ] || [ "$found" -eq 3 ] || exit "$found"
+          id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate \
+            --jq '[.[] | select(.body | startswith("<!-- comment-report -->"))][0].id // empty')
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -F body=@body.md >/dev/null
+          elif [ "$found" -eq 0 ]; then
+            gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -F body=@body.md >/dev/null
+          fi
