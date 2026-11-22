@@ -64,7 +64,12 @@ function prescriptionSteps(p: Prescription, blockIndex: number, prescriptionInde
 			return [
 				{ ...at, setIndex: 0, setCount: 1, movement: p.movement, amrap: true, groupSummary: `Max ${repsLabel(p.movement, 2)}` }
 			];
-		default:
+		case 'amrap':
+		case 'emom':
+		case 'forTime':
+		case 'intervals':
+		case 'steady':
+		case 'freeText':
 			return [];
 	}
 }

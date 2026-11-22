@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { disclosure, expect, test } from './test.ts';
+import { disclosure, expect, expectDisclosure, openDisclosure, test } from './test.ts';
 import { openOn } from './clock.ts';
 import { captureEvidence } from './evidence.ts';
 
@@ -62,7 +62,7 @@ test('clicking a day opens the pane with that session', async ({ page }, testInf
 	await cell(page, /^Fri Dec 11, Deadlift \+ bike/).click();
 	await expect(pane(page).getByText('Friday, Dec 11')).toBeVisible();
 	await expect(pane(page).getByRole('heading', { level: 2, name: 'Deadlift + bike' })).toBeVisible();
-	await disclosure(pane(page), /^Deadlift/).click();
+	await openDisclosure(pane(page), /^Deadlift/);
 	await expect(pane(page).getByText(/× 5/).filter({ visible: true }).first()).toBeVisible();
 	await cell(page, /^Mon Dec 7/).click();
 	await expect(pane(page).getByText(/min · Not logged$/)).toBeVisible();
@@ -158,6 +158,48 @@ for (const width of [1280, 1440]) {
 	});
 }
 
+test('at 1440 every column, gutter and padding keeps its pre-fluid px value', async ({ page }) => {
+	await page.setViewportSize({ width: 1440, height: 900 });
+	await openOn(page, '2026-12-09');
+	await expect(pane(page)).toBeVisible();
+	const measured = await page.evaluate(() => {
+		const style = (selector: string) => getComputedStyle(document.querySelector(selector) as Element);
+		const tracks = (selector: string) => style(selector).gridTemplateColumns.split(' ');
+		return {
+			planTracks: tracks('.plan'),
+			planPadding: [style('.plan').paddingLeft, style('.plan').paddingRight],
+			paneGap: style('.plan').columnGap,
+			paneInset: style('aside').paddingLeft,
+			rowTracks: tracks('.row.columns'),
+			headerPadding: [style('.column').paddingLeft, style('.column').paddingRight],
+			cellPadding: [style('button.day').paddingLeft, style('button.day').paddingRight],
+			navPadding: [style('nav[aria-label="Main"]').paddingLeft, style('nav[aria-label="Main"]').paddingRight]
+		};
+	});
+	const days = measured.rowTracks.slice(2);
+	expect(days).toHaveLength(6);
+	const dayWidths = days.map((track) => Number.parseFloat(track));
+	expect(dayWidths.reduce((sum, width) => sum + width, 0)).toBeCloseTo(904 - 76 - 96 - 7 * 4, 3);
+	// why: Chromium lays out in 1/64 px units, so six equal 1fr tracks of 704/6 px land on 117.328 or 117.344
+	for (const width of dayWidths) expect(Math.abs(width - 704 / 6)).toBeLessThanOrEqual(1 / 64);
+	expect(measured).toEqual({
+		planTracks: ['904px', '400px'],
+		planPadding: ['48px', '48px'],
+		paneGap: '40px',
+		paneInset: '40px',
+		rowTracks: ['76px', '96px', ...days],
+		headerPadding: ['10px', '10px'],
+		cellPadding: ['10px', '10px'],
+		navPadding: ['48px', '48px']
+	});
+	await page.goto('/progress');
+	const progress = await page.evaluate(() => {
+		const style = getComputedStyle(document.querySelector('.progress') as Element);
+		return [style.paddingLeft, style.paddingRight, style.columnGap];
+	});
+	expect(progress).toEqual(['48px', '48px', '40px']);
+});
+
 test('at 1024 with the pane open, headers fit and every cell carries its full label on hover', async ({ page }) => {
 	await page.setViewportSize({ width: 1024, height: 900 });
 	await openOn(page, '2026-12-09');
@@ -203,11 +245,11 @@ test('a logged day shows the logged reps, the session RPE and the score in the p
 	await page.reload();
 	await cell(page, /^Mon Dec 7, .*, logged$/).click();
 	await expect(pane(page).getByText(/^\d+ min · Logged · RPE 8$/)).toBeVisible();
-	await disclosure(pane(page), /^Couplet/).click();
+	await openDisclosure(pane(page), /^Couplet/);
 	await expect(pane(page).getByText('✓ 6:52')).toBeVisible();
-	await disclosure(pane(page), /^Single-leg/).click();
+	await openDisclosure(pane(page), /^Single-leg/);
 	await expect(pane(page).getByText('✓ 10', { exact: true })).toBeVisible();
-	await disclosure(pane(page), /^Back squat/).click();
+	await openDisclosure(pane(page), /^Back squat/);
 	const lines = pane(page).locator('.lines p');
 	await expect(lines.filter({ hasText: '140 × 5' }).first()).toHaveText(/^140 × 5\s*✓ 5$/);
 	await expect(lines.filter({ hasText: '185 × 5' })).toHaveText(/✓ 7$/);
@@ -215,7 +257,9 @@ test('a logged day shows the logged reps, the session RPE and the score in the p
 	await captureEvidence(page, testInfo, 'plan-pane-logged');
 
 	await cell(page, /^Thu Dec 10/).click();
-	await disclosure(pane(page), /^Gymnastics|^Z1/).first().click();
+	const first = disclosure(pane(page), /^Gymnastics|^Z1/).first();
+	await first.click();
+	await expectDisclosure(first, { name: /^Gymnastics|^Z1/, expanded: true });
 	await expect(pane(page).getByText(/^\d+ min$/)).toBeVisible();
 	await expect(pane(page).getByText(/✓/)).toHaveCount(0);
 });
