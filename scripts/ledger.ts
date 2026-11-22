@@ -25,8 +25,27 @@ export interface Entry {
 
 export const ledgerDir = 'verification/ledger';
 
-// why: one catch per bug: a run of consecutive commits where a check failed, ended by a later commit where it passed.
-// A failure that passes on a re-run of the same commit is a flake, not a fix, so it counts as a pass.
+export interface Run {
+	commit: string;
+	name: string;
+	conclusion: string;
+	minutes: number;
+}
+
+// why: a check must earn its cost; GitHub bills each job rounded up to a whole minute
+export function programmaticCosts(runs: Run[]): Cost[] {
+	const costs = new Map<string, Cost>();
+	for (const { name, conclusion, minutes } of runs) {
+		if (conclusion === 'skipped') continue;
+		const cost = costs.get(name) ?? { by: name, runs: 0, minutes: 0 };
+		cost.runs++;
+		cost.minutes! += Math.ceil(minutes);
+		costs.set(name, cost);
+	}
+	return [...costs.values()].sort((a, b) => a.by.localeCompare(b.by));
+}
+
+// why: one catch per bug, a run of failing commits ended by a later passing commit; a re-run that passes on the same commit is a flake, so it counts as a pass.
 export function programmaticCatches(runs: Run[]): Catch[] {
 	const commits = [...new Set(runs.map(({ commit }) => commit))];
 	const names = [...new Set(runs.map(({ name }) => name))];
@@ -99,6 +118,7 @@ if (import.meta.main) {
 		const known = new Set((existing?.catches ?? []).map((c) => `${c.by}@${c.commit ?? ''}`));
 		const agentCosts = (existing?.costs ?? []).filter((cost) => cost.tokens !== undefined);
 		const entry: Entry = {
+			...existing,
 			pr: Number(pr),
 			title,
 			catches: [...(existing?.catches ?? []), ...programmaticCatches(runs).filter((c) => !known.has(`${c.by}@${c.commit}`))],

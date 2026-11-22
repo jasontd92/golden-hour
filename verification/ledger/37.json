@@ -28,30 +28,46 @@
 			"real": true,
 			"commit": "d326c34d3ced9cf2dc8698e6647799f58436f7af",
 			"what": "d326c34 deleted programmaticCosts and the Run type from scripts/ledger.ts along with the old catch rule; the kept cost tests fail (programmaticCosts is not a function) and `pnpm ledger draft` would crash calling it."
+		},
+		{
+			"by": "implementer-local",
+			"kind": "agent",
+			"real": true,
+			"what": "pnpm ledger draft rewrote the entry and dropped fields it doesn't model (human, notes); found by running the draft on this PR"
 		}
 	],
 	"costs": [
 		{
 			"by": "bundle-budget",
-			"runs": 5,
-			"minutes": 5
+			"runs": 8,
+			"minutes": 8
 		},
 		{
 			"by": "checks",
-			"runs": 5,
-			"minutes": 6
+			"runs": 8,
+			"minutes": 10
+		},
+		{
+			"by": "e2e",
+			"runs": 1,
+			"minutes": 0
+		},
+		{
+			"by": "evidence",
+			"runs": 1,
+			"minutes": 0
 		},
 		{
 			"by": "Vercel Preview Comments",
-			"runs": 5,
+			"runs": 8,
 			"minutes": 0
 		},
 		{
 			"by": "oracle",
-			"runs": 1,
-			"tokens": 2707044,
-			"usd": 1.95,
-			"minutes": 9
+			"runs": 2,
+			"tokens": 3942560,
+			"usd": 3.14,
+			"minutes": 17
 		}
 	],
 	"notes": "Implementer (main session) cost not measured. The oracle ran Stryker unprompted and added one test for a gap it found; no code bug.",
