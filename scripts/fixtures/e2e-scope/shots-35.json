@@ -1,0 +1,232 @@
+[
+	{
+		"name": "desktop-chromium-plan-holiday-weeks",
+		"page": "/",
+		"spec": "e2e/plan.desktop.e2e.ts"
+	},
+	{
+		"name": "desktop-chromium-plan-pane-logged",
+		"page": "/",
+		"spec": "e2e/plan.desktop.e2e.ts"
+	},
+	{
+		"name": "desktop-chromium-plan-pane",
+		"page": "/",
+		"spec": "e2e/plan.desktop.e2e.ts"
+	},
+	{
+		"name": "desktop-chromium-plan",
+		"page": "/",
+		"spec": "e2e/plan.desktop.e2e.ts"
+	},
+	{
+		"name": "desktop-chromium-progress",
+		"page": "/progress",
+		"spec": "e2e/plan.desktop.e2e.ts"
+	},
+	{
+		"name": "desktop-chromium-week-summary",
+		"page": "/",
+		"spec": "e2e/plan.desktop.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-all-benchmarks",
+		"page": "/progress/benchmarks",
+		"spec": "e2e/progress.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-all-lifts-thruster",
+		"page": "/progress/lifts/thruster",
+		"spec": "e2e/progress.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-back-squat-history",
+		"page": "/progress/lifts/back-squat",
+		"spec": "e2e/progress.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-crossfit-total-history",
+		"page": "/progress/benchmarks/crossfit-total",
+		"spec": "e2e/progress.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-fran-history",
+		"page": "/progress/benchmarks/fran",
+		"spec": "e2e/progress.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-log-set",
+		"page": "/log/2027-01-25",
+		"spec": "e2e/log.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-note-open",
+		"page": "/log/2027-01-25",
+		"spec": "e2e/log.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-progress",
+		"page": "/progress",
+		"spec": "e2e/progress.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-saved-rest",
+		"page": "/log/2027-01-25",
+		"spec": "e2e/log.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-session-no-sets",
+		"page": "/log/2027-01-30",
+		"spec": "e2e/log.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-session-prefilled",
+		"page": "/log/2027-01-30",
+		"spec": "e2e/log.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-session-score",
+		"page": "/log/2027-01-25",
+		"spec": "e2e/log.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-session-step",
+		"page": "/log/2027-01-25",
+		"spec": "e2e/log.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-today-expanded",
+		"page": "/",
+		"spec": "e2e/today.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-today-week-1",
+		"page": "/",
+		"spec": "e2e/today.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-today-week-4-checkpoint",
+		"page": "/",
+		"spec": "e2e/today.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-today-week-4",
+		"page": "/",
+		"spec": "e2e/today.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-today-week-5-body-comp",
+		"page": "/",
+		"spec": "e2e/today.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-today",
+		"page": "/",
+		"spec": "e2e/today.e2e.ts"
+	},
+	{
+		"name": "mobile-chromium-week",
+		"page": "/week",
+		"spec": "e2e/week.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-all-benchmarks",
+		"page": "/progress/benchmarks",
+		"spec": "e2e/progress.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-all-lifts-thruster",
+		"page": "/progress/lifts/thruster",
+		"spec": "e2e/progress.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-back-squat-history",
+		"page": "/progress/lifts/back-squat",
+		"spec": "e2e/progress.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-crossfit-total-history",
+		"page": "/progress/benchmarks/crossfit-total",
+		"spec": "e2e/progress.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-fran-history",
+		"page": "/progress/benchmarks/fran",
+		"spec": "e2e/progress.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-log-set",
+		"page": "/log/2027-01-25",
+		"spec": "e2e/log.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-note-open",
+		"page": "/log/2027-01-25",
+		"spec": "e2e/log.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-progress",
+		"page": "/progress",
+		"spec": "e2e/progress.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-saved-rest",
+		"page": "/log/2027-01-25",
+		"spec": "e2e/log.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-session-no-sets",
+		"page": "/log/2027-01-30",
+		"spec": "e2e/log.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-session-prefilled",
+		"page": "/log/2027-01-30",
+		"spec": "e2e/log.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-session-score",
+		"page": "/log/2027-01-25",
+		"spec": "e2e/log.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-session-step",
+		"page": "/log/2027-01-25",
+		"spec": "e2e/log.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-today-expanded",
+		"page": "/",
+		"spec": "e2e/today.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-today-week-1",
+		"page": "/",
+		"spec": "e2e/today.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-today-week-4-checkpoint",
+		"page": "/",
+		"spec": "e2e/today.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-today-week-4",
+		"page": "/",
+		"spec": "e2e/today.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-today-week-5-body-comp",
+		"page": "/",
+		"spec": "e2e/today.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-today",
+		"page": "/",
+		"spec": "e2e/today.e2e.ts"
+	},
+	{
+		"name": "mobile-webkit-week",
+		"page": "/week",
+		"spec": "e2e/week.e2e.ts"
+	}
+]
