@@ -5,30 +5,22 @@
 		{
 			"by": "checks",
 			"kind": "programmatic",
-			"what": "provenance step: fetch-depth `pull_request && 0 || 1` is 1 because 0 is falsy, so the checkout had no history. Not reachable by unit tests (CI wiring).",
 			"real": true,
-			"commit": "8b1b6ff1622e261b6a1c97141a93da0ca11d72a2"
+			"commit": "8b1b6ff1622e261b6a1c97141a93da0ca11d72a2",
+			"what": "provenance step: a pull_request checkout has no origin/<base> ref, so git rev-list failed (red from 8b1b6ff to f8226b9). CI wiring, not reachable by unit tests."
 		},
 		{
 			"by": "checks",
 			"kind": "programmatic",
-			"what": "provenance step: fetch-depth `pull_request && 0 || 1` is 1 because 0 is falsy, so the checkout had no history. Not reachable by unit tests (CI wiring).",
 			"real": true,
-			"commit": "5b31962c8ee9ac2975d70fff86af95ab2c902be2"
+			"commit": "e32ecae12d5d67567e026be5d8d5ae523942aeda",
+			"what": "provenance step: fetch-depth `pull_request && 0 || 1` evaluates to 1 because 0 is falsy, so the checkout had no history. Hidden behind the first bug."
 		},
 		{
-			"by": "checks",
-			"kind": "programmatic",
-			"what": "provenance step: the PR checkout has no origin/<base> ref, so git rev-list failed. Not reachable by unit tests (CI wiring).",
+			"by": "implementer-local",
+			"kind": "agent",
 			"real": true,
-			"commit": "f8226b9ca11c678cfa89e6c5b7e5d7d577185be7"
-		},
-		{
-			"by": "checks",
-			"kind": "programmatic",
-			"what": "provenance step: fetch-depth `pull_request && 0 || 1` is 1 because 0 is falsy, so the checkout had no history. Not reachable by unit tests (CI wiring).",
-			"real": true,
-			"commit": "e32ecae12d5d67567e026be5d8d5ae523942aeda"
+			"what": "ledger draft counted one bug once per failing commit (4 catches for 2 bugs); found by reading the first real draft. The oracle's tests pinned the wrong rule because the brief stated it."
 		}
 	],
 	"costs": [
