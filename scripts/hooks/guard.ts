@@ -26,9 +26,12 @@ export function judgeCommit(message: string, files: string[], role: string | und
 	};
 }
 
+// why: flags are read only before any heredoc, whose body is message text, and quoted values stay one word
+const shellWords = (command: string) => (command.split('<<')[0]!.match(/"[^"]*"|'[^']*'|\S+/g) ?? []).map((word) => word.replace(/^(["'])([\s\S]*)\1$/, '$2'));
+
 // why: the places git commit reads message text from; a trailer written as `Verified-by=oracle` becomes the real trailer
 export function commitMessageSources(command: string): { files: string[]; commits: string[]; text: string } {
-	const words = (command.match(/"[^"]*"|'[^']*'|\S+/g) ?? []).map((word) => word.replace(/^(["'])([\s\S]*)\1$/, '$2'));
+	const words = shellWords(command);
 	const files: string[] = [];
 	const commits: string[] = [];
 	const trailers: string[] = [];
@@ -49,7 +52,7 @@ export function commitMessageSources(command: string): { files: string[]; commit
 
 // why: the PR a `gh pr merge` names, wherever its number, URL or branch sits among the flags; undefined means the current branch, as gh itself does
 export function mergeTarget(command: string): { pr?: string; repo?: string } {
-	const words = command.slice(command.search(/\bgh\s+pr\s+merge\b/)).split(/\s+/).slice(3);
+	const words = shellWords(command.slice(command.search(/\bgh\s+pr\s+merge\b/))).slice(3);
 	const takesValue = new Set(['-t', '--subject', '-b', '--body', '-F', '--body-file', '-A', '--author-email', '--match-head-commit', '-R', '--repo']);
 	let pr: string | undefined;
 	let repo: string | undefined;
