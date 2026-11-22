@@ -1,35 +1,48 @@
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { globSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
+
+export const runsDir = 'verification/runs';
+export const escapesDir = 'verification/escapes';
 
 export interface Catch {
 	by: string;
-	kind: 'programmatic' | 'agent' | 'human';
 	what: string;
-	real: boolean | null;
-	commit?: string;
+	commit: string;
 }
 
 export interface Cost {
 	by: string;
 	runs: number;
-	minutes?: number;
-	tokens?: number;
+	minutes: number;
 }
-
-export interface Entry {
-	pr: number;
-	title: string;
-	catches: Catch[];
-	costs: Cost[];
-}
-
-export const ledgerDir = 'verification/ledger';
 
 export interface Run {
 	commit: string;
 	name: string;
 	conclusion: string;
 	minutes: number;
+}
+
+// why: GitHub keeps check runs, so CI needs no stored record; local and agent checks leave nothing behind unless they write one when they run
+export interface RunRecord {
+	at: string;
+	by: string;
+	result: 'pass' | 'fail' | 'blocked';
+	minutes?: number;
+	tokens?: number;
+	usd?: number;
+	pr?: number;
+	caught?: number;
+	detail?: string;
+}
+
+export interface Escape {
+	at: string;
+	what: string;
+	found_by: string;
+	should_have_caught: string;
+	introduced_in?: number;
 }
 
 // why: a check must earn its cost; GitHub bills each job rounded up to a whole minute
@@ -39,7 +52,7 @@ export function programmaticCosts(runs: Run[]): Cost[] {
 		if (conclusion === 'skipped') continue;
 		const cost = costs.get(name) ?? { by: name, runs: 0, minutes: 0 };
 		cost.runs++;
-		cost.minutes! += Math.ceil(minutes);
+		cost.minutes += Math.ceil(minutes);
 		costs.set(name, cost);
 	}
 	return [...costs.values()].sort((a, b) => a.by.localeCompare(b.by));
@@ -57,7 +70,7 @@ export function programmaticCatches(runs: Run[]): Catch[] {
 			if (results.includes('success')) {
 				if (streak.length > 0) {
 					const span = streak.length > 1 ? `${streak[0]!.slice(0, 7)}..${streak.at(-1)!.slice(0, 7)}` : streak[0]!.slice(0, 7);
-					catches.push({ by: name, kind: 'programmatic', what: `failed at ${span}, passed at ${commit.slice(0, 7)}`, real: null, commit: streak[0]! });
+					catches.push({ by: name, what: `failed at ${span}, passed at ${commit.slice(0, 7)}`, commit: streak[0]! });
 				}
 				streak = [];
 			} else if (results.includes('failure')) streak.push(commit);
@@ -68,74 +81,122 @@ export function programmaticCatches(runs: Run[]): Catch[] {
 
 export interface Tally {
 	by: string;
-	real: number;
-	flake: number;
-	unclassified: number;
+	catches: number;
 	runs: number;
+	failed: number;
+	blocked: number;
 	minutes: number;
 	tokens: number;
+	usd: number;
+	escapes: number;
 }
 
-// why: each kind of verification must prove its value against its cost; one with no real catches is a candidate to remove
-export function summarize(entries: Entry[]): Tally[] {
+// why: each kind of verification must prove its value against its cost; escapes are charged to the check that should have caught them
+export function summarize(catches: Catch[], costs: Cost[], records: RunRecord[], escapes: Escape[]): Tally[] {
 	const tallies = new Map<string, Tally>();
-	const tally = (by: string) => tallies.get(by) ?? tallies.set(by, { by, real: 0, flake: 0, unclassified: 0, runs: 0, minutes: 0, tokens: 0 }).get(by)!;
-	for (const { by, real } of entries.flatMap((entry) => entry.catches)) {
-		const t = tally(by);
-		if (real === true) t.real++;
-		else if (real === false) t.flake++;
-		else t.unclassified++;
+	const tally = (by: string) =>
+		tallies.get(by) ?? tallies.set(by, { by, catches: 0, runs: 0, failed: 0, blocked: 0, minutes: 0, tokens: 0, usd: 0, escapes: 0 }).get(by)!;
+	for (const { by } of catches) tally(by).catches++;
+	for (const { by, runs, minutes } of costs) {
+		tally(by).runs += runs;
+		tally(by).minutes += minutes;
 	}
-	for (const { by, runs, minutes, tokens } of entries.flatMap((entry) => entry.costs ?? [])) {
-		const t = tally(by);
-		t.runs += runs;
-		t.minutes += minutes ?? 0;
-		t.tokens += tokens ?? 0;
+	for (const record of records) {
+		const t = tally(record.by);
+		t.runs++;
+		t.catches += record.caught ?? 0;
+		if (record.result === 'fail') t.failed++;
+		if (record.result === 'blocked') t.blocked++;
+		t.minutes += record.minutes ?? 0;
+		t.tokens += record.tokens ?? 0;
+		t.usd += record.usd ?? 0;
 	}
-	return [...tallies.values()].sort((a, b) => b.real - a.real || a.by.localeCompare(b.by));
+	for (const { should_have_caught } of escapes) tally(should_have_caught).escapes++;
+	return [...tallies.values()].sort((a, b) => b.catches - a.catches || b.escapes - a.escapes || a.by.localeCompare(b.by));
 }
 
-const gh = (...args: string[]) => execFileSync('gh', args, { encoding: 'utf8' });
+export function mutationScore(report: { files: Record<string, { mutants: { status: string }[] }> }): number {
+	const statuses = Object.values(report.files).flatMap((file) => file.mutants.map(({ status }) => status));
+	const detected = statuses.filter((status) => status === 'Killed' || status === 'Timeout').length;
+	const valid = statuses.filter((status) => !['CompileError', 'RuntimeError', 'Ignored'].includes(status)).length;
+	return valid === 0 ? 0 : Math.round((detected / valid) * 1000) / 10;
+}
 
-if (import.meta.main) {
-	const [mode, pr] = process.argv.slice(2);
-	if (mode === 'draft' && pr) {
-		const title = gh('pr', 'view', pr, '--json', 'title', '-q', '.title').trim();
+const stamp = (at: string) => at.replace(/[:.]/g, '-');
+
+export function writeRecord(root: string, record: RunRecord): string {
+	const file = path.join(root, runsDir, `${stamp(record.at)}-${record.by}.json`);
+	mkdirSync(path.dirname(file), { recursive: true });
+	writeFileSync(file, JSON.stringify(record, null, '\t') + '\n');
+	return file;
+}
+
+const readAll = <T>(dir: string): T[] => globSync(`${dir}/*.json`).map((file) => JSON.parse(readFileSync(file, 'utf8')) as T);
+const gh = (...args: string[]) => execFileSync('gh', args, { encoding: 'utf8' });
+const flag = (args: string[], name: string) => {
+	const index = args.indexOf(`--${name}`);
+	return index >= 0 ? args[index + 1] : undefined;
+};
+const number = (value: string | undefined) => (value === undefined ? undefined : Number(value));
+
+function ciHistory(prs: number): { catches: Catch[]; costs: Cost[] } {
+	const numbers = gh('pr', 'list', '--state', 'merged', '--limit', String(prs), '--json', 'number', '-q', '.[].number').split('\n').filter(Boolean);
+	const catches: Catch[] = [];
+	const costs: Cost[] = [];
+	for (const pr of numbers) {
 		const shas = gh('api', `repos/{owner}/{repo}/pulls/${pr}/commits`, '--paginate', '-q', '.[].sha').split('\n').filter(Boolean);
 		const runs: Run[] = shas.flatMap((commit) =>
-			(JSON.parse(gh('api', `repos/{owner}/{repo}/commits/${commit}/check-runs`, '-q', '[.check_runs[] | {name, conclusion, started_at, completed_at}]')) as { name: string; conclusion: string; started_at: string; completed_at: string | null }[])
+			(JSON.parse(gh('api', `repos/{owner}/{repo}/commits/${commit}/check-runs?per_page=100`, '-q', '[.check_runs[] | {name, conclusion, started_at, completed_at}]')) as { name: string; conclusion: string; started_at: string; completed_at: string | null }[])
 				.filter((run) => run.completed_at)
 				.map(({ name, conclusion, started_at, completed_at }) => ({ commit, name, conclusion, minutes: (Date.parse(completed_at!) - Date.parse(started_at)) / 60_000 }))
 		);
-		const file = `${ledgerDir}/${pr}.json`;
-		const existing = (() => {
-			try {
-				return JSON.parse(readFileSync(file, 'utf8')) as Entry;
-			} catch {
-				return undefined;
-			}
-		})();
-		const known = new Set((existing?.catches ?? []).map((c) => `${c.by}@${c.commit ?? ''}`));
-		const agentCosts = (existing?.costs ?? []).filter((cost) => cost.tokens !== undefined);
-		const entry: Entry = {
-			...existing,
-			pr: Number(pr),
-			title,
-			catches: [...(existing?.catches ?? []), ...programmaticCatches(runs).filter((c) => !known.has(`${c.by}@${c.commit}`))],
-			costs: [...programmaticCosts(runs), ...agentCosts]
-		};
-		mkdirSync(ledgerDir, { recursive: true });
-		writeFileSync(file, JSON.stringify(entry, null, '\t') + '\n');
-		console.log(`${file}: ${entry.catches.length} catch(es); set "real" on each, and add agent or human catches and agent token costs`);
+		catches.push(...programmaticCatches(runs));
+		costs.push(...programmaticCosts(runs));
+	}
+	return { catches, costs };
+}
+
+if (import.meta.main) {
+	const argv = process.argv.slice(2);
+	const mode = argv[0]?.startsWith('--') ? 'report' : argv[0];
+	const args = mode === 'report' ? argv : argv.slice(1);
+	const root = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).trim();
+	const at = new Date().toISOString();
+	if (mode === 'run') {
+		const [by, separator, command, ...rest] = args;
+		if (!by || separator !== '--' || !command) throw new Error('usage: node scripts/ledger.ts run <name> -- <command...>');
+		const start = performance.now();
+		const { status } = spawnSync(command, rest, { stdio: 'inherit' });
+		const minutes = Math.round((performance.now() - start) / 600) / 100;
+		const report = path.join(root, 'reports/mutation/mutation.json');
+		const detail = by === 'mutation' && status === 0 ? `score ${mutationScore(JSON.parse(readFileSync(report, 'utf8')))}%` : undefined;
+		console.log(`recorded ${path.relative(root, writeRecord(root, { at, by, result: status === 0 ? 'pass' : 'fail', minutes, ...(detail ? { detail } : {}) }))}`);
+		process.exitCode = status ?? 1;
+	} else if (mode === 'agent') {
+		const [by] = args;
+		if (!by) throw new Error('usage: node scripts/ledger.ts agent <name> --tokens N [--caught N] [--usd X] [--minutes M] [--pr N] [--detail "..."]');
+		const record: RunRecord = { at, by, result: 'pass', caught: number(flag(args, 'caught')), tokens: number(flag(args, 'tokens')), usd: number(flag(args, 'usd')), minutes: number(flag(args, 'minutes')), pr: number(flag(args, 'pr')), detail: flag(args, 'detail') };
+		console.log(`recorded ${path.relative(root, writeRecord(root, JSON.parse(JSON.stringify(record)) as RunRecord))}`);
+	} else if (mode === 'escape') {
+		const [what] = args;
+		const foundBy = flag(args, 'found-by');
+		const shouldHave = flag(args, 'should-have-caught');
+		if (!what || !foundBy || !shouldHave) throw new Error('usage: node scripts/ledger.ts escape "<what>" --found-by <who> --should-have-caught <check> [--introduced-in <pr>]');
+		const escape: Escape = { at, what, found_by: foundBy, should_have_caught: shouldHave, ...(flag(args, 'introduced-in') ? { introduced_in: Number(flag(args, 'introduced-in')) } : {}) };
+		const file = path.join(root, escapesDir, `${stamp(at)}.json`);
+		mkdirSync(path.dirname(file), { recursive: true });
+		writeFileSync(file, JSON.stringify(escape, null, '\t') + '\n');
+		console.log(`recorded ${path.relative(root, file)}`);
 	} else {
-		const entries = globSync(`${ledgerDir}/*.json`).map((file) => JSON.parse(readFileSync(file, 'utf8')) as Entry);
-		console.log(`${entries.length} PR(s) in ${ledgerDir}`);
-		console.log('check | real | flake | unclassified | runs | CI min | tokens | cost per real catch');
-		for (const t of summarize(entries)) {
-
-			const perCatch = t.real > 0 ? [t.minutes && `${Math.round(t.minutes / t.real)} min`, t.tokens && `${Math.round(t.tokens / t.real)} tokens`].filter(Boolean).join(' + ') || '-' : 'no real catches yet';
-			console.log(`${t.by} | ${t.real} | ${t.flake} | ${t.unclassified} | ${t.runs} | ${t.minutes} | ${t.tokens} | ${perCatch}`);
-
+		const prs = Number(flag(args, 'prs') ?? 30);
+		const { catches, costs } = ciHistory(prs);
+		const records = readAll<RunRecord>(path.join(root, runsDir));
+		const escapes = readAll<Escape>(path.join(root, escapesDir));
+		console.log(`CI: last ${prs} merged PRs. Local and agent runs: ${records.length}. Escapes: ${escapes.length}.`);
+		console.log('catches: CI = runs of failures fixed by a later commit; agents = findings that led to a fix.');
+		console.log('check | catches | runs | failed | blocked | minutes | tokens | usd | escapes');
+		for (const t of summarize(catches, costs, records, escapes)) {
+			console.log(`${t.by} | ${t.catches} | ${t.runs} | ${t.failed} | ${t.blocked} | ${Math.round(t.minutes)} | ${t.tokens} | ${t.usd.toFixed(2)} | ${t.escapes}`);
 		}
 	}
 }

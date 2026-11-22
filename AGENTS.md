@@ -18,12 +18,9 @@ The agent that implements a change does not write, choose or weaken the tests th
 
 A reviewer flags a behaviour change that skipped the oracle, and tests that would pass on a plausible wrong implementation.
 
-## Record what each check catches
-Every PR gets `verification/ledger/<pr>.json`: what caught each mistake, whether it was real, and what verification cost. `pnpm ledger` summarizes it.
-- **Programmatic** (CI, budgets, mutation, e2e): `pnpm ledger draft <pr>` adds one catch per bug: a run of failing commits for a check, ended by a later commit where it passes. A re-run that passes counts as a flake.
-- **Agent and human** (oracle tests, verifier, reviewer, Codex, you): whoever catches it adds `{"by", "kind", "what", "real"}`.
-- Mark each catch `"real": true` (a real mistake) or `false` (a flake or a false alarm).
-- Costs are per check: the draft adds CI minutes per check run; each agent role adds `{"by": "oracle", "runs", "tokens"}` from its session's output.
-- Every kind of verification must prove its value against its cost. One that keeps showing no real catches is a candidate for removal, and that includes the oracle and the reviewers.
-- A mistake caught after merge (e2e on main, the canary) goes in the ledger of the PR that fixes it, naming the PR that caused it.
-The verifier, or whoever merges, completes the entry before merging.
+## Every check must earn its cost
+`pnpm ledger` reports, per check, what it caught, what it cost and what got past it. A check that keeps catching nothing real, at real cost, is a candidate for removal, including the oracle and the reviewers.
+- **CI checks** need nothing stored: the report reads their history from GitHub and counts one catch per run of failing commits ended by a passing one.
+- **Local and agent checks** leave nothing behind unless they record a run in `verification/runs/`. `pnpm mutate`, `pnpm proof:sync`, `pnpm e2e:local` and `pnpm oracle` do it automatically, and the guard hook records each block. After any other agent verification (`/code-review`, Codex, a verifier), record it: `pnpm ledger agent <name> --tokens N [--caught N] [--usd X] [--minutes M] [--pr N] [--detail "..."]`, where `--caught` counts only findings that led to a fix commit, so the evidence is the fix, not the agent's own grading.
+- **Escapes:** every mistake found after merge (on main, by the canary, or by you) gets `pnpm ledger escape "<what>" --found-by <who> --should-have-caught <check> [--introduced-in <pr>]`. Escapes are the outcome that matters.
+- Commit the new files under `verification/` with the PR they belong to.

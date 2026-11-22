@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { writeRecord } from '../ledger.ts';
 import { isTestPath, oracleTrailer } from '../provenance.ts';
 
 interface HookInput {
@@ -42,6 +43,7 @@ if (import.meta.main) {
 		verdict = judgeMerge(checks);
 	}
 	if (!verdict.allow) {
+		writeRecord(run('git', ['rev-parse', '--show-toplevel']).trim(), { at: new Date().toISOString(), by: 'guard', result: 'blocked', detail: verdict.reason });
 		console.error(verdict.reason);
 		process.exitCode = 2;
 	}

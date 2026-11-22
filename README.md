@@ -7,7 +7,7 @@ pnpm install
 pnpm dev        # local app
 pnpm check      # the full gate: types, lint, policy, unit tests
 pnpm test:e2e   # mobile WebKit and Chromium
-pnpm ledger     # what each kind of verification has caught, and what it cost
+pnpm ledger     # per check: what it caught, what it cost, what got past it
 ```
 
-**Verification ledger.** `verification/ledger/` has one file per PR recording which check caught each mistake (CI, mutation, e2e, oracle tests, review, or a human), whether it was real or a flake, and what verification cost. It is how this repo decides which checks earn their keep. The rules for who writes tests and how catches are recorded are in `AGENTS.md`.
+**Verification ledger.** Every check here has to earn its cost. `pnpm ledger` combines CI history from GitHub with `verification/runs/` (local and agent checks: mutation testing, sync proof, local e2e, oracle sessions, reviews, guard-hook blocks) and `verification/escapes/` (mistakes found after merge, charged to the check that should have caught them). The rules for who writes tests and how runs and escapes are recorded are in `AGENTS.md`.
