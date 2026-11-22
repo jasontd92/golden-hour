@@ -4,6 +4,7 @@ type Verdict = 'ok' | 'prose' | 'tsNoReason' | 'tsIgnore' | 'eslintNoReason';
 
 const allowed = [
 	/^why:\s*\S/,
+	/^developer-directed-comment:\s*\S/,
 	/^@ts-expect-error\s+\S/,
 	/^eslint-disable-next-line\s+\S+.*\s--\s+\S/,
 	/^svelte-ignore\s+\S/
