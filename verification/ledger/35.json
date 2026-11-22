@@ -13,8 +13,22 @@
 			"kind": "agent",
 			"real": true,
 			"what": "#37's verification.yaml did not parse as YAML (unquoted ': ' and leading quotes); fixed in the oracle commit"
+		},
+		{
+			"by": "code-review",
+			"kind": "agent",
+			"real": true,
+			"what": "a feature whose spec captured nothing fell back to every screenshot; plus stale comment when nothing is picked, index imports missed, cwd-relative spec path, live PR file list (see PR thread)"
 		}
 	],
-	"costs": [{ "by": "oracle", "runs": 1, "tokens": 1922451, "usd": 1.4, "minutes": 6 }],
-	"notes": "Self-written tests from the first version were removed; the oracle kept the changesRendering cases and added 20. It ran Stryker unprompted: 9 survivors, all order, equivalent anchors or CLI-only."
+	"costs": [
+		{
+			"by": "oracle",
+			"runs": 1,
+			"tokens": 1922451,
+			"usd": 1.4,
+			"minutes": 6
+		}
+	],
+	"notes": "Self-written tests from the first version were removed; the oracle kept the changesRendering cases and added 20. It ran Stryker unprompted: 9 survivors, all order, equivalent anchors or CLI-only. Rebase onto #37 conflicted on verification.yaml (deleted in #37, edited by this PR's oracle commit); the implementer resolved it by keeping the deletion, so the oracle commit now carries only tests and fixtures."
 }
