@@ -29,6 +29,17 @@ export default defineConfig(
 		}
 	},
 	{
+		files: ['**/*.ts', '**/*.svelte'],
+		ignores: ['src/service-worker/**'],
+		languageOptions: { parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname } },
+		rules: {
+			'@typescript-eslint/switch-exhaustiveness-check': [
+				'error',
+				{ considerDefaultExhaustiveForUnions: false, requireDefaultForNonUnion: true }
+			]
+		}
+	},
+	{
 		files: ['**/*.svelte', '**/*.svelte.ts'],
 		languageOptions: {
 			parserOptions: { extraFileExtensions: ['.svelte'], parser: ts.parser }

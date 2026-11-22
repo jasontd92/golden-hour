@@ -3,6 +3,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 
 const eslint = new ESLint();
 
+// why: typed rules resolve files through the TS project service, which sees only files on disk; lint real paths
 async function messages(file: string, code: string) {
 	const [result] = await eslint.lintText(code, { filePath: file });
 	return (result?.messages ?? []).map((m) => `${m.ruleId}: ${m.message}`);
@@ -13,8 +14,8 @@ const coldStartMs = 30_000;
 // why: the first lintText loads the config, svelte parser and TS program; pay that once here, not in whichever test runs first
 beforeAll(async () => {
 	await Promise.all([
-		messages('src/lib/features/today/Warm.svelte', '<script lang="ts">\n\tlet a = 1;\n</script>\n\n<p>{a}</p>\n'),
-		messages('src/lib/domain/warm.ts', 'export const a = 1;\n')
+		messages('src/lib/features/today/Today.svelte', '<script lang="ts">\n\tlet a = 1;\n</script>\n\n<p>{a}</p>\n'),
+		messages('src/lib/domain/plan.ts', 'export const a = 1;\n')
 	]);
 }, coldStartMs);
 
@@ -29,11 +30,11 @@ describe('$effect placement', () => {
 		expect(await messages('src/routes/+page.svelte', effect)).toContain(effectRule);
 	});
 	it('passes in a ui primitive', async () => {
-		expect(await messages('src/lib/ui/Disclosure.svelte', effect)).toEqual([]);
+		expect(await messages('src/lib/ui/HardDot.svelte', effect)).toEqual([]);
 	});
 	it("passes in a feature's effects.svelte.ts", async () => {
 		const code = 'export function track(read: () => number) {\n\t$effect(() => {\n\t\tread();\n\t});\n}\n';
-		expect(await messages('src/lib/features/today/effects.svelte.ts', code)).toEqual([]);
+		expect(await messages('src/lib/features/log/effects.svelte.ts', code)).toEqual([]);
 	});
 });
 
@@ -55,5 +56,18 @@ describe('boundaries through the real config', () => {
 	it('fails when domain imports a feature', async () => {
 		const found = await messages('src/lib/domain/plan.ts', "import { x } from '#lib/features/today/model.ts';\nexport const y = x;\n");
 		expect(found.some((m) => m.startsWith('golden-hour/layer-boundaries: src/lib/domain is pure TS'))).toBe(true);
+	});
+});
+
+describe('switches over a union', () => {
+	const switchRule = /^@typescript-eslint\/switch-exhaustiveness-check: Switch is not exhaustive\. Cases not matched: "b"/;
+	const over = (cases: string) =>
+		`export function f(k: 'a' | 'b'): number {\n\tswitch (k) {\n${cases}\t}\n}\n`;
+	it('fails when a default hides a missing member', async () => {
+		const found = await messages('src/lib/domain/plan.ts', over("\t\tcase 'a':\n\t\t\treturn 1;\n\t\tdefault:\n\t\t\treturn 0;\n"));
+		expect(found.some((m) => switchRule.test(m))).toBe(true);
+	});
+	it('passes when every member has a case', async () => {
+		expect(await messages('src/lib/domain/plan.ts', over("\t\tcase 'a':\n\t\t\treturn 1;\n\t\tcase 'b':\n\t\t\treturn 0;\n"))).toEqual([]);
 	});
 });

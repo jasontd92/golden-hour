@@ -278,7 +278,7 @@
 
 	.row {
 		display: grid;
-		grid-template-columns: clamp(60px, 4vw + 19px, 76px) clamp(88px, 2vw + 67px, 96px) repeat(6, minmax(0, 1fr));
+		grid-template-columns: clamp(60px, 4vw + 19px, 76px) clamp(88px, 2vw + 67.2px, 96px) repeat(6, minmax(0, 1fr));
 		column-gap: 4px;
 		height: 34px;
 		align-items: center;

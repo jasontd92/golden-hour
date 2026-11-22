@@ -75,10 +75,14 @@ describe('LogFlow', () => {
 		const h = harness(checkpoint);
 		const flow = h.flow();
 		await flow.resume();
-		while (flow.step?.movement !== 'dip') {
+		const dip = flow.steps.findIndex((step) => step.movement === 'dip');
+		expect(dip).toBeGreaterThan(0);
+		for (let i = 0; i < dip; i++) {
 			await flow.done();
 			flow.advance();
 		}
+		expect(flow.step).toMatchObject({ movement: 'dip' });
+		expect(flow.step).not.toHaveProperty('reps');
 		expect(flow.reps).toBe(0);
 		for (let i = 0; i < 9; i++) flow.more();
 		await flow.done();
