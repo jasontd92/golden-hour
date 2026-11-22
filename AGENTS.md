@@ -19,6 +19,11 @@ The agent that implements a change does not write, choose or weaken the tests th
 A reviewer flags a behaviour change that skipped the oracle, and tests that would pass on a plausible wrong implementation.
 
 ## Record what each check catches
-Each verifier or reviewer posts one PR comment starting with `<!-- verification-ledger -->`, followed by JSON:
-`{"pr": 35, "agents": 2, "tokens": 41000, "caught": [{"by": "oracle-test|review|e2e|mutation|canary|post-merge|human", "what": "...", "real": true}]}`.
-This shows which checks find real mistakes and which only cost tokens.
+Every PR gets `verification/ledger/<pr>.json`: what caught each mistake, whether it was real, and what verification cost. `pnpm ledger` summarizes it.
+- **Programmatic** (CI, budgets, mutation, e2e): `pnpm ledger draft <pr>` adds every check that failed on one commit and passed on a later one.
+- **Agent and human** (oracle tests, verifier, reviewer, Codex, you): whoever catches it adds `{"by", "kind", "what", "real"}`.
+- Mark each catch `"real": true` (a real mistake) or `false` (a flake or a false alarm).
+- Costs are per check: the draft adds CI minutes per check run; each agent role adds `{"by": "oracle", "runs", "tokens"}` from its session's output.
+- Every kind of verification must prove its value against its cost. One that keeps showing no real catches is a candidate for removal, and that includes the oracle and the reviewers.
+- A mistake caught after merge (e2e on main, the canary) goes in the ledger of the PR that fixes it, naming the PR that caused it.
+The verifier, or whoever merges, completes the entry before merging.

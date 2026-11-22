@@ -30,6 +30,7 @@
 		"db:generate": "drizzle-kit generate",
 		"proof:sync": "node scripts/sync-mutants.ts",
 		"mutate": "stryker run",
+		"ledger": "node scripts/ledger.ts",
 		"oracle": "ROLE=oracle claude -p --agent oracle --permission-mode acceptEdits --allowedTools \"Bash(git *) Bash(pnpm *) Bash(node *) Bash(gh *)\" --output-format json"
 	},
 	"devDependencies": {
