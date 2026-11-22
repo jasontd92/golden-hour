@@ -44,6 +44,19 @@ describe('comment-report', () => {
 		expect(addedTaggedComments(code)).toEqual([]);
 	});
 
+	it('ignores comment syntax inside string literals but keeps trailing comments', () => {
+		const code = [
+			'+++ b/src/a.spec.ts',
+			'@@ -0,0 +1,3 @@',
+			"+\t{ code: '// why: fixture text' },",
+			'+\tconst s = "a \\" // why: still a string";',
+			"+const a = 'x'; // why: real trailing comment"
+		].join('\n');
+		expect(addedTaggedComments(code)).toEqual([
+			{ file: 'src/a.spec.ts', line: 3, tag: 'why', text: 'real trailing comment' }
+		]);
+	});
+
 	it('renders counts per tag and a table', () => {
 		const body = renderReport(addedTaggedComments(diff), 'abcdef1234');
 		expect(body.startsWith(marker)).toBe(true);

@@ -12,6 +12,11 @@ export interface TaggedComment {
 const source = /\.(ts|js|mjs|cjs|svelte)$/;
 const tagged = /(?:\/\/|\/\*+|<!--|^\s*\*)\s*(why|developer-directed-comment):\s*(.*?)\s*(?:\*\/|-->)?\s*$/;
 
+function insideString(before: string): boolean {
+	const unescaped = before.replace(/\\./g, '');
+	return ["'", '"', '`'].some((quote) => unescaped.split(quote).length % 2 === 0);
+}
+
 export function addedTaggedComments(diff: string): TaggedComment[] {
 	const found: TaggedComment[] = [];
 	let file = '';
@@ -27,8 +32,9 @@ export function addedTaggedComments(diff: string): TaggedComment[] {
 			continue;
 		}
 		if (!row.startsWith('+') || row.startsWith('+++')) continue;
-		const match = source.test(file) ? tagged.exec(row.slice(1)) : null;
-		if (match) found.push({ file, line, tag: match[1] as CommentTag, text: match[2] ?? '' });
+		const code = row.slice(1);
+		const match = source.test(file) ? tagged.exec(code) : null;
+		if (match && !insideString(code.slice(0, match.index))) found.push({ file, line, tag: match[1] as CommentTag, text: match[2] ?? '' });
 		line++;
 	}
 	return found;
