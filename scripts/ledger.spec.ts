@@ -10,46 +10,64 @@ const byName = <T extends { by: string }>(list: T[]) => [...list].sort((a, b) =>
 const run = (commit: string, name: string, conclusion: string, minutes = 1): Run => ({ commit, name, conclusion, minutes });
 
 describe('programmaticCatches', () => {
-	it('finds the one real catch in PR #24: evidence failed at 95ca93e and passed on the last commit a032f6d', () => {
-		const catches = programmaticCatches(runsOf('24'));
+	const keys = (catches: { by: string; commit?: string }[]) => catches.map(({ by, commit }) => `${by}@${commit}`).sort();
+
+	it('gives real PR #37 one catch for its one streak: checks failed 8b1b6ff..e32ecae and passed at 172d15f, so checks@8b1b6ff; rules out one catch per failing commit (4), or crediting the last failing or the passing commit', () => {
+		const catches = programmaticCatches(runsOf('37'));
 		expect(catches).toHaveLength(1);
-		expect(catches[0]).toMatchObject({ by: 'evidence', kind: 'programmatic', real: null });
-		expect(catches[0]!.commit).toMatch(/^95ca93e[0-9a-f]{33}$/);
+		expect(catches[0]).toMatchObject({ by: 'checks', kind: 'programmatic', real: null, commit: '8b1b6ff1622e261b6a1c97141a93da0ca11d72a2' });
 	});
 
-	it('finds none in PRs #27 and #33, which never failed, nor in #35, whose only commit (the last) failed; rules out counting a failure on the last commit', () => {
+	it('still finds the one real catch in PR #24: evidence failed at 95ca93e and passed at a032f6d', () => {
+		const catches = programmaticCatches(runsOf('24'));
+		expect(catches).toHaveLength(1);
+		expect(catches[0]).toMatchObject({ by: 'evidence', kind: 'programmatic', real: null, commit: '95ca93e0bc999f7ce3e9b90f2d6398f644c8878a' });
+	});
+
+	it('finds none in PRs #27 and #33, which never failed, nor in #35, whose only commit failed with no later pass; rules out counting a streak still failing at the last commit', () => {
 		for (const pr of ['27', '33', '35']) expect(programmaticCatches(runsOf(pr))).toEqual([]);
 	});
 
-	it('needs a success on the last commit, not merely a later one; rules out "passed on any later commit"', () => {
-		expect(programmaticCatches([run('c1', 'unit', 'failure'), run('c2', 'unit', 'success'), run('c3', 'unit', 'failure')])).toEqual([]);
-		expect(programmaticCatches([run('c1', 'unit', 'failure'), run('c2', 'unit', 'success'), run('c3', 'unit', 'skipped')])).toEqual([]);
-		expect(programmaticCatches([run('c1', 'unit', 'failure'), run('c2', 'lint', 'success')])).toEqual([]);
+	it('credits the first failing commit of a streak; rules out the last failing commit or the passing commit', () => {
+		expect(keys(programmaticCatches([run('c1', 'unit', 'failure'), run('c2', 'unit', 'failure'), run('c3', 'unit', 'failure'), run('c4', 'unit', 'success')]))).toEqual(['unit@c1']);
 	});
 
-	it('is one catch per (check, commit): re-runs on one commit count once, failures on two commits count twice; rules out one catch per run or per check', () => {
-		const catches = programmaticCatches([
-			run('c1', 'unit', 'failure'),
-			run('c1', 'unit', 'failure'),
-			run('c2', 'unit', 'failure'),
-			run('c2', 'lint', 'failure'),
-			run('c3', 'unit', 'success'),
-			run('c3', 'lint', 'success')
-		]);
-		expect(catches.map(({ by, commit }) => `${by}@${commit}`).sort()).toEqual(['lint@c2', 'unit@c1', 'unit@c2']);
+	it('gives one catch per streak: fail, pass, fail, pass is two catches at c1 and c3; rules out one catch per check', () => {
+		const catches = programmaticCatches([run('c1', 'unit', 'failure'), run('c2', 'unit', 'success'), run('c3', 'unit', 'failure'), run('c4', 'unit', 'success')]);
+		expect(keys(catches)).toEqual(['unit@c1', 'unit@c3']);
 		for (const c of catches) expect(c).toMatchObject({ kind: 'programmatic', real: null });
 	});
 
-	it('does not count a failure on the last commit that a re-run there turned green; rules out dropping the "non-last commit" condition', () => {
+	it('counts a streak ended by a later pass even when the check fails again at the last commit; rules out the old "must pass on the last commit" rule', () => {
+		expect(keys(programmaticCatches([run('c1', 'unit', 'failure'), run('c2', 'unit', 'success'), run('c3', 'unit', 'failure')]))).toEqual(['unit@c1']);
+	});
+
+	it('does not count a streak still failing at the last commit; rules out "any failure is a catch"', () => {
+		expect(programmaticCatches([run('c1', 'unit', 'success'), run('c2', 'unit', 'failure'), run('c3', 'unit', 'failure')])).toEqual([]);
+	});
+
+	it('treats a commit where the check failed and passed (a re-run) as passing, in either run order, so a failure fixed only by a re-run is not a catch; rules out counting the failed attempt', () => {
+		expect(programmaticCatches([run('c1', 'e2e', 'failure'), run('c1', 'e2e', 'success'), run('c2', 'e2e', 'success')])).toEqual([]);
+		expect(programmaticCatches([run('c1', 'e2e', 'success'), run('c1', 'e2e', 'failure'), run('c2', 'e2e', 'success')])).toEqual([]);
 		expect(programmaticCatches([run('c1', 'e2e', 'success'), run('c2', 'e2e', 'failure'), run('c2', 'e2e', 'success')])).toEqual([]);
+	});
+
+	it('counts repeated failed runs on one commit once; rules out one catch per run', () => {
+		expect(keys(programmaticCatches([run('c1', 'unit', 'failure'), run('c1', 'unit', 'failure'), run('c2', 'unit', 'success')]))).toEqual(['unit@c1']);
+	});
+
+	it("judges each check on its own runs; rules out another check's pass ending a streak, or merging streaks across checks", () => {
+		expect(programmaticCatches([run('c1', 'unit', 'failure'), run('c2', 'lint', 'success')])).toEqual([]);
+		const catches = programmaticCatches([run('c1', 'lint', 'failure'), run('c1', 'unit', 'success'), run('c2', 'unit', 'failure'), run('c2', 'lint', 'failure'), run('c3', 'unit', 'success'), run('c3', 'lint', 'success')]);
+		expect(keys(catches)).toEqual(['lint@c1', 'unit@c2']);
 	});
 
 	it('does not count a cancelled or skipped run as a failure; rules out "anything but success"', () => {
 		expect(programmaticCatches([run('c1', 'e2e', 'cancelled'), run('c1', 'lint', 'skipped'), run('c2', 'e2e', 'success'), run('c2', 'lint', 'success')])).toEqual([]);
 	});
 
-	it('takes the last commit from run order, not from sorting shas; rules out picking the lexically greatest sha', () => {
-		expect(programmaticCatches([run('zzz', 'unit', 'failure'), run('aaa', 'unit', 'success')])).toHaveLength(1);
+	it('takes commit order from run order, not from sorting shas; rules out ordering by sha', () => {
+		expect(keys(programmaticCatches([run('zzz', 'unit', 'failure'), run('aaa', 'unit', 'success')]))).toEqual(['unit@zzz']);
 		expect(programmaticCatches([run('aaa', 'unit', 'success'), run('zzz', 'unit', 'failure')])).toEqual([]);
 	});
 });

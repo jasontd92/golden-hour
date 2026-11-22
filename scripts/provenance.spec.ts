@@ -51,15 +51,15 @@ describe('provenanceProblems on real history', () => {
 });
 
 describe('provenanceProblems: which paths are tests', () => {
-	it.each(['src/lib/plan.spec.ts', 'scripts/canary.spec.ts', 'e2e/today.e2e.ts', 'verification.yaml', 'root.spec.ts', 'lint/rules/deep/nested/x.spec.ts'])(
+	it.each(['src/lib/plan.spec.ts', 'scripts/canary.spec.ts', 'e2e/today.e2e.ts', 'root.spec.ts', 'lint/rules/deep/nested/x.spec.ts'])(
 		'flags %s without the trailer; rules out a pattern that misses a test kind or depth',
 		(file) => {
 			expect(provenanceProblems([commit({ files: [file] })])).toHaveLength(1);
 		}
 	);
 
-	it.each(['scripts/canary.local.spec.ts', 'src/lib/x.local.spec.ts', 'src/lib/plan.ts', 'scripts/spec.ts.md', 'README.md', 'e2e/helpers.ts', 'verification/ledger/27.json'])(
-		'ignores %s; rules out flagging the implementer\'s own *.local.spec.ts checks or non-test files',
+	it.each(['scripts/canary.local.spec.ts', 'src/lib/x.local.spec.ts', 'src/lib/plan.ts', 'scripts/spec.ts.md', 'README.md', 'e2e/helpers.ts', 'verification/ledger/27.json', 'verification.yaml', 'scripts/verification.yaml'])(
+		'ignores %s; rules out flagging the implementer\'s own *.local.spec.ts checks or non-test files, or still guarding the dropped verification.yaml',
 		(file) => {
 			expect(provenanceProblems([commit({ files: [file] })])).toEqual([]);
 		}
@@ -139,14 +139,14 @@ describe('provenance CLI', () => {
 	const weakened = commitAll('fix: drop the failing test');
 	const head = git('rev-parse', 'HEAD');
 
-	it('exits 1 with one line per problem for main..pr; rules out exit 0 on problems, or reporting merges and oracle commits', () => {
+	it('exits 1 with one line per problem for main..pr; rules out exit 0 on problems, or reporting merges, oracle commits, local specs or the now-ordinary verification.yaml', () => {
 		const result = cli(`main..${head}`);
 		expect(result.status).toBe(1);
 		const lines = `${result.stdout}\n${result.stderr}`.split('\n');
 		expect(lines.filter((line) => line.includes(implementerTest.slice(0, 7)) && line.includes('scripts/b.spec.ts'))).toHaveLength(1);
 		expect(lines.filter((line) => line.includes(weakened.slice(0, 7)) && line.includes('scripts/b.spec.ts'))).toHaveLength(1);
-		expect(lines.filter((line) => line.includes(weakened.slice(0, 7)) && line.includes('verification.yaml'))).toHaveLength(1);
-		expect(lines.filter((line) => line.includes('e2e/b.e2e.ts') || line.includes('b.local.spec.ts') || line.includes('scripts/main.spec.ts'))).toEqual([]);
+		expect(lines.filter((line) => line.includes('e2e/b.e2e.ts') || line.includes('b.local.spec.ts') || line.includes('scripts/main.spec.ts') || line.includes('verification.yaml'))).toEqual([]);
+		expect(lines.filter((line) => line.includes(implementerTest.slice(0, 7)) || line.includes(weakened.slice(0, 7)))).toHaveLength(2);
 	});
 
 	it('exits 0 on a range with no test changes; rules out failing every range', () => {

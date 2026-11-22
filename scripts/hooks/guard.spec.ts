@@ -11,7 +11,7 @@ const fixture = (name: string) => JSON.parse(readFileSync(new URL(`../fixtures/o
 describe('judgeCommit', () => {
 	const commit = 'git commit -m "feat: x"';
 
-	it.each(['scripts/canary.spec.ts', 'e2e/today.e2e.ts', 'verification.yaml', 'src/lib/deep/x.spec.ts'])('blocks staging %s outside the oracle, with a reason; rules out a guard that misses a test kind', (file) => {
+	it.each(['scripts/canary.spec.ts', 'e2e/today.e2e.ts', 'src/lib/deep/x.spec.ts', 'root.spec.ts'])('blocks staging %s outside the oracle, with a reason; rules out a guard that misses a test kind', (file) => {
 		const verdict = judgeCommit(commit, ['src/lib/plan.ts', file], undefined);
 		expect(verdict.allow).toBe(false);
 		if (!verdict.allow) expect(verdict.reason).toContain(file);
@@ -22,11 +22,11 @@ describe('judgeCommit', () => {
 	});
 
 	it('allows the oracle to commit tests with the trailer', () => {
-		expect(judgeCommit(`git commit -m "test: x" -m "${trailer}"`, ['scripts/canary.spec.ts', 'verification.yaml'], 'oracle')).toEqual({ allow: true });
+		expect(judgeCommit(`git commit -m "test: x" -m "${trailer}"`, ['scripts/canary.spec.ts', 'e2e/today.e2e.ts'], 'oracle')).toEqual({ allow: true });
 	});
 
-	it('allows an implementer commit with no test paths, including its own *.local.spec.ts; rules out blocking every commit', () => {
-		expect(judgeCommit(commit, ['src/lib/plan.ts', 'scripts/canary.local.spec.ts', 'README.md'], undefined)).toEqual({ allow: true });
+	it('allows an implementer commit with no test paths, including its own *.local.spec.ts and verification.yaml (now an ordinary file); rules out blocking every commit, or still guarding verification.yaml', () => {
+		expect(judgeCommit(commit, ['src/lib/plan.ts', 'scripts/canary.local.spec.ts', 'README.md', 'verification.yaml'], undefined)).toEqual({ allow: true });
 		expect(judgeCommit(commit, [], 'implementer')).toEqual({ allow: true });
 	});
 
