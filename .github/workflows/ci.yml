@@ -24,6 +24,11 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      e2e: ${{ steps.e2e-scope.outputs.run }}
     steps:
       - uses: actions/checkout@v7
       - id: setup
@@ -45,8 +50,30 @@ jobs:
       - name: unit
         if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: pnpm test:unit
+      - id: e2e-scope
+        name: does this PR change what's rendered
+        if: ${{ !cancelled() && github.event_name == 'pull_request' && steps.setup.outcome == 'success' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          all=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/labels" --jq '.[].name' | grep -qx screenshots && echo --all || true)
+          run=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate --jq '.[].filename' | node scripts/e2e-scope.ts $all)
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+          echo "e2e: ${run:-skipped until merge}"
+
+  bundle-budget:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      - run: pnpm build
+      - run: node scripts/budgets.ts
 
   e2e:
+    needs: checks
+    if: ${{ !cancelled() && (github.event_name == 'push' || needs.checks.outputs.e2e != '') }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     outputs:
