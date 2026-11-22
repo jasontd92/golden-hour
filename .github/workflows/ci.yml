@@ -101,7 +101,9 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: e2e-screenshots
-          path: test-results/screenshots/*.png
+          path: |
+            test-results/screenshots/*.png
+            test-results/screenshots/*.json
           if-no-files-found: error
           retention-days: 14
       - if: failure()
@@ -126,11 +128,29 @@ jobs:
       ARTIFACT_URL: ${{ needs.e2e.outputs.artifact-url }}
       E2E_RESULT: ${{ needs.e2e.result }}
     steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: |
+            scripts
+            src/routes
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
       - uses: actions/download-artifact@v8
         with:
           name: e2e-screenshots
           path: shots
+      - id: pick
+        name: Pick screenshots of the pages this PR touched
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate --jq '.[].filename' \
+            | node scripts/e2e-scope.ts --screenshots shots > picked.txt
+          echo "count=$(grep -c . picked.txt || true)" >> "$GITHUB_OUTPUT"
+          echo "total=$(ls shots/*.png | wc -l | tr -d ' ')" >> "$GITHUB_OUTPUT"
+          echo "screenshots for touched pages:"; cat picked.txt
       - name: Publish screenshots to ci-evidence
+        if: steps.pick.outputs.count != '0'
         run: |
           dir="$PR/$SHA"
           git init -q evidence && cd evidence
@@ -142,7 +162,7 @@ jobs:
             echo '{"git":{"deploymentEnabled":false}}' > vercel.json
           fi
           mkdir -p "$dir"
-          cp ../shots/*.png "$dir"/
+          while read -r name; do cp "../shots/$name.png" "$dir"/; done < ../picked.txt
           git add -A .
           git diff --cached --quiet || git -c user.name=github-actions -c user.email=41898282+github-actions[bot]@users.noreply.github.com \
             commit -qm "ci: e2e evidence for #$PR at ${SHA:0:7}"
@@ -152,19 +172,22 @@ jobs:
           done
           exit 1
       - name: Comment with inline screenshots
+        if: steps.pick.outputs.count != '0'
+        env:
+          COUNT: ${{ steps.pick.outputs.count }}
+          TOTAL: ${{ steps.pick.outputs.total }}
         run: |
           base="https://github.com/$GITHUB_REPOSITORY/blob/ci-evidence/$PR/$SHA"
           {
             echo "<!-- e2e-screenshots -->"
-            echo "**E2E evidence** for \`${SHA:0:7}\` (e2e: $E2E_RESULT). [Zip]($ARTIFACT_URL)"
+            echo "**E2E evidence** for \`${SHA:0:7}\` (e2e: $E2E_RESULT): $COUNT of $TOTAL screenshots, for the pages this PR touched. All $TOTAL are in the [zip]($ARTIFACT_URL)."
             echo
-            for file in shots/*.png; do
-              name=$(basename "$file" .png)
+            while read -r name; do
               echo "**$name**"
               echo
               echo "<img src=\"$base/$name.png?raw=true\" width=\"320\" alt=\"$name\">"
               echo
-            done
+            done < picked.txt
           } > body.md
           id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate \
             --jq '[.[] | select(.body | startswith("<!-- e2e-screenshots -->"))][0].id // empty')
