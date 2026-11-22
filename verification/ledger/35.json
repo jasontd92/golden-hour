@@ -30,5 +30,11 @@
 			"minutes": 6
 		}
 	],
-	"notes": "Self-written tests from the first version were removed; the oracle kept the changesRendering cases and added 20. It ran Stryker unprompted: 9 survivors, all order, equivalent anchors or CLI-only. Rebase onto #37 conflicted on verification.yaml (deleted in #37, edited by this PR's oracle commit); the implementer resolved it by keeping the deletion, so the oracle commit now carries only tests and fixtures."
+	"human": [
+		"e2e/evidence.ts records spec relative to Playwright's config rootDir, not process.cwd(): not tested, since it needs a real Playwright run from a directory other than the repo root. Check one PR run's screenshots JSON has spec 'e2e/<name>.e2e.ts', and that nothing runs Playwright from a subdirectory.",
+		"The evidence job on real GitHub: compare(base...head) caps the files it lists (about 300, unpaginated here), so a very large PR may lose some picks without warning; the job's if: (always(), artifact-id set) and sparse checkout are enough for the CLI; the fake-gh tests run its shell with bash -e, not the runner's exact shell; the PATCH and POST really render and replace the comment.",
+		"Whether showing only the own spec's screenshots, and none when that spec captured nothing, is the right call for reviewers. A failed spec now shows no screenshots, and the reviewer relies on the e2e result in the comment header to notice.",
+		"Whether a feature with no spec of its own falling back to every screenshot on its importers' routes is too noisy when the root +layout imports it (it would show all of them)."
+	],
+	"notes":"Self-written tests from the first version were removed; the oracle kept the changesRendering cases and added 20. It ran Stryker unprompted: 9 survivors, all order, equivalent anchors or CLI-only. Rebase onto #37 conflicted on verification.yaml (deleted in #37, edited by this PR's oracle commit); the implementer resolved it by keeping the deletion, so the oracle commit now carries only tests and fixtures."
 }
