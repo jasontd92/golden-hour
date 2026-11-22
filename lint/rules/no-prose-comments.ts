@@ -1,12 +1,13 @@
 import type { AST, Rule } from 'eslint';
 
-type Verdict = 'ok' | 'prose' | 'tsNoReason' | 'tsIgnore' | 'eslintNoReason';
+type Verdict = 'ok' | 'prose' | 'tsNoReason' | 'tsIgnore' | 'eslintNoReason' | 'strykerNoReason';
 
 const allowed = [
 	/^why:\s*\S/,
 	/^@ts-expect-error\s+\S/,
 	/^eslint-disable-next-line\s+\S+.*\s--\s+\S/,
-	/^svelte-ignore\s+\S/
+	/^svelte-ignore\s+\S/,
+	/^Stryker disable next-line\s+\S+:\s*\S/
 ];
 
 export function judgeComment(raw: string): Verdict {
@@ -15,6 +16,7 @@ export function judgeComment(raw: string): Verdict {
 	if (text.startsWith('@ts-expect-error')) return 'tsNoReason';
 	if (/^@ts-(ignore|nocheck)/.test(text)) return 'tsIgnore';
 	if (/^eslint-disable/.test(text)) return 'eslintNoReason';
+	if (/^Stryker (disable|restore)/.test(text)) return 'strykerNoReason';
 	return 'prose';
 }
 
@@ -34,7 +36,9 @@ export const noProseComments: Rule.RuleModule = {
 			tsNoReason: "@ts-expect-error needs a reason: '@ts-expect-error <why>'.",
 			tsIgnore: "Use '@ts-expect-error <why>' instead of @ts-ignore or @ts-nocheck.",
 			eslintNoReason:
-				"Only 'eslint-disable-next-line <rule> -- <why>' is allowed. Fix the code, or disable one line with the rule name and a reason."
+				"Only 'eslint-disable-next-line <rule> -- <why>' is allowed. Fix the code, or disable one line with the rule name and a reason.",
+			strykerNoReason:
+				"Only 'Stryker disable next-line <mutators>: <why>' is allowed. Kill the mutant with a test; disable one line only for an equivalent or tool-breaking mutant, with the reason."
 		}
 	},
 	create(context) {

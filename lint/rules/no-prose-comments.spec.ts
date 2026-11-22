@@ -10,7 +10,8 @@ tsTester.run('no-prose-comments', noProseComments, {
 		{ filename: file, code: '// why: Safari drops the first frame\nconst a = 1;' },
 		{ filename: file, code: '/* why: keeps parity with build.py */\nconst a = 1;' },
 		{ filename: file, code: '// @ts-expect-error zod widens the union here\nconst a: number = "x";' },
-		{ filename: file, code: '// eslint-disable-next-line no-console -- CLI output\nconsole.log(1);' }
+		{ filename: file, code: '// eslint-disable-next-line no-console -- CLI output\nconsole.log(1);' },
+		{ filename: file, code: '// Stryker disable next-line all: Vite needs literal glob arguments\nconst a = 1;' }
 	],
 	invalid: [
 		{ filename: file, code: '// increment the counter\nlet a = 1;', errors: [{ messageId: 'prose' }] },
@@ -19,7 +20,9 @@ tsTester.run('no-prose-comments', noProseComments, {
 		{ filename: file, code: '// @ts-expect-error\nconst a: number = "x";', errors: [{ messageId: 'tsNoReason' }] },
 		{ filename: file, code: '// @ts-ignore\nconst a: number = "x";', errors: [{ messageId: 'tsIgnore' }] },
 		{ filename: file, code: '/* eslint-disable no-console */\nconsole.log(1);', errors: [{ messageId: 'eslintNoReason' }] },
-		{ filename: file, code: '// eslint-disable-next-line no-console\nconsole.log(1);', errors: [{ messageId: 'eslintNoReason' }] }
+		{ filename: file, code: '// eslint-disable-next-line no-console\nconsole.log(1);', errors: [{ messageId: 'eslintNoReason' }] },
+		{ filename: file, code: '// Stryker disable next-line all\nconst a = 1;', errors: [{ messageId: 'strykerNoReason' }] },
+		{ filename: file, code: '// Stryker disable all: whole file\nconst a = 1;', errors: [{ messageId: 'strykerNoReason' }] }
 	]
 });
 
