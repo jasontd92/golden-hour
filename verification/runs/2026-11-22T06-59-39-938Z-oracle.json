@@ -1,0 +1,11 @@
+{
+	"at": "2026-11-22T06:59:39.938Z",
+	"by": "oracle",
+	"result": "pass",
+	"tokens": 2104282,
+	"usd": 1.8,
+	"minutes": 7.21,
+	"pr": 37,
+	"caught": 1,
+	"detail": "mergeTarget split quoted flag values on spaces"
+}

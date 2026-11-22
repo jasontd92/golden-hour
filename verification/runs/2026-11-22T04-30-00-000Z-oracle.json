@@ -1,0 +1,11 @@
+{
+	"at": "2026-11-22T04:30:00.000Z",
+	"by": "oracle",
+	"result": "pass",
+	"tokens": 2707044,
+	"usd": 1.95,
+	"minutes": 9.19,
+	"pr": 37,
+	"detail": "first tests for provenance, guard, ledger",
+	"caught": 0
+}

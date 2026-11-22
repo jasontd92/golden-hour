@@ -1,0 +1,9 @@
+{
+	"at": "2026-11-22T07:02:50.278Z",
+	"by": "code-review",
+	"result": "pass",
+	"caught": 10,
+	"tokens": 111066,
+	"pr": 37,
+	"detail": "10 findings, all fixed in 1ff0e5f/ceb063f"
+}

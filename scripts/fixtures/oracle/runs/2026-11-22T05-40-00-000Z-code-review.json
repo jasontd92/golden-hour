@@ -1,0 +1,10 @@
+{
+	"at": "2026-11-22T05:40:00.000Z",
+	"by": "code-review",
+	"result": "pass",
+	"tokens": 74861,
+	"minutes": 1.72,
+	"pr": 35,
+	"detail": "3 important (stale comment, no result line, failed-spec fallback), 4 nits",
+	"caught": 5
+}

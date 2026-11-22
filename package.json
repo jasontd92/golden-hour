@@ -21,15 +21,17 @@
 		"policy": "node scripts/check-md.ts && node scripts/check-features.ts && node scripts/plan-check.ts",
 		"test:unit": "vitest --run",
 		"test:e2e": "playwright test",
-		"e2e:local": "node scripts/e2e-local.ts",
+		"e2e:local": "node scripts/ledger.ts run e2e-local -- node scripts/e2e-local.ts",
 		"sessions:score": "node scripts/score-sessions.ts",
 		"schema:emit": "node scripts/schema-emit.ts",
 		"plan:check": "node scripts/plan-check.ts",
 		"plan:generate": "node scripts/plan-generate.ts",
 		"data:build": "node scripts/data-build.ts",
 		"db:generate": "drizzle-kit generate",
-		"proof:sync": "node scripts/sync-mutants.ts",
-		"mutate": "stryker run"
+		"proof:sync": "node scripts/ledger.ts run proof-sync -- node scripts/sync-mutants.ts",
+		"mutate": "node scripts/ledger.ts run mutation -- stryker run",
+		"ledger": "node scripts/ledger.ts",
+		"oracle": "node scripts/oracle.ts"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
