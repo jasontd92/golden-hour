@@ -21,7 +21,7 @@ const pageMatches = (page: string, route: string, prefix: boolean) =>
 	new RegExp(`^${route.replace(/\/$/, '').replace(/\[[^\]]+\]/g, '[^/]+')}${prefix ? '(/.*)?' : '/?'}$`).test(page);
 
 // why: best effort for human reviewers; a change with no page of its own (domain, data, helpers) shows no screenshot rather than all of them.
-export function screenshotsFor(changed: string[], shots: Shot[], importers: (feature: string) => string[]): string[] {
+export function screenshotsFor(changed: string[], shots: Shot[], importers: (feature: string) => string[], specs = [...new Set(shots.map(({ spec }) => spec))]): string[] {
 	const files = renderedFiles(changed);
 	if (files.some((file) => matches(file, everyPage))) return shots.map(({ name }) => name).sort();
 	const picked = new Set<string>();
@@ -29,10 +29,10 @@ export function screenshotsFor(changed: string[], shots: Shot[], importers: (fea
 		const layout = path.posix.basename(routeFile).startsWith('+layout');
 		for (const shot of from) if (pageMatches(shot.page, routeOf(routeFile), layout)) picked.add(shot.name);
 	};
-	// why: a page like / renders several features; a feature with its own spec shows only that spec's screenshots of it
+	// why: a page like / renders several features; a feature with its own spec shows only that spec's screenshots, even none when the spec failed before capturing
 	const featureShots = (feature: string) => {
-		const own = shots.filter(({ spec }) => new RegExp(`^e2e/${feature}(\\.desktop)?\\.e2e\\.ts$`).test(spec));
-		return own.length > 0 ? own : shots;
+		const own = new RegExp(`^e2e/${feature}(\\.desktop)?\\.e2e\\.ts$`);
+		return specs.some((spec) => own.test(spec)) ? shots.filter(({ spec }) => own.test(spec)) : shots;
 	};
 	for (const file of files) {
 		const feature = /^src\/lib\/features\/([^/]+)\//.exec(file)?.[1];
@@ -49,8 +49,8 @@ if (import.meta.main) {
 	if (process.argv.includes('--screenshots') && shotsDir) {
 		const shots = globSync(`${shotsDir}/*.json`).map((file) => ({ name: path.basename(file, '.json'), ...(JSON.parse(readFileSync(file, 'utf8')) as Omit<Shot, 'name'>) }));
 		const routeFiles = globSync('src/routes/**/*.{svelte,ts}');
-		const importers = (feature: string) => routeFiles.filter((file) => readFileSync(file, 'utf8').includes(`#lib/features/${feature}/`));
-		console.log(screenshotsFor(changed, shots, importers).join('\n'));
+		const importers = (feature: string) => routeFiles.filter((file) => new RegExp(`#lib/features/${feature}(/|['"])`).test(readFileSync(file, 'utf8')));
+		console.log(screenshotsFor(changed, shots, importers, globSync('e2e/*.e2e.ts')).join('\n'));
 	} else {
 		console.log(process.argv.includes('--all') || changesRendering(changed) ? 'run' : '');
 	}

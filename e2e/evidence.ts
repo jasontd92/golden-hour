@@ -19,6 +19,6 @@ export async function captureEvidence(page: Page, testInfo: TestInfo, name: stri
 	await page.screenshot({ path: file, fullPage: true });
 	await testInfo.attach(name, { path: file, contentType: 'image/png' });
 	// why: the PR comment shows only screenshots of pages the PR touched, so each one records its page and spec
-	const spec = path.relative(process.cwd(), testInfo.file);
+	const spec = path.relative(testInfo.config.rootDir, testInfo.file);
 	writeFileSync(file.replace(/\.png$/, '.json'), JSON.stringify({ page: new URL(page.url()).pathname, spec }));
 }

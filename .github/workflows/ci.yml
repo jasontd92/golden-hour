@@ -84,7 +84,6 @@ jobs:
     timeout-minutes: 20
     outputs:
       artifact-id: ${{ steps.screenshots.outputs.artifact-id }}
-      artifact-url: ${{ steps.screenshots.outputs.artifact-url }}
     container:
       image: mcr.microsoft.com/playwright:v1.65.1-noble
       options: --ipc=host
@@ -125,7 +124,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       PR: ${{ github.event.pull_request.number }}
       SHA: ${{ github.event.pull_request.head.sha }}
-      ARTIFACT_URL: ${{ needs.e2e.outputs.artifact-url }}
+      BASE: ${{ github.event.pull_request.base.sha }}
       E2E_RESULT: ${{ needs.e2e.result }}
     steps:
       - uses: actions/checkout@v7
@@ -133,6 +132,7 @@ jobs:
           sparse-checkout: |
             scripts
             src/routes
+            e2e
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
@@ -144,10 +144,9 @@ jobs:
       - id: pick
         name: Pick screenshots of the pages this PR touched
         run: |
-          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate --jq '.[].filename' \
+          gh api "repos/$GITHUB_REPOSITORY/compare/$BASE...$SHA" --jq '.files[].filename' \
             | node scripts/e2e-scope.ts --screenshots shots > picked.txt
           echo "count=$(grep -c . picked.txt || true)" >> "$GITHUB_OUTPUT"
-          echo "total=$(ls shots/*.png | wc -l | tr -d ' ')" >> "$GITHUB_OUTPUT"
           echo "screenshots for touched pages:"; cat picked.txt
       - name: Publish screenshots to ci-evidence
         if: steps.pick.outputs.count != '0'
@@ -172,17 +171,19 @@ jobs:
           done
           exit 1
       - name: Comment with inline screenshots
-        if: steps.pick.outputs.count != '0'
         env:
           COUNT: ${{ steps.pick.outputs.count }}
-          TOTAL: ${{ steps.pick.outputs.total }}
         run: |
           base="https://github.com/$GITHUB_REPOSITORY/blob/ci-evidence/$PR/$SHA"
           {
             echo "<!-- e2e-screenshots -->"
-            echo "**E2E evidence** for \`${SHA:0:7}\` (e2e: $E2E_RESULT): $COUNT of $TOTAL screenshots, for the pages this PR touched. All $TOTAL are in the [zip]($ARTIFACT_URL)."
+            if [ "$COUNT" = 0 ]; then
+              echo "**E2E evidence** for \`${SHA:0:7}\` (e2e: $E2E_RESULT): this commit touched no pages with screenshots."
+            else
+              echo "**E2E evidence** for \`${SHA:0:7}\` (e2e: $E2E_RESULT): the pages this PR touched."
+            fi
             echo
-            while read -r name; do
+            [ "$COUNT" = 0 ] || while read -r name; do
               echo "**$name**"
               echo
               echo "<img src=\"$base/$name.png?raw=true\" width=\"320\" alt=\"$name\">"
@@ -193,6 +194,8 @@ jobs:
             --jq '[.[] | select(.body | startswith("<!-- e2e-screenshots -->"))][0].id // empty')
           if [ -n "$id" ]; then
             gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -F body=@body.md >/dev/null
+          elif [ "$COUNT" = 0 ]; then
+            echo "no screenshots and no earlier comment: nothing to post"
           else
             gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -F body=@body.md >/dev/null
           fi
