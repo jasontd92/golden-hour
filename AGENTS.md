@@ -1,0 +1,24 @@
+# Agents in this repo
+
+The agent that implements a change does not write, choose or weaken the tests that judge it.
+
+## Roles
+- **Implementer.** Writes code. May check its own work as much as it likes, but only in `*.local.spec.ts` files, which git ignores. Its own checks are never committed and never the final word.
+- **Oracle.** A separate session: `pnpm oracle "<brief>"`, which runs `.claude/agents/oracle.md` with `ROLE=oracle`. Gets the intent, not a tour of the code. Writes `verification.yaml` and the committed tests, in commits with the trailer `Verified-by: oracle`.
+- **Verifier / reviewer.** Fresh, after the implementation. Runs the manifest and judges the gaps. Never the implementer.
+
+## Enforced
+- The `.claude/settings.json` hook refuses a commit that stages tests (`*.spec.ts`, `*.e2e.ts`, `verification.yaml`) outside the oracle session. It also refuses `gh pr merge` unless every check is green.
+- CI's "tests come from the oracle" step fails a PR whose non-merge commits change tests without the oracle trailer.
+
+## What needs an oracle (for briefs and PR review)
+- **Behaviour change:** yes, even a short pass. "Existing test X already covers this" is a valid prescription, but the oracle makes it.
+- **Tests or verification tooling:** yes, and the PR is held with `ceo-review`.
+- **Docs, data, dependency bumps, or a refactor that leaves every test unchanged:** no. The unchanged suite is the proof.
+
+A reviewer flags a behaviour change that skipped the oracle, and tests that would pass on a plausible wrong implementation.
+
+## Record what each check catches
+Each verifier or reviewer posts one PR comment starting with `<!-- verification-ledger -->`, followed by JSON:
+`{"pr": 35, "agents": 2, "tokens": 41000, "caught": [{"by": "oracle-test|review|e2e|mutation|canary|post-merge|human", "what": "...", "real": true}]}`.
+This shows which checks find real mistakes and which only cost tokens.

@@ -31,8 +31,13 @@ jobs:
       e2e: ${{ steps.e2e-scope.outputs.run }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: ${{ github.event_name == 'pull_request' && 0 || 1 }}
       - id: setup
         uses: ./.github/actions/setup
+      - name: tests come from the oracle
+        if: ${{ !cancelled() && github.event_name == 'pull_request' && steps.setup.outcome == 'success' }}
+        run: node scripts/provenance.ts "origin/${{ github.base_ref }}..${{ github.event.pull_request.head.sha }}"
       - name: typecheck
         run: pnpm typecheck
       - name: lint

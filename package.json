@@ -29,7 +29,8 @@
 		"data:build": "node scripts/data-build.ts",
 		"db:generate": "drizzle-kit generate",
 		"proof:sync": "node scripts/sync-mutants.ts",
-		"mutate": "stryker run"
+		"mutate": "stryker run",
+		"oracle": "ROLE=oracle claude -p --agent oracle --permission-mode acceptEdits --allowedTools \"Bash(git *) Bash(pnpm *) Bash(node *) Bash(gh *)\" --output-format json"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
