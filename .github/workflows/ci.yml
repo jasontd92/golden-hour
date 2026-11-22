@@ -28,7 +28,7 @@ jobs:
       contents: read
       pull-requests: read
     outputs:
-      e2e: ${{ steps.e2e-scope.outputs.specs }}
+      e2e: ${{ steps.e2e-scope.outputs.run }}
     steps:
       - uses: actions/checkout@v7
       - id: setup
@@ -51,16 +51,16 @@ jobs:
         if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: pnpm test:unit
       - id: e2e-scope
-        name: e2e specs for what this PR renders
-        if: ${{ github.event_name == 'pull_request' && steps.setup.outcome == 'success' }}
+        name: does this PR change what's rendered
+        if: ${{ !cancelled() && github.event_name == 'pull_request' && steps.setup.outcome == 'success' }}
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
         run: |
           all=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/labels" --jq '.[].name' | grep -qx screenshots && echo --all || true)
-          specs=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate --jq '.[].filename' | node scripts/e2e-scope.ts $all)
-          echo "specs=$specs" >> "$GITHUB_OUTPUT"
-          echo "e2e: ${specs:-skipped until merge}"
+          run=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate --jq '.[].filename' | node scripts/e2e-scope.ts $all)
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+          echo "e2e: ${run:-skipped until merge}"
 
   bundle-budget:
     runs-on: ubuntu-latest
@@ -87,17 +87,16 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           setup-node: 'false'
-      - run: pnpm test:e2e $SPECS
+      - run: pnpm test:e2e
         env:
           HOME: /root
-          SPECS: ${{ needs.checks.outputs.e2e != 'all' && needs.checks.outputs.e2e || '' }}
       - id: screenshots
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: e2e-screenshots
           path: test-results/screenshots/*.png
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 14
       - if: failure()
         uses: actions/upload-artifact@v7
