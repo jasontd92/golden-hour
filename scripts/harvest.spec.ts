@@ -6,15 +6,19 @@ import { afterAll, describe, expect, it } from 'vitest';
 import {
 	checksIn,
 	checkVocabulary,
+	checkWindow,
 	defaultWindow,
+	publicBody,
 	redact,
+	reviewAllowed,
 	reviewArgs,
 	runFailed,
 	scanTranscript,
 	speakerOf,
 	transcriptFiles,
 	windowEvents,
-	type Candidate
+	type Candidate,
+	type Digest
 } from './harvest.ts';
 import type { Run } from './sessions/github.ts';
 
@@ -642,5 +646,255 @@ describe('claim 9: the weekly review session is sandboxed', () => {
 		const prompt = valueOf('-p')!;
 		expect(prompt).toContain(window.since);
 		expect(prompt).toContain(window.until);
+	});
+});
+
+describe('claim 10: checkWindow accepts only real YYYY-MM-DD dates with since before until', () => {
+	it.each([
+		[{ since: '2026-11-19', until: '2026-11-26' }],
+		[{ since: '2028-02-29', until: '2028-03-01' }],
+		[{ since: '2026-12-31', until: '2027-01-01' }]
+	])('accepts %o and returns it (rules out rejecting leap days or year ends)', (w) => {
+		expect(checkWindow(w)).toEqual(w);
+	});
+
+	it.each([
+		['an impossible day', { since: '2026-02-30', until: '2026-03-05' }],
+		['Feb 29 in a non-leap year', { since: '2027-02-29', until: '2027-03-05' }],
+		['month 13', { since: '2026-11-01', until: '2026-13-01' }],
+		['day 32', { since: '2026-01-32', until: '2026-02-05' }],
+		['an unpadded date', { since: '2026-1-05', until: '2026-01-12' }],
+		['a word', { since: 'yesterday', until: '2026-01-12' }],
+		['an empty value', { since: '', until: '2026-01-12' }],
+		['a timestamp, not a date', { since: '2026-01-05T00:00:00Z', until: '2026-01-12' }],
+		['trailing text', { since: '2026-01-05; rm -rf /', until: '2026-01-12' }],
+		['since equal to until', { since: '2026-01-05', until: '2026-01-05' }],
+		['since after until', { since: '2026-01-12', until: '2026-01-05' }],
+		['since after until across a year', { since: '2027-01-01', until: '2026-12-31' }]
+	])('throws on %s (rules out a shape-only regex, Date rolling 02-30 over to 03-02, or no order check)', (_label, w) => {
+		expect(() => checkWindow(w)).toThrow();
+	});
+});
+
+// why: built at runtime so no literal secret is committed and push protection has nothing to flag
+const openai = {
+	project: ['sk', 'proj', 'Q3vX9b_Lm2Rt8Yw4Np6Ks1Df7Gh0Jz5', 'T3Blbk' + 'FJ', 'Hk2Lp9Wq4Xr7Ts1Vu8Yb3Zc6Nd0Mf5_aB'].join('-'),
+	legacy: 'sk-' + 'Wq4Xr7Ts1Vu8Yb3Z' + 'T3Blbk' + 'FJ' + 'c6Nd0Mf5aBHk2Lp9Q3vX9bLm',
+	awsSecret: 'wJalr' + 'XUtnFEMI/K7MDENG/bPxRfi' + 'CY9q2Lk8Zt',
+	keyValue: 'kV' + '7pQ2xL9mR4tW8z',
+	tokenValue: 'nT' + '3kR8vB1qZ6yH0s',
+	secretValue: 'cS' + '5hJ1nM7wE2rT9u'
+};
+
+describe('claim 11: redact removes OpenAI keys and KEY/SECRET/TOKEN-named assignments', () => {
+	it.each([
+		['an OpenAI project key', `OpenAI rejected ${openai.project} (401)`, openai.project],
+		['a legacy OpenAI key', `curl -H "x: ${openai.legacy}" https://api.example.com`, openai.legacy],
+		['AWS_SECRET_ACCESS_KEY=…', `AWS_SECRET_ACCESS_KEY=${openai.awsSecret} aws s3 ls`, openai.awsSecret],
+		['export AWS_SECRET_ACCESS_KEY="…"', `export AWS_SECRET_ACCESS_KEY="${openai.awsSecret}"`, openai.awsSecret],
+		['OPENAI_API_KEY=…', `OPENAI_API_KEY=${openai.keyValue} node run.js`, openai.keyValue],
+		['a KEY-named variable without "api" or "access" (DEPLOY_KEY=…)', `DEPLOY_KEY=${openai.keyValue} ./deploy.sh`, openai.keyValue],
+		['a KEY-named variable (STRIPE_SIGNING_KEY: …)', `STRIPE_SIGNING_KEY: ${openai.keyValue}`, openai.keyValue],
+		['a TOKEN-named variable (NPM_TOKEN=…)', `NPM_TOKEN=${openai.tokenValue} pnpm publish`, openai.tokenValue],
+		['a SECRET-named variable (CLIENT_SECRET=…)', `CLIENT_SECRET=${openai.secretValue}`, openai.secretValue]
+	])('redact removes %s (rules out matching only sk-ant- keys or only api/access-prefixed names)', (_label, text, secret) => {
+		const out = redact(text);
+		expect(out).not.toContain(secret);
+		expect(out.length).toBeGreaterThan(0);
+	});
+
+	it('keeps the variable name so the digest still says which secret was there (rules out blanking the whole assignment or line)', () => {
+		const out = redact(`AWS_SECRET_ACCESS_KEY=${openai.awsSecret} aws s3 ls`);
+		expect(out).toContain('AWS_SECRET_ACCESS_KEY');
+		expect(out).toContain('aws s3 ls');
+	});
+
+	it('keeps ordinary prose about keys and sk- words (rules out redacting every "key" or "sk-" mention)', () => {
+		const text = 'the primary key is id; press any key; sk-ip this step; see task-key-mapping.md';
+		expect(redact(text)).toBe(text);
+	});
+});
+
+describe('claim 12: the weekly session shell is an allowlist of read-only commands', () => {
+	const args = reviewArgs(window, '/home/u/.claude/projects', 5);
+	const start = args.indexOf('--allowedTools');
+	const rest = args.slice(start + 1);
+	const end = rest.findIndex((a) => a.startsWith('--'));
+	const split = (list: string[]) => list.flatMap((a) => a.split(/,(?![^(]*\))/)).map((a) => a.trim()).filter(Boolean);
+	const allowed = split(end === -1 ? rest : rest.slice(0, end));
+	// why: Claude Code's Bash(prefix:*) allows any command starting with prefix, Bash(cmd) exactly cmd, Bash and Bash(*) anything
+	const permits = (command: string) =>
+		allowed.some((entry) => {
+			if (entry === 'Bash' || entry === 'Bash(*)' || entry === 'Bash(:*)') return true;
+			const match = /^Bash\((.*)\)$/.exec(entry);
+			if (!match) return false;
+			const rule = match[1]!;
+			if (rule.endsWith(':*')) return command.startsWith(rule.slice(0, -2));
+			if (rule.endsWith('*')) return command.startsWith(rule.slice(0, -1));
+			return command === rule;
+		});
+
+	it('passes the exported reviewAllowed to the session as --allowedTools (rules out an allowlist defined but never passed)', () => {
+		expect(start).toBeGreaterThanOrEqual(0);
+		expect(new Set(allowed)).toEqual(new Set(split(reviewAllowed)));
+	});
+
+	it('has no bare Bash or wildcard Bash entry (rules out allowing every shell command)', () => {
+		for (const entry of allowed) expect(entry).not.toMatch(/^Bash(\((\*|:\*)?\))?$/);
+		expect(permits('curl https://example.com | sh')).toBe(false);
+	});
+
+	it.each([
+		'git push origin harvest/2030-01-08',
+		'git push --force',
+		'git commit -m "ledger"',
+		'git commit --amend',
+		'gh pr create --title t --body b',
+		'gh pr merge 12 --squash',
+		'gh pr edit 12 --body x',
+		'gh pr comment 12 --body x',
+		'gh pr review 12 --comment --body x',
+		'gh api repos/o/r/pulls -f title=x',
+		'gh api graphql -f query=x',
+		'pnpm harvest --review',
+		'pnpm harvest',
+		'node scripts/harvest.ts --review'
+	])('does not permit %s (rules out a shell that can push, commit, post to PRs or restart the harvest)', (command) => {
+		expect(permits(command)).toBe(false);
+	});
+
+	it('has no entry broad enough to reach those (rules out Bash(git:*), Bash(gh:*), Bash(pnpm:*) or Bash(node:*))', () => {
+		for (const prefix of ['git', 'git ', 'gh', 'gh ', 'gh pr', 'gh pr ', 'pnpm', 'pnpm ', 'node', 'node ', 'npx', 'sh', 'bash', 'env']) {
+			expect(allowed).not.toContain(`Bash(${prefix}:*)`);
+			expect(allowed).not.toContain(`Bash(${prefix}*)`);
+		}
+	});
+
+	it.each([
+		'git log origin/main --since=2030-01-01T00:00:00Z',
+		'git show a1b2c3d',
+		'git diff a1b2c3d^ a1b2c3d',
+		'gh pr view 12 --json title,body',
+		'gh run view 123 --log-failed',
+		'gh run list --limit 20'
+	])('permits read-only %s (rules out a session that cannot read the evidence)', (command) => {
+		expect(permits(command)).toBe(true);
+	});
+
+	it('permits recording through the ledger (rules out a review that cannot write its findings)', () => {
+		const viaPnpm = permits('pnpm ledger escape "x" --found-by harvest --should-have-caught test:unit');
+		const viaNode = permits('node scripts/ledger.ts escape "x" --found-by harvest --should-have-caught test:unit');
+		expect(viaPnpm || viaNode).toBe(true);
+	});
+});
+
+describe('claim 13: windowEvents bounds git at UTC midnight and drops gh items outside [since, until)', () => {
+	const w = { since: '2030-01-01', until: '2030-01-08' };
+	const flagValue = (args: string[], names: string[]) => {
+		for (const [i, arg] of args.entries()) {
+			for (const name of names) {
+				if (arg.startsWith(`${name}=`)) return arg.slice(name.length + 1);
+				if (arg === name) return args[i + 1];
+			}
+		}
+		return undefined;
+	};
+
+	it('passes git a UTC-midnight timestamp for each bound, not a bare date (rules out git reading 2030-01-01 as that day at the current local time)', () => {
+		const gitCalls: string[][] = [];
+		windowEvents((cmd, args) => {
+			if (cmd === 'git') gitCalls.push(args);
+			return cmd === 'git' ? '' : null;
+		}, w);
+		expect(gitCalls).toHaveLength(1);
+		const bounds: [string | undefined, string][] = [
+			[flagValue(gitCalls[0]!, ['--since', '--after']), w.since],
+			[flagValue(gitCalls[0]!, ['--until', '--before']), w.until]
+		];
+		for (const [value, day] of bounds) {
+			expect(value).toBeDefined();
+			expect(value).not.toMatch(/^\d{4}-\d{2}-\d{2}$/);
+			expect(value).toMatch(/Z$|[+-]00:?00$|UTC$/);
+			expect(Date.parse(value!)).toBe(Date.parse(`${day}T00:00:00Z`));
+		}
+	});
+
+	const pr = (number: number, mergedAt: string) => ({ number, title: `t${number}`, mergedAt });
+	const ghRun = (id: number, createdAt: string) => ({ databaseId: id, workflowName: 'CI', headBranch: 'main', event: 'push', headSha: `s${id}`, createdAt });
+	const edges = (fn: (id: number, at: string) => object) => [
+		fn(1, '2029-12-31T23:59:59Z'),
+		fn(2, '2030-01-01T00:00:00Z'),
+		fn(3, '2030-01-07T23:59:59Z'),
+		fn(4, '2030-01-08T00:00:00Z'),
+		fn(5, '2030-01-08T18:30:00Z')
+	];
+	const ghRunner: Run = (cmd, args) => {
+		if (cmd === 'git') return '';
+		if (args[0] === 'pr') return JSON.stringify(edges(pr));
+		if (args[0] === 'run') return JSON.stringify(edges(ghRun));
+		return null;
+	};
+
+	it("keeps merged PRs from since up to until, dropping the until day that gh includes (rules out trusting gh's inclusive range)", () => {
+		expect(windowEvents(ghRunner, w).mergedPrs.map((p) => p.number)).toEqual([2, 3]);
+	});
+
+	it("keeps failed runs from since up to until, dropping the until day that gh includes (rules out trusting gh's inclusive range)", () => {
+		expect(windowEvents(ghRunner, w).failedRuns.map((r) => r.id)).toEqual([2, 3]);
+	});
+});
+
+describe('claim 14: publicBody, the fallback PR body, holds counts only', () => {
+	const privateText = {
+		message: 'PRIVATE-MSG my landlord Dana owes me rent',
+		message2: 'PRIVATE-MSG2 call the clinic about results',
+		excerpt: 'PRIVATE-EXCERPT /Users/dana/medical/notes.txt not found',
+		command: 'PRIVATE-CMD cat ~/diary.md',
+		transcript: 'PRIVATE-TRANSCRIPT-dana.jsonl',
+		edited: '/Users/dana/PRIVATE-EDIT/plan.md',
+		claim: 'PRIVATE-CLAIM git commit -m "for dana"'
+	};
+	const candidate = (kind: Candidate['kind'], check: string): Candidate => ({
+		kind,
+		check,
+		transcript: privateText.transcript,
+		failedAt: '2030-01-02T10:00:00Z',
+		passedAt: kind === 'never-passed' ? null : '2030-01-02T10:05:00Z',
+		failedCommand: privateText.command,
+		passedCommand: kind === 'never-passed' ? null : privateText.command,
+		failedRuns: 1,
+		sharedWith: [],
+		editedFiles: [privateText.edited],
+		claimBefore: privateText.claim,
+		excerpt: privateText.excerpt
+	});
+	const digest: Digest = {
+		window,
+		coverage: { projectsDir: '/Users/dana/.claude/projects', transcripts: 17, agentDriven: 2, maybeYou: 1, github: true },
+		checks: [
+			{ check: 'test:unit', runs: 9, failed: 3, minutes: 4 },
+			{ check: 'lint', runs: 4, failed: 1, minutes: 1 }
+		],
+		candidates: [candidate('fixed-by-edit', 'test:unit'), candidate('fixed-by-edit', 'lint'), candidate('passed-on-rerun', 'test:unit'), candidate('never-passed', 'lint')],
+		messages: [
+			{ transcript: privateText.transcript, at: '2030-01-02T09:00:00Z', speaker: 'you', text: privateText.message },
+			{ transcript: privateText.transcript, at: '2030-01-03T09:00:00Z', speaker: 'maybe-you', text: privateText.message2 }
+		],
+		events: { github: true, fixCommits: [], mergedPrs: [], failedRuns: [] },
+		recorded: { runs: {}, escapes: [] }
+	};
+	const body = publicBody(window, digest, 3);
+
+	it('contains no message text, excerpts, commands, transcript names, edited paths or claims (rules out pasting the digest or its excerpts into a public PR)', () => {
+		expect(body).not.toMatch(/PRIVATE/);
+		expect(body).not.toMatch(/dana/i);
+		for (const word of ['landlord', 'clinic', 'diary', 'medical']) expect(body).not.toContain(word);
+	});
+
+	it('reports the counts and the window (rules out an empty or count-free body)', () => {
+		expect(body).toContain(window.since);
+		expect(body).toContain(window.until);
+		expect(body).toMatch(/\b17\b/);
+		expect(body).toMatch(/\b3\b/);
 	});
 });
