@@ -33,7 +33,8 @@
 		"ledger": "node scripts/ledger.ts",
 		"oracle": "node scripts/oracle.ts",
 		"bench:verifiers": "node scripts/bench/bench.ts",
-		"bench:escapes": "node scripts/bench/escapes.ts"
+		"bench:escapes": "node scripts/bench/escapes.ts",
+		"harvest": "node scripts/harvest.ts"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
