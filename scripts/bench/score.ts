@@ -23,7 +23,7 @@ export function parseFindings(verdict: string): Finding[] | null {
 export function normalizePath(reported: string): { file: string; line: number | null } {
 	const cleaned = reported.trim().replace(/^`|`$/g, '');
 	const located = /^(.*?):(\d+)(?::\d+)?$/.exec(cleaned);
-	const file = (located ? located[1]! : cleaned).replace(/^(?:\.\/|[ab]\/)/, '');
+	const file = path.posix.normalize((located ? located[1]! : cleaned).replace(/^(?:\.\/|[ab]\/)/, ''));
 	return { file, line: located ? Number(located[2]) : null };
 }
 
