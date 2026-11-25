@@ -5,7 +5,7 @@ import { parsePlanterReport, planterPrompt } from './planter-prompt.ts';
 
 describe('headless agents', () => {
 	it('run with no push, no gh, no web and a spend cap', () => {
-		const args = claudeArgs('prompt', 4);
+		const args = claudeArgs('prompt', 4, { model: 'opus', effort: null });
 		const denied = args.slice(args.indexOf('--disallowedTools') + 1, args.indexOf('--max-budget-usd'));
 		expect(denied).toEqual(expect.arrayContaining(['Bash(git push:*)', 'Bash(gh:*)', 'WebFetch', 'WebSearch']));
 		expect(args).toEqual(expect.arrayContaining(['--safe-mode', '--no-session-persistence', '--max-budget-usd', '4']));
@@ -35,7 +35,7 @@ describe('headless agents', () => {
 		expect(parseResult('verifier', stdout, 1)).toEqual({
 			text: 'done',
 			error: null,
-			usage: { role: 'verifier', costUsd: 1.25, durationMs: 120000, turns: 7, inputTokens: 10, outputTokens: 20, cacheReadTokens: 30, cacheWriteTokens: 40 }
+			usage: { role: 'verifier', agent: 'default', models: [], costUsd: 1.25, durationMs: 120000, turns: 7, inputTokens: 10, outputTokens: 20, cacheReadTokens: 30, cacheWriteTokens: 40 }
 		});
 		expect(parseResult('planter', 'not json', 5).error).toContain('no JSON result');
 	});

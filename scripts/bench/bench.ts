@@ -1,9 +1,9 @@
 import { randomBytes } from 'node:crypto';
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
-import { runAgent, type Usage } from './agents.ts';
+import { configLabel, parseAgentConfig, runAgent, type AgentConfig, type Usage } from './agents.ts';
 import { catalog, type BugClass } from './catalog.ts';
 import {
 	cloneWithoutHistoryLeftovers,
@@ -18,11 +18,11 @@ import {
 	workingDiff
 } from './clone.ts';
 import { leaks, pathLeaks } from './leak-check.ts';
-import { addedHunks, changedFiles, sampleClasses, type Manifest, type Plant } from './manifest.ts';
+import { addedHunks, changedFiles, parseManifest, sampleClasses, type Manifest, type Plant } from './manifest.ts';
 import { mechanicalPlanters, type RepoView } from './mechanical.ts';
 import { parsePlanterReport, planterPrompt } from './planter-prompt.ts';
 import { formatScore, scoreRun } from './score.ts';
-import { builtInMethod, verifierPrompt } from './verifier-prompt.ts';
+import { builtInMethod, verifierPrompt, type ChunkBrief } from './verifier-prompt.ts';
 
 interface Options {
 	classes: number;
@@ -34,6 +34,10 @@ interface Options {
 	method: string | null;
 	planterUsd: number;
 	verifierUsd: number;
+	planter: AgentConfig;
+	verifier: AgentConfig;
+	savePlants: boolean;
+	replay: string | null;
 }
 
 function options(): Options {
@@ -47,7 +51,11 @@ function options(): Options {
 			keep: { type: 'boolean', default: false },
 			method: { type: 'string' },
 			'planter-usd': { type: 'string', default: '3' },
-			'verifier-usd': { type: 'string', default: '15' }
+			'verifier-usd': { type: 'string', default: '15' },
+			planter: { type: 'string', default: 'opus' },
+			verifier: { type: 'string', default: 'opus' },
+			'save-plants': { type: 'boolean', default: false },
+			replay: { type: 'string' }
 		}
 	});
 	return {
@@ -59,7 +67,11 @@ function options(): Options {
 		keep: values.keep,
 		method: values.method ?? null,
 		planterUsd: Number(values['planter-usd']),
-		verifierUsd: Number(values['verifier-usd'])
+		verifierUsd: Number(values['verifier-usd']),
+		planter: parseAgentConfig(values.planter),
+		verifier: parseAgentConfig(values.verifier),
+		savePlants: values['save-plants'],
+		replay: values.replay === undefined ? null : path.resolve(values.replay)
 	};
 }
 
@@ -79,7 +91,7 @@ function plantOne(bugClass: BugClass, dir: string, avoid: string[], opts: Option
 		for (const edit of mechanical.edits) writeFileSync(path.join(dir, edit.file), edit.text);
 		planted = { how: 'mechanical', behavior: mechanical.behavior, markers: mechanical.markers, cover: mechanical.cover };
 	} else {
-		const result = runAgent('planter', dir, planterPrompt(bugClass, avoid), opts.planterUsd);
+		const result = runAgent('planter', dir, planterPrompt(bugClass, avoid), opts.planterUsd, opts.planter);
 		usage.push(result.usage);
 		const report = parsePlanterReport(result.text);
 		if (report === null) return { ...base, how: 'agent', status: 'not-planted', reason: result.error ?? 'planter gave no report block' };
@@ -115,10 +127,67 @@ function usageLines(usage: Usage[], wallMs: number): string[] {
 	return [
 		...usage.map(
 			(entry) =>
-				`${entry.role}: ${Math.round(entry.durationMs / 60000)} min, ${entry.turns} turns, in ${entry.inputTokens} (+${entry.cacheReadTokens} cache read, +${entry.cacheWriteTokens} cache write), out ${entry.outputTokens}, $${entry.costUsd.toFixed(2)}`
+				`${entry.role} ${entry.agent} (${entry.models.join(', ') || 'model unknown'}): ${Math.round(entry.durationMs / 60000)} min, ${entry.turns} turns, in ${entry.inputTokens} (+${entry.cacheReadTokens} cache read, +${entry.cacheWriteTokens} cache write), out ${entry.outputTokens}, $${entry.costUsd.toFixed(2)}`
 		),
 		`agents total: $${total.cost.toFixed(2)}, ${total.input} input tokens (cache included), ${total.output} output tokens; wall time ${Math.round(wallMs / 60000)} min`
 	];
+}
+
+type SealedBrief = Omit<ChunkBrief, 'clone'>;
+
+function verify(verifyDir: string, brief: SealedBrief, method: string, opts: Options, usage: Usage[]): string {
+	install(verifyDir);
+	const prompt = verifierPrompt({ ...brief, clone: verifyDir }, method);
+	const leaked = leaks('verifier prompt', prompt);
+	if (leaked.length > 0) throw new Error(leaked.join('\n'));
+	log(`verifier ${configLabel(opts.verifier)}: reviewing ${brief.baseSha.slice(0, 7)}..${brief.headSha.slice(0, 7)} (${brief.changes.length} commits)`);
+	const result = runAgent('verifier', verifyDir, prompt, opts.verifierUsd, opts.verifier);
+	usage.push(result.usage);
+	if (result.error) log(`verifier: ${result.error}`);
+	return result.text;
+}
+
+function finish(runDir: string, manifest: Manifest, verdict: string | null, usage: Usage[], started: number, header: string[]): number {
+	const report = [
+		...header,
+		manifest.dryRun
+			? ['dry run, no verifier:', ...manifest.plants.map((plant) => `${plant.classId}  ${plant.split}  ${plant.status}${plant.reason ? ` (${plant.reason})` : ''}`)].join('\n')
+			: formatScore(scoreRun(manifest, verdict)),
+		'',
+		...usageLines(usage, Date.now() - started)
+	].join('\n');
+	if (verdict !== null) writeFileSync(path.join(runDir, 'verdict.md'), verdict);
+	writeFileSync(path.join(runDir, 'report.txt'), `${report}\n`);
+	writeFileSync(path.join(runDir, 'usage.json'), `${JSON.stringify(usage, null, 2)}\n`);
+	console.log(`\n${report}\n\nresults: ${runDir}`);
+	return 0;
+}
+
+const sealedFiles = { bundle: 'plants.bundle', brief: 'brief.json' } as const;
+
+function replay(sealedRun: string, opts: Options, method: string, started: number): number {
+	if (!existsSync(path.join(sealedRun, sealedFiles.bundle))) {
+		console.error(`${sealedRun} holds no sealed plants; make one with --save-plants`);
+		return 1;
+	}
+	const manifest = parseManifest(readFileSync(path.join(sealedRun, 'manifest.json'), 'utf8'));
+	const brief = JSON.parse(readFileSync(path.join(sealedRun, sealedFiles.brief), 'utf8')) as SealedBrief;
+	const runDir = path.join(opts.work, 'runs', `${new Date().toISOString().replace(/[:.]/g, '-')}-replay-${configLabel(opts.verifier).replace(':', '-')}`);
+	mkdirSync(runDir, { recursive: true });
+	// why: the sealed manifest sits under --work, so the verifier's clone lives in an unrelated temp dir it has no path to
+	const sandbox = mkdtempSync(path.join(os.tmpdir(), 'ghb-'));
+	const usage: Usage[] = [];
+	try {
+		const verifyDir = path.join(sandbox, randomBytes(6).toString('hex'));
+		sh(sandbox, 'git', ['clone', '-q', path.join(sealedRun, sealedFiles.bundle), verifyDir]);
+		sh(verifyDir, 'git', ['remote', 'remove', 'origin']);
+		if (headSha(verifyDir) !== brief.headSha) throw new Error('the sealed bundle does not hold the sealed head');
+		log(`replay of ${manifest.runId}: ${manifest.plants.filter((plant) => plant.status === 'planted').length} plants, work ${sandbox}`);
+		const verdict = verify(verifyDir, brief, method, opts, usage);
+		return finish(runDir, manifest, verdict, usage, started, [`replay of ${manifest.runId} (base ${manifest.baseSha.slice(0, 7)}), verifier ${configLabel(opts.verifier)}`, '']);
+	} finally {
+		rmSync(sandbox, { recursive: true, force: true });
+	}
 }
 
 function main(): number {
@@ -133,17 +202,18 @@ function main(): number {
 		console.error(`--work ${opts.work} is inside the repo; clones must live outside it.`);
 		return 1;
 	}
-	const sha = sh(repo, 'git', ['rev-parse', opts.ref]).stdout.trim();
-	const runId = `${new Date().toISOString().replace(/[:.]/g, '-')}-${opts.seed}`;
-	const runDir = path.join(opts.work, 'runs', runId);
-	const sandbox = path.join(opts.work, 'clones', randomBytes(6).toString('hex'));
-	mkdirSync(runDir, { recursive: true });
 	const method = opts.method === null ? builtInMethod : readFileSync(opts.method, 'utf8');
 	const promptLeaks = [...leaks('verifier method', method), ...pathLeaks([path.join(os.homedir(), '.claude', 'skills'), path.join(repo, '.claude')])];
 	if (promptLeaks.length > 0) {
 		for (const leak of promptLeaks) console.error(leak);
 		return 1;
 	}
+	if (opts.replay !== null) return replay(opts.replay, opts, method, started);
+	const sha = sh(repo, 'git', ['rev-parse', opts.ref]).stdout.trim();
+	const runId = `${new Date().toISOString().replace(/[:.]/g, '-')}-${opts.seed}`;
+	const runDir = path.join(opts.work, 'runs', runId);
+	const sandbox = opts.savePlants ? mkdtempSync(path.join(os.tmpdir(), 'ghb-')) : path.join(opts.work, 'clones', randomBytes(6).toString('hex'));
+	mkdirSync(runDir, { recursive: true });
 	const usage: Usage[] = [];
 	let seedState = opts.seed;
 	const pick = (count: number) => (seedState = (seedState * 1103515245 + 12345) >>> 0) % count;
@@ -179,36 +249,18 @@ function main(): number {
 			if (applied.length !== live.length) throw new Error('a surviving plant no longer applies on top of the others');
 			const verifyDir = path.join(sandbox, randomBytes(6).toString('hex'));
 			cloneWithoutHistoryLeftovers(plantDir, verifyDir);
-			const head = headSha(verifyDir);
+			const brief: SealedBrief = { chunk: `BENCH-${opts.seed}`, baseSha, headSha: headSha(verifyDir), changes: live.map((plant) => plant.cover) };
 			rmSync(plantDir, { recursive: true, force: true });
-			install(verifyDir);
-			const prompt = verifierPrompt(
-				{ chunk: `BENCH-${opts.seed}`, clone: verifyDir, baseSha, headSha: head, changes: live.map((plant) => plant.cover) },
-				method
-			);
-			const leaked = leaks('verifier prompt', prompt);
-			if (leaked.length > 0) throw new Error(leaked.join('\n'));
-			log(`verifier: reviewing ${baseSha.slice(0, 7)}..${head.slice(0, 7)} (${live.length} commits)`);
-			const result = runAgent('verifier', verifyDir, prompt, opts.verifierUsd);
-			usage.push(result.usage);
-			verdict = result.text;
-			if (result.error) log(`verifier: ${result.error}`);
-			writeFileSync(path.join(runDir, 'verdict.md'), verdict);
+			if (opts.savePlants) {
+				sh(verifyDir, 'git', ['bundle', 'create', '-q', path.join(runDir, sealedFiles.bundle), 'main']);
+				writeFileSync(path.join(runDir, sealedFiles.brief), `${JSON.stringify(brief, null, 2)}\n`);
+			}
+			verdict = verify(verifyDir, brief, method, opts, usage);
 		} else {
 			log('every plant was caught by machine or not planted; no verifier run needed');
 		}
 		writeFileSync(path.join(runDir, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
-		const report = [
-			opts.dryRun
-				? ['dry run, no verifier:', ...plants.map((plant) => `${plant.classId}  ${plant.split}  ${plant.status}${plant.reason ? ` (${plant.reason})` : ''}`)].join('\n')
-				: formatScore(scoreRun(manifest, verdict)),
-			'',
-			...usageLines(usage, Date.now() - started)
-		].join('\n');
-		writeFileSync(path.join(runDir, 'report.txt'), `${report}\n`);
-		writeFileSync(path.join(runDir, 'usage.json'), `${JSON.stringify(usage, null, 2)}\n`);
-		console.log(`\n${report}\n\nresults: ${runDir}`);
-		return 0;
+		return finish(runDir, manifest, verdict, usage, started, opts.dryRun ? [] : [`planter ${configLabel(opts.planter)}, verifier ${configLabel(opts.verifier)}`, '']);
 	} finally {
 		if (opts.keep) log(`kept clones in ${sandbox}`);
 		else rmSync(sandbox, { recursive: true, force: true });
