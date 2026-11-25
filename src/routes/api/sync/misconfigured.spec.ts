@@ -7,7 +7,8 @@ import { GET } from './+server.ts';
 vi.mock('$app/env/private', () => ({
 	SYNC_TOKEN: 't',
 	TURSO_DATABASE_URL: ' "postgres://user:pass@secret-host.turso.io/db" ',
-	TURSO_AUTH_TOKEN: 'secret-token'
+	TURSO_AUTH_TOKEN: 'secret-token',
+	VERCEL_GIT_COMMIT_SHA: 'fa1eade47b73733d6312d5abfad33ce9e4068081'
 }));
 
 type Event = Parameters<typeof GET>[0];
@@ -18,16 +19,17 @@ describe('/api/sync GET with an unusable TURSO_DATABASE_URL', () => {
 		const response = await GET({} as Event);
 		expect(response.status).toBe(503);
 		const body = await response.json();
-		expect(body).toEqual({ token: true, database: 'unmigrated', reason: 'LibsqlError URL_SCHEME_NOT_SUPPORTED', urlScheme: 'postgres' });
+		expect(body).toEqual({ token: true, database: 'unmigrated', commit: 'fa1eade47b73733d6312d5abfad33ce9e4068081', reason: 'LibsqlError URL_SCHEME_NOT_SUPPORTED', urlScheme: 'postgres' });
 		expect(JSON.stringify(body)).not.toMatch(/secret|pass/);
 	});
 });
 
 describe('syncHealth when ready', () => {
-	it('stays exactly {token, database} and omits the scheme', async () => {
+	it('stays exactly {token, database, commit} and omits the scheme', async () => {
 		const db = await openDb(':memory:');
 		await migrateDb(db);
-		const response = await syncHealth({ token: 't', database: async () => ({ status: 'ready', db }), urlScheme: 'libsql' });
-		expect([response.status, await response.json()]).toEqual([200, { token: true, database: 'ready' }]);
+		const commit = 'fa1eade47b73733d6312d5abfad33ce9e4068081';
+		const response = await syncHealth({ token: 't', database: async () => ({ status: 'ready', db }), urlScheme: 'libsql', commit });
+		expect([response.status, await response.json()]).toEqual([200, { token: true, database: 'ready', commit }]);
 	});
 });

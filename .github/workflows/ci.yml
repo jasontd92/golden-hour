@@ -24,11 +24,22 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      e2e: ${{ steps.e2e-scope.outputs.run }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: ${{ github.event_name == 'pull_request' && '0' || '1' }}
       - id: setup
         uses: ./.github/actions/setup
+      - name: tests come from the oracle
+        if: ${{ !cancelled() && github.event_name == 'pull_request' && steps.setup.outcome == 'success' }}
+        run: node scripts/provenance.ts "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
       - name: typecheck
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: pnpm typecheck
       - name: lint
         if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
@@ -45,13 +56,34 @@ jobs:
       - name: unit
         if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: pnpm test:unit
+      - id: e2e-scope
+        name: does this PR change what's rendered
+        if: ${{ !cancelled() && github.event_name == 'pull_request' && steps.setup.outcome == 'success' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          all=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/labels" --jq '.[].name' | grep -qx screenshots && echo --all || true)
+          run=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate --jq '.[].filename' | node scripts/e2e-scope.ts $all)
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+          echo "e2e: ${run:-skipped until merge}"
+
+  bundle-budget:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      - run: pnpm build
+      - run: node scripts/budgets.ts
 
   e2e:
+    needs: checks
+    if: ${{ !cancelled() && (github.event_name == 'push' || needs.checks.outputs.e2e != '') }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     outputs:
       artifact-id: ${{ steps.screenshots.outputs.artifact-id }}
-      artifact-url: ${{ steps.screenshots.outputs.artifact-url }}
     container:
       image: mcr.microsoft.com/playwright:v1.65.1-noble
       options: --ipc=host
@@ -68,7 +100,9 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: e2e-screenshots
-          path: test-results/screenshots/*.png
+          path: |
+            test-results/screenshots/*.png
+            test-results/screenshots/*.json
           if-no-files-found: error
           retention-days: 14
       - if: failure()
@@ -90,14 +124,32 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       PR: ${{ github.event.pull_request.number }}
       SHA: ${{ github.event.pull_request.head.sha }}
-      ARTIFACT_URL: ${{ needs.e2e.outputs.artifact-url }}
+      BASE: ${{ github.event.pull_request.base.sha }}
       E2E_RESULT: ${{ needs.e2e.result }}
     steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: |
+            scripts
+            src/routes
+            e2e
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
       - uses: actions/download-artifact@v8
         with:
           name: e2e-screenshots
           path: shots
+      - id: pick
+        name: Pick screenshots of the pages this PR touched
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/compare/$BASE...$SHA" --jq '.files[].filename' \
+            | node scripts/e2e-scope.ts --screenshots shots > picked.txt
+          echo "count=$(grep -c . picked.txt || true)" >> "$GITHUB_OUTPUT"
+          echo "screenshots for touched pages:"; cat picked.txt
       - name: Publish screenshots to ci-evidence
+        if: steps.pick.outputs.count != '0'
         run: |
           dir="$PR/$SHA"
           git init -q evidence && cd evidence
@@ -109,7 +161,7 @@ jobs:
             echo '{"git":{"deploymentEnabled":false}}' > vercel.json
           fi
           mkdir -p "$dir"
-          cp ../shots/*.png "$dir"/
+          while read -r name; do cp "../shots/$name.png" "$dir"/; done < ../picked.txt
           git add -A .
           git diff --cached --quiet || git -c user.name=github-actions -c user.email=41898282+github-actions[bot]@users.noreply.github.com \
             commit -qm "ci: e2e evidence for #$PR at ${SHA:0:7}"
@@ -119,24 +171,65 @@ jobs:
           done
           exit 1
       - name: Comment with inline screenshots
+        env:
+          COUNT: ${{ steps.pick.outputs.count }}
         run: |
           base="https://github.com/$GITHUB_REPOSITORY/blob/ci-evidence/$PR/$SHA"
           {
             echo "<!-- e2e-screenshots -->"
-            echo "**E2E evidence** for \`${SHA:0:7}\` (e2e: $E2E_RESULT). [Zip]($ARTIFACT_URL)"
+            if [ "$COUNT" = 0 ]; then
+              echo "**E2E evidence** for \`${SHA:0:7}\` (e2e: $E2E_RESULT): this commit touched no pages with screenshots."
+            else
+              echo "**E2E evidence** for \`${SHA:0:7}\` (e2e: $E2E_RESULT): the pages this PR touched."
+            fi
             echo
-            for file in shots/*.png; do
-              name=$(basename "$file" .png)
+            [ "$COUNT" = 0 ] || while read -r name; do
               echo "**$name**"
               echo
               echo "<img src=\"$base/$name.png?raw=true\" width=\"320\" alt=\"$name\">"
               echo
-            done
+            done < picked.txt
           } > body.md
           id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate \
             --jq '[.[] | select(.body | startswith("<!-- e2e-screenshots -->"))][0].id // empty')
           if [ -n "$id" ]; then
             gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -F body=@body.md >/dev/null
+          elif [ "$COUNT" = 0 ]; then
+            echo "no screenshots and no earlier comment: nothing to post"
           else
+            gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -F body=@body.md >/dev/null
+          fi
+
+  comment-report:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR: ${{ github.event.pull_request.number }}
+      BASE: ${{ github.event.pull_request.base.sha }}
+      SHA: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - name: Report new why and developer-directed comments
+        run: |
+          set +e
+          node scripts/comment-report.ts "$BASE" "$SHA" > body.md
+          found=$?
+          set -e
+          [ "$found" -eq 0 ] || [ "$found" -eq 3 ] || exit "$found"
+          id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --paginate \
+            --jq '[.[] | select(.body | startswith("<!-- comment-report -->"))][0].id // empty')
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" -F body=@body.md >/dev/null
+          elif [ "$found" -eq 0 ]; then
             gh api "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -F body=@body.md >/dev/null
           fi

@@ -1,0 +1,109 @@
+[
+	{
+		"sha": "715de4cc03daa4e74749bc8261183b84ecefa813",
+		"parents": 1,
+		"message": "feat(verify): scoped StrykerJS mutation testing with incremental CI\n\nAdds pnpm mutate (StrykerJS 10.1.1, vitest runner) over domain, server/db,\nthe log store and sync loop, and the data-build parsers. Baseline 85.61%;\nbreak threshold 83. CI runs incrementally on PRs touching those paths and\non main, with a weekly full run; the incremental file lives in the Actions\ncache. Lint allows a reasoned 'Stryker disable next-line' directive.\n\n",
+		"files": [
+			".github/workflows/mutation.yml",
+			".gitignore",
+			"lint/rules/no-prose-comments.spec.ts",
+			"lint/rules/no-prose-comments.ts",
+			"package.json",
+			"pnpm-lock.yaml",
+			"scripts/mutation-scope.spec.ts",
+			"src/lib/server/db/migrate.ts",
+			"stryker.config.json"
+		]
+	},
+	{
+		"sha": "91fe627eaee1581ac4641b1325c4778a31d1775a",
+		"parents": 1,
+		"message": "ci(mutation): cold PRs mutate only changed files; allow full runs on 2-core runners\n\n",
+		"files": [
+			".github/workflows/mutation.yml",
+			"scripts/mutation-scope.spec.ts",
+			"scripts/mutation-scope.ts"
+		]
+	},
+	{
+		"sha": "46ed249859a11232128d1a61c049a27f8b72a4de",
+		"parents": 1,
+		"message": "ci: run mutation testing on demand only, with stable timeouts\n\n",
+		"files": [
+			".github/workflows/mutation.yml",
+			"scripts/mutation-scope.spec.ts",
+			"scripts/mutation-scope.ts",
+			"stryker.config.json"
+		]
+	},
+	{
+		"sha": "8ea54ee8e2edbe5d141e2080422fce4190802032",
+		"parents": 2,
+		"message": "Merge remote-tracking branch 'origin/main' into ws12-stryker-local\n\n",
+		"files": [
+			".github/workflows/canary.yml",
+			".github/workflows/ci.yml",
+			"scripts/budgets.spec.ts",
+			"scripts/budgets.ts",
+			"scripts/canary.spec.ts",
+			"scripts/canary.ts",
+			"scripts/e2e-scope.spec.ts",
+			"scripts/e2e-scope.ts",
+			"src/env.ts",
+			"src/lib/server/sync-env.ts",
+			"src/lib/server/sync.ts",
+			"src/routes/api/sync/misconfigured.spec.ts",
+			"src/routes/api/sync/sync.spec.ts",
+			"src/routes/api/sync/unconfigured.spec.ts"
+		]
+	},
+	{
+		"sha": "bd58a6960647bf27f3b9dc83ceb873c4c27ba028",
+		"parents": 2,
+		"message": "Merge pull request #27 from jasontd92/ws10-canary-budgets\n\nci: production sync canary and blocking performance budgets\n",
+		"files": [
+			".github/workflows/canary.yml",
+			".github/workflows/ci.yml",
+			"scripts/budgets.spec.ts",
+			"scripts/budgets.ts",
+			"scripts/canary.spec.ts",
+			"scripts/canary.ts",
+			"scripts/e2e-scope.spec.ts",
+			"scripts/e2e-scope.ts",
+			"src/env.ts",
+			"src/lib/server/sync-env.ts",
+			"src/lib/server/sync.ts",
+			"src/routes/api/sync/misconfigured.spec.ts",
+			"src/routes/api/sync/sync.spec.ts",
+			"src/routes/api/sync/unconfigured.spec.ts"
+		]
+	},
+	{
+		"sha": "8b1b6ff1622e261b6a1c97141a93da0ca11d72a2",
+		"parents": 1,
+		"message": "feat(verify): tests come from a separate oracle session\n\n- scripts/provenance.ts: CI fails a PR whose non-merge commits change tests (*.spec.ts, *.e2e.ts, verification.yaml) without a Verified-by: oracle trailer.\n- scripts/hooks/guard.ts (.claude/settings.json PreToolUse): refuses test commits outside ROLE=oracle, the trailer outside the oracle, and gh pr merge unless every check is green.\n- .claude/agents/oracle.md and pnpm oracle: the oracle runs as its own headless session.\n- *.local.spec.ts is gitignored for implementers' own checks.\n- AGENTS.md (imported by CLAUDE.md): roles, what needs an oracle, and the verification-ledger comment.\n\n",
+		"files": [
+			".claude/agents/oracle.md",
+			".claude/settings.json",
+			".github/workflows/ci.yml",
+			".gitignore",
+			"AGENTS.md",
+			"CLAUDE.md",
+			"package.json",
+			"scripts/check-md.ts",
+			"scripts/hooks/guard.ts",
+			"scripts/provenance.ts"
+		]
+	},
+	{
+		"sha": "5b31962c8ee9ac2975d70fff86af95ab2c902be2",
+		"parents": 1,
+		"message": "feat(verify): a verification ledger per PR, with cost per check\n\nverification/ledger/<pr>.json records which check caught each mistake, whether it was real, and per-check cost (CI minutes from check runs, agent tokens). pnpm ledger draft <pr> adds programmatic catches and costs; pnpm ledger prints real catches and cost per real catch for every check. Linked from the README.\n\n",
+		"files": [
+			"AGENTS.md",
+			"README.md",
+			"package.json",
+			"scripts/ledger.ts"
+		]
+	}
+]

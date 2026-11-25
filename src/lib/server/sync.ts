@@ -9,6 +9,7 @@ export interface SyncDeps {
 	token: string | undefined;
 	database: () => Promise<Database>;
 	urlScheme?: UrlScheme;
+	commit?: string;
 }
 
 const digest = (value: string) => createHash('sha256').update(value).digest();
@@ -55,5 +56,6 @@ export async function syncHealth(deps: SyncDeps): Promise<Response> {
 	const token = Boolean(deps.token);
 	const reason = database.status === 'unmigrated' ? { reason: database.reason } : {};
 	const scheme = status === 'unmigrated' && deps.urlScheme ? { urlScheme: deps.urlScheme } : {};
-	return Response.json({ token, database: status, ...reason, ...scheme }, { status: token && status === 'ready' ? 200 : 503 });
+	const commit = deps.commit ? { commit: deps.commit } : {};
+	return Response.json({ token, database: status, ...commit, ...reason, ...scheme }, { status: token && status === 'ready' ? 200 : 503 });
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { GET, POST } from './+server.ts';
 
-vi.mock('$app/env/private', () => ({ SYNC_TOKEN: undefined, TURSO_DATABASE_URL: undefined, TURSO_AUTH_TOKEN: undefined }));
+vi.mock('$app/env/private', () => ({ SYNC_TOKEN: undefined, TURSO_DATABASE_URL: undefined, TURSO_AUTH_TOKEN: undefined, VERCEL_GIT_COMMIT_SHA: undefined }));
 
 type Event = Parameters<typeof POST>[0];
 

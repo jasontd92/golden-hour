@@ -1,0 +1,9 @@
+{
+	"at": "2026-11-22T03:58:00.000Z",
+	"by": "code-review",
+	"result": "pass",
+	"tokens": 65354,
+	"minutes": 1.68,
+	"detail": "ran on the wrong target (uncommitted team/draft-plan.md, not #27)",
+	"caught": 0
+}

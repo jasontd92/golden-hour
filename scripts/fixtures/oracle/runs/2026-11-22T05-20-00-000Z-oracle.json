@@ -1,0 +1,11 @@
+{
+	"at": "2026-11-22T05:20:00.000Z",
+	"by": "oracle",
+	"result": "pass",
+	"tokens": 1922451,
+	"usd": 1.4,
+	"minutes": 6.05,
+	"pr": 35,
+	"detail": "real-data tests for scoped screenshots; found #37 verification.yaml invalid",
+	"caught": 1
+}

@@ -1,0 +1,51 @@
+{
+	"27": [
+		".github/workflows/canary.yml",
+		".github/workflows/ci.yml",
+		"scripts/budgets.spec.ts",
+		"scripts/budgets.ts",
+		"scripts/canary.spec.ts",
+		"scripts/canary.ts",
+		"scripts/e2e-scope.spec.ts",
+		"scripts/e2e-scope.ts",
+		"src/env.ts",
+		"src/lib/server/sync-env.ts",
+		"src/lib/server/sync.ts",
+		"src/routes/api/sync/misconfigured.spec.ts",
+		"src/routes/api/sync/sync.spec.ts",
+		"src/routes/api/sync/unconfigured.spec.ts"
+	],
+	"28": [
+		".github/workflows/mutation.yml",
+		".gitignore",
+		"lint/rules/no-prose-comments.spec.ts",
+		"lint/rules/no-prose-comments.ts",
+		"package.json",
+		"pnpm-lock.yaml",
+		"src/lib/server/db/migrate.ts",
+		"stryker.config.json"
+	],
+	"33": [
+		"e2e/plan.desktop.e2e.ts",
+		"e2e/sync-env.spec.ts",
+		"e2e/sync-env.ts",
+		"e2e/test.ts",
+		"e2e/today.e2e.ts",
+		"eslint.config.js",
+		"lint/config.spec.ts",
+		"scripts/e2e-local.spec.ts",
+		"scripts/e2e-local.ts",
+		"scripts/plan-sessions.ts",
+		"src/lib/features/log/flow.spec.ts",
+		"src/lib/features/log/steps.ts",
+		"src/lib/features/plan/Plan.svelte",
+		"src/lib/features/today/prescription-lines.ts",
+		"tsconfig.json",
+		"vite.config.ts"
+	],
+	"35": [
+		".github/workflows/ci.yml",
+		"e2e/evidence.ts",
+		"scripts/e2e-scope.ts"
+	]
+}

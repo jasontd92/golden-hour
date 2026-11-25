@@ -3,6 +3,9 @@ import { listRepoFiles, report } from './repo-files.ts';
 
 export const markdownAllowlist = [
 	'README.md',
+	'AGENTS.md',
+	'CLAUDE.md',
+	'.claude/agents/**',
 	'data/README.md',
 	'data/normalized/REPORT.md',
 	'team/**',

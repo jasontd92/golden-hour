@@ -1,0 +1,11 @@
+{
+	"at": "2026-11-22T05:50:00.000Z",
+	"by": "oracle",
+	"result": "pass",
+	"tokens": 1235516,
+	"usd": 1.19,
+	"minutes": 8,
+	"pr": 37,
+	"detail": "drop verification.yaml, one catch per bug; caught deleted programmaticCosts",
+	"caught": 1
+}

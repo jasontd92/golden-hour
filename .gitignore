@@ -9,3 +9,6 @@ node_modules
 test-results
 playwright-report
 vite.config.ts.timestamp-*
+/reports
+/.stryker-tmp
+*.local.spec.ts

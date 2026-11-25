@@ -13,7 +13,7 @@ import { handleSync } from '#lib/server/sync.ts';
 import { syncDatabase } from '#lib/server/sync-env.ts';
 import { GET, POST } from './+server.ts';
 
-vi.mock('$app/env/private', () => ({ SYNC_TOKEN: 'test-token', TURSO_DATABASE_URL: ':memory:', TURSO_AUTH_TOKEN: undefined }));
+vi.mock('$app/env/private', () => ({ SYNC_TOKEN: 'test-token', TURSO_DATABASE_URL: ':memory:', TURSO_AUTH_TOKEN: undefined, VERCEL_GIT_COMMIT_SHA: undefined }));
 
 let routeDb: Db;
 beforeAll(async () => {
