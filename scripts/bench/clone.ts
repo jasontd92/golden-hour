@@ -1,0 +1,120 @@
+import { spawnSync } from 'node:child_process';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import path from 'node:path';
+
+export const benchDir = 'scripts/bench';
+
+export interface Shell {
+	ok: boolean;
+	stdout: string;
+	output: string;
+}
+
+export function sh(cwd: string, cmd: string, args: string[], options: { input?: string; timeoutMs?: number; env?: NodeJS.ProcessEnv } = {}): Shell {
+	const result = spawnSync(cmd, args, {
+		cwd,
+		encoding: 'utf8',
+		input: options.input,
+		timeout: options.timeoutMs,
+		env: options.env ?? process.env,
+		maxBuffer: 256 * 1024 * 1024
+	});
+	return { ok: result.status === 0, stdout: result.stdout ?? '', output: `${result.stdout ?? ''}${result.stderr ?? ''}${result.error ? String(result.error) : ''}` };
+}
+
+function must(result: Shell, what: string): string {
+	if (!result.ok) throw new Error(`${what} failed:\n${result.output.slice(-2000)}`);
+	return result.output;
+}
+
+export function isInside(child: string, parent: string): boolean {
+	const relative = path.relative(path.resolve(parent), path.resolve(child));
+	return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
+}
+
+export function stripBenchScripts(packageJson: string): string {
+	const pkg = JSON.parse(packageJson) as { scripts?: Record<string, string> };
+	const scripts: Record<string, string> = {};
+	for (const [name, command] of Object.entries(pkg.scripts ?? {})) {
+		const kept = command
+			.split(' && ')
+			.filter((step) => !step.includes(`${benchDir}/`))
+			.join(' && ');
+		if (kept !== '') scripts[name] = kept;
+	}
+	return `${JSON.stringify({ ...pkg, scripts }, null, '\t')}\n`;
+}
+
+const git = (dir: string, ...args: string[]) => must(sh(dir, 'git', ['-c', 'user.name=bench', '-c', 'user.email=bench@localhost', '-c', 'commit.gpgsign=false', ...args]), `git ${args[0]}`);
+
+export function exportBase(repo: string, sha: string, dir: string): void {
+	mkdirSync(dir, { recursive: true });
+	const archive = path.join(path.dirname(dir), `${path.basename(dir)}.tar`);
+	must(sh(repo, 'git', ['archive', '--format=tar', `--output=${archive}`, sha]), 'git archive');
+	must(sh(dir, 'tar', ['-xf', archive], { env: { ...process.env, COPYFILE_DISABLE: '1' } }), 'tar');
+	rmSync(archive);
+	rmSync(path.join(dir, benchDir), { recursive: true, force: true });
+	const packageJson = path.join(dir, 'package.json');
+	writeFileSync(packageJson, stripBenchScripts(readFileSync(packageJson, 'utf8')));
+	git(dir, 'init', '-q', '-b', 'main');
+	git(dir, 'add', '.');
+	git(dir, 'commit', '-q', '-m', `main at ${sha.slice(0, 7)}`);
+}
+
+export function install(dir: string): void {
+	must(sh(dir, 'pnpm', ['install', '--frozen-lockfile', '--prefer-offline'], { timeoutMs: 15 * 60000 }), 'pnpm install');
+}
+
+export const gates = [
+	['pnpm', 'check'],
+	['pnpm', 'proof:sync']
+] as const;
+
+export function gateSummary(output: string): string {
+	const lines = output.split('\n');
+	const telling = lines.filter((line) => /NOT KILLED|crashed|positive control|FAIL|×|Error|error TS|problem/.test(line)).slice(0, 40);
+	return [...telling, '…', ...lines.slice(-15)].join('\n');
+}
+
+export function runGates(dir: string): { ok: true; flaky: string[] } | { ok: false; gate: string; summary: string } {
+	const flaky: string[] = [];
+	for (const [cmd, ...args] of gates) {
+		const gate = `${cmd} ${args.join(' ')}`;
+		const first = sh(dir, cmd, args, { timeoutMs: 30 * 60000 });
+		if (first.ok) continue;
+		// why: the sync proof is randomised, so a single red run is not proof that the plant caused it
+		const second = sh(dir, cmd, args, { timeoutMs: 30 * 60000 });
+		if (!second.ok) return { ok: false, gate: `${gate} (failed twice)`, summary: gateSummary(second.output) };
+		flaky.push(gate);
+	}
+	return { ok: true, flaky };
+}
+
+export const ledgerRuns = 'verification/runs';
+
+export function workingDiff(dir: string): string {
+	git(dir, 'add', '--intent-to-add', '.');
+	return sh(dir, 'git', ['diff', '--no-color', '--no-ext-diff', '--', '.', `:(exclude)${ledgerRuns}`]).stdout;
+}
+
+export function resetWorkingTree(dir: string): void {
+	git(dir, 'reset', '-q');
+	git(dir, 'checkout', '-q', '--', '.');
+	git(dir, 'clean', '-fdq');
+}
+
+export function commitPatch(dir: string, diff: string, message: string): boolean {
+	if (!sh(dir, 'git', ['apply', '--whitespace=nowarn', '-'], { input: diff }).ok) return false;
+	git(dir, 'add', '.');
+	git(dir, 'commit', '-q', '-m', message);
+	return true;
+}
+
+export function headSha(dir: string): string {
+	return sh(dir, 'git', ['rev-parse', 'HEAD']).stdout.trim();
+}
+
+export function cloneWithoutHistoryLeftovers(from: string, to: string, branch?: string): void {
+	must(sh(path.dirname(to), 'git', ['clone', '-q', '--no-local', ...(branch === undefined ? [] : ['-b', branch]), from, to]), 'git clone');
+	git(to, 'remote', 'remove', 'origin');
+}
