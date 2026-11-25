@@ -90,9 +90,11 @@ export function runGates(dir: string): { ok: true; flaky: string[] } | { ok: fal
 	return { ok: true, flaky };
 }
 
+export const ledgerRuns = 'verification/runs';
+
 export function workingDiff(dir: string): string {
 	git(dir, 'add', '--intent-to-add', '.');
-	return sh(dir, 'git', ['diff', '--no-color', '--no-ext-diff']).stdout;
+	return sh(dir, 'git', ['diff', '--no-color', '--no-ext-diff', '--', '.', `:(exclude)${ledgerRuns}`]).stdout;
 }
 
 export function resetWorkingTree(dir: string): void {
@@ -112,7 +114,7 @@ export function headSha(dir: string): string {
 	return sh(dir, 'git', ['rev-parse', 'HEAD']).stdout.trim();
 }
 
-export function cloneWithoutHistoryLeftovers(from: string, to: string): void {
-	must(sh(path.dirname(to), 'git', ['clone', '-q', '--no-local', from, to]), 'git clone');
+export function cloneWithoutHistoryLeftovers(from: string, to: string, branch?: string): void {
+	must(sh(path.dirname(to), 'git', ['clone', '-q', '--no-local', ...(branch === undefined ? [] : ['-b', branch]), from, to]), 'git clone');
 	git(to, 'remote', 'remove', 'origin');
 }

@@ -179,8 +179,7 @@ function replay(sealedRun: string, opts: Options, method: string, started: numbe
 	const usage: Usage[] = [];
 	try {
 		const verifyDir = path.join(sandbox, randomBytes(6).toString('hex'));
-		sh(sandbox, 'git', ['clone', '-q', path.join(sealedRun, sealedFiles.bundle), verifyDir]);
-		sh(verifyDir, 'git', ['remote', 'remove', 'origin']);
+		cloneWithoutHistoryLeftovers(path.join(sealedRun, sealedFiles.bundle), verifyDir, 'main');
 		if (headSha(verifyDir) !== brief.headSha) throw new Error('the sealed bundle does not hold the sealed head');
 		log(`replay of ${manifest.runId}: ${manifest.plants.filter((plant) => plant.status === 'planted').length} plants, work ${sandbox}`);
 		const verdict = verify(verifyDir, brief, method, opts, usage);
@@ -228,6 +227,7 @@ function main(): number {
 			console.error(`base is red before planting (${control.gate}):\n${control.summary}`);
 			return 1;
 		}
+		resetWorkingTree(plantDir);
 		const pool = opts.dryRun ? catalog.filter((bugClass) => bugClass.id in mechanicalPlanters) : catalog;
 		const plants: Plant[] = [];
 		for (const bugClass of sampleClasses(pool, opts.classes, opts.seed)) {
